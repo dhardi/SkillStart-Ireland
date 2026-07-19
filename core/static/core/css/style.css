@@ -6,3 +6,36 @@ body {
     font-weight: 700;
     letter-spacing: 0.5px;
 }
+
+.hero-card {
+    background-color: #ffffff;
+    border-radius: 18px;
+    padding: 2rem;
+}
+
+.hero-card-item {
+    display: flex;
+    align-items: flex-start;
+    gap: 1rem;
+    padding: 1.25rem 0;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.hero-card-item:last-child {
+    border-bottom: none;
+}
+
+.hero-card-item h3 {
+    font-size: 1.2rem;
+    margin-bottom: 0.35rem;
+}
+
+.hero-card-item p {
+    margin-bottom: 0;
+    color: #6c757d;
+}
+
+.hero-icon {
+    font-size: 2rem;
+    line-height: 1;
+}
