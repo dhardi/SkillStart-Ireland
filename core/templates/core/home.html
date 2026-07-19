@@ -1,68 +1,18 @@
-<!DOCTYPE html>
-<html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+{% extends "base.html" %}
 
-    <title>Warehouse Academy Ireland</title>
-</head>
+{% block title %}
+    Home | Warehouse Academy Ireland
+{% endblock %}
 
-<body>
-    <header>
-        <nav>
-            <h1>Warehouse Academy Ireland</h1>
+{% block content %}
 
-            <a href="/">Home</a>
-            <a href="#">Cursos</a>
-            <a href="#">Login</a>
-        </nav>
-    </header>
+    <h1>Warehouse Academy Ireland</h1>
 
-    <main>
-        <section>
-            <h2>Prepare-se para trabalhar em warehouses na Irlanda</h2>
+    <h2>Prepare-se para trabalhar em warehouses na Irlanda</h2>
 
-            <p>
-                Cursos, simulados e vocabulário em português e inglês
-                para quem trabalha ou deseja trabalhar na área de warehouse.
-            </p>
+    <p>
+        Cursos, simulados e vocabulário em português e inglês
+        para quem trabalha ou deseja trabalhar na área de warehouse.
+    </p>
 
-            <a href="#">Ver cursos</a>
-        </section>
-
-        <section>
-            <h2>Primeiros cursos</h2>
-
-            <article>
-                <h3>Counterbalance Forklift</h3>
-
-                <p>
-                    Preparação teórica, segurança, inspeção diária e simulado.
-                </p>
-            </article>
-
-            <article>
-                <h3>Manual Handling</h3>
-
-                <p>
-                    Aprenda técnicas básicas para movimentação segura de cargas.
-                </p>
-            </article>
-
-            <article>
-                <h3>Warehouse English</h3>
-
-                <p>
-                    Vocabulário e frases usadas diariamente em warehouses.
-                </p>
-            </article>
-        </section>
-    </main>
-
-    <footer>
-        <p>
-            Curso preparatório. Não substitui treinamento ou certificação oficial.
-        </p>
-    </footer>
-</body>
-</html>
+{% endblock %}
