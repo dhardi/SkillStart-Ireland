@@ -1,0 +1,89 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ course.title }} | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+        <a href="{% url 'course_list' %}"
+           class="text-decoration-none">
+            &larr; Back to Courses
+        </a>
+
+        <div class="row justify-content-center mt-4">
+            <div class="col-12 col-lg-8">
+                <div class="card border-0 shadow-sm">
+                    {% if course.image %}
+    <img src="{{ course.image.url }}"
+         class="img-fluid rounded mb-4"
+         alt="{{ course.title }}">
+{% endif %}
+                    <div class="card-body p-4 p-md-5">
+                        <p class="text-primary fw-semibold mb-2">
+                            {{ course.category.name }}
+                        </p>
+
+                        <h1 class="fw-bold mb-4">
+                            {{ course.title }}
+                        </h1>
+
+                        <p class="lead text-muted">
+                            {{ course.description }}
+                        </p>
+
+                        <hr class="my-4">
+
+<h3 class="mb-4">
+    Course Lessons
+</h3>
+
+<div class="list-group">
+
+    {% for lesson in lessons %}
+
+        <div class="list-group-item py-3">
+
+            <div class="d-flex justify-content-between">
+
+                <strong>
+                    Lesson {{ lesson.order }}
+                </strong>
+
+                <span class="badge bg-primary">
+                    Available
+                </span>
+
+            </div>
+
+            <h5 class="mt-2">
+                {{ lesson.title }}
+            </h5>
+
+            <p class="text-muted mb-0">
+                {{ lesson.content }}
+            </p>
+
+        </div>
+
+    {% empty %}
+
+        <div class="alert alert-warning">
+
+            No lessons available for this course.
+
+        </div>
+
+    {% endfor %}
+
+</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+{% endblock %}
