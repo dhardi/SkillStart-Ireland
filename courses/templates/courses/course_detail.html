@@ -6,83 +6,124 @@
 
 {% block content %}
 
-<section class="py-5">
+<section class="course-detail-section py-5">
     <div class="container">
-        <a href="{% url 'course_list' %}"
-           class="text-decoration-none">
-            &larr; Back to Courses
+
+        <a
+            href="{% url 'course_list' %}"
+            class="course-back-link"
+        >
+            ← Back to Courses
         </a>
 
-        <div class="row justify-content-center mt-4">
-            <div class="col-12 col-lg-8">
-                <div class="card border-0 shadow-sm">
+        <div class="row align-items-center g-5 mt-2">
+
+            <div class="col-12 col-lg-5">
+                <div class="course-detail-image-wrapper">
+
                     {% if course.image %}
-    <img src="{{ course.image.url }}"
-         class="img-fluid rounded mb-4"
-         alt="{{ course.title }}">
-{% endif %}
-                    <div class="card-body p-4 p-md-5">
-                        <p class="text-primary fw-semibold mb-2">
-                            {{ course.category.name }}
-                        </p>
+                        <img
+                            src="{{ course.image.url }}"
+                            alt="{{ course.title }}"
+                            class="course-detail-image"
+                        >
+                    {% else %}
+                        <div class="course-detail-placeholder">
+                            No image available
+                        </div>
+                    {% endif %}
 
-                        <h1 class="fw-bold mb-4">
-                            {{ course.title }}
-                        </h1>
-
-                        <p class="lead text-muted">
-                            {{ course.description }}
-                        </p>
-
-                        <hr class="my-4">
-
-<h3 class="mb-4">
-    Course Lessons
-</h3>
-
-<div class="list-group">
-
-    {% for lesson in lessons %}
-
-        <div class="list-group-item py-3">
-
-            <div class="d-flex justify-content-between">
-
-                <strong>
-                    Lesson {{ lesson.order }}
-                </strong>
-
-                <span class="badge bg-primary">
-                    Available
-                </span>
-
-            </div>
-
-            <h5 class="mt-2">
-                {{ lesson.title }}
-            </h5>
-
-            <p class="text-muted mb-0">
-                {{ lesson.content }}
-            </p>
-
-        </div>
-
-    {% empty %}
-
-        <div class="alert alert-warning">
-
-            No lessons available for this course.
-
-        </div>
-
-    {% endfor %}
-
-</div>
-                    </div>
                 </div>
             </div>
+
+            <div class="col-12 col-lg-7">
+
+                <p class="course-detail-category">
+                    {{ course.category.name }}
+                </p>
+
+                <h1 class="course-detail-title">
+                    {{ course.title }}
+                </h1>
+
+                <div class="course-detail-description">
+                    {{ course.description|linebreaks }}
+                </div>
+
+                <div class="course-detail-notice">
+                    <strong>Online learning course</strong>
+
+                    <p class="mb-0">
+                        Study the lessons at your own pace and build
+                        practical workplace knowledge.
+                    </p>
+                </div>
+
+            </div>
         </div>
+
+        <div class="course-lessons-section mt-5">
+
+            <div class="course-lessons-header">
+                <div>
+                    <p class="course-detail-category mb-2">
+                        Course content
+                    </p>
+
+                    <h2 class="fw-bold mb-0">
+                        Course Lessons
+                    </h2>
+                </div>
+
+                <span class="lesson-count">
+                    {{ lessons|length }}
+                    lesson{{ lessons|length|pluralize }}
+                </span>
+            </div>
+
+            <div class="mt-4">
+
+                {% for lesson in lessons %}
+
+                    <article class="lesson-card">
+
+                        <div class="lesson-number">
+                            {{ lesson.order }}
+                        </div>
+
+                        <div class="lesson-content">
+
+                            <div class="lesson-meta">
+                                Lesson {{ lesson.order }}
+
+                                <span class="lesson-available">
+                                    Available
+                                </span>
+                            </div>
+
+                            <h3 class="lesson-title">
+                                {{ lesson.title }}
+                            </h3>
+
+                            <div class="lesson-description">
+                                {{ lesson.content|linebreaks }}
+                            </div>
+
+                        </div>
+
+                    </article>
+
+                {% empty %}
+
+                    <div class="alert alert-light border">
+                        No lessons are available for this course yet.
+                    </div>
+
+                {% endfor %}
+
+            </div>
+        </div>
+
     </div>
 </section>
 

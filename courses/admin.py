@@ -10,6 +10,18 @@ class CategoryAdmin(admin.ModelAdmin):
     prepopulated_fields = {"slug": ("name",)}
 
 
+class LessonInline(admin.TabularInline):
+    model = Lesson
+    extra = 1
+    fields = (
+        "title",
+        "order",
+        "is_published",
+        "content",
+    )
+    ordering = ("order",)
+
+
 @admin.register(Course)
 class CourseAdmin(admin.ModelAdmin):
     list_display = (
@@ -29,6 +41,7 @@ class CourseAdmin(admin.ModelAdmin):
     prepopulated_fields = {
         "slug": ("title",),
     }
+    inlines = [LessonInline]
 
 
 @admin.register(Lesson)
