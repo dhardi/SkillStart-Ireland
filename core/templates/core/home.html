@@ -6,130 +6,533 @@
 
 {% block content %}
 
-<section class="bg-light py-5">
-    <div class="container py-5">
-        <div class="row align-items-center">
-
-            <div class="col-lg-7">
-                <h1 class="display-4 fw-bold">
-                    Learn essential skills for work in Ireland
-                </h1>
-
-                <p class="lead mt-3">
-                    Practical online courses for warehouse, kitchen,
-                    hospitality and workplace safety.
-                </p>
-
-                <a href="#" class="btn btn-primary btn-lg mt-3">
-                    Explore courses
-                </a>
-            </div>
-
-            <div class="col-lg-5 mt-5 mt-lg-0">
-                <div class="hero-card shadow">
-                    <div class="hero-card-item">
-                        <span class="hero-icon">📦</span>
-
-                        <div>
-                            <h3>Warehouse Skills</h3>
-                            <p>
-                                Forklift, manual handling and safety basics.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="hero-card-item">
-                        <span class="hero-icon">🍳</span>
-
-                        <div>
-                            <h3>Kitchen Skills</h3>
-                            <p>
-                                Food safety, HACCP and kitchen preparation.
-                            </p>
-                        </div>
-                    </div>
-
-                    <div class="hero-card-item">
-                        <span class="hero-icon">🧹</span>
-
-                        <div>
-                            <h3>Workplace Skills</h3>
-                            <p>
-                                Cleaning, hospitality and customer service.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-        </div>
-    </div>
-</section>
-<section class="courses-section py-5">
+<!-- Home Hero -->
+<section class="home-hero">
     <div class="container">
 
-        <div class="text-center mb-5">
-            <h2 class="fw-bold">Explore our course categories</h2>
+        <div class="row align-items-center g-5">
 
-            <p class="text-muted">
-                Practical learning designed to help you build essential workplace skills.
-            </p>
+            <div class="col-12 col-lg-7">
+
+                <div class="home-hero-content">
+
+                    <span class="home-hero-label">
+                        Practical learning for work in Ireland
+                    </span>
+
+                    <h1 class="home-hero-title">
+                        Build practical skills for your next career opportunity
+                    </h1>
+
+                    <p class="home-hero-description">
+                        Develop essential workplace knowledge through clear,
+                        practical and easy-to-follow online courses designed
+                        for people working and building careers in Ireland.
+                    </p>
+
+                    <div class="home-hero-actions">
+
+                        <a
+                            href="{% url 'course_list' %}"
+                            class="home-primary-button"
+                        >
+                            Explore courses
+                            <span aria-hidden="true">→</span>
+                        </a>
+
+                        <a
+                            href="#how-it-works"
+                            class="home-secondary-button"
+                        >
+                            How it works
+                        </a>
+
+                    </div>
+
+                    <div class="home-hero-benefits">
+
+                        <span>
+                            <span class="home-benefit-check">✓</span>
+                            Self-paced learning
+                        </span>
+
+                        <span>
+                            <span class="home-benefit-check">✓</span>
+                            Practical lessons
+                        </span>
+
+                        <span>
+                            <span class="home-benefit-check">✓</span>
+                            Mobile friendly
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+            <div class="col-12 col-lg-5">
+
+                <div class="home-hero-panel">
+
+                    <div class="home-panel-header">
+
+                        <span class="home-panel-label">
+                            SkillStart Ireland
+                        </span>
+
+                        <h2>
+                            Skills designed for real workplaces
+                        </h2>
+
+                    </div>
+
+                    <div class="home-panel-course-list">
+
+                        <div class="home-panel-course">
+
+                            <div class="home-panel-icon">
+                                01
+                            </div>
+
+                            <div>
+                                <h3>Warehouse skills</h3>
+
+                                <p>
+                                    Safety, manual handling and practical
+                                    warehouse knowledge.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="home-panel-course">
+
+                            <div class="home-panel-icon">
+                                02
+                            </div>
+
+                            <div>
+                                <h3>Food and kitchen safety</h3>
+
+                                <p>
+                                    Food hygiene, HACCP awareness and
+                                    safe working practices.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="home-panel-course">
+
+                            <div class="home-panel-icon">
+                                03
+                            </div>
+
+                            <div>
+                                <h3>Workplace skills</h3>
+
+                                <p>
+                                    Essential knowledge for hospitality,
+                                    cleaning and customer-facing roles.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="home-panel-footer">
+
+                        <span class="home-panel-status"></span>
+
+                        <span>
+                            Courses available online
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
         </div>
 
-        <div class="row g-4">
+    </div>
+</section>
 
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="course-category-card h-100">
-                    <div class="course-category-icon">📦</div>
+<!-- Trust Strip -->
+<section class="home-trust-strip">
+    <div class="container">
 
-                    <h3>Warehouse</h3>
+        <div class="home-trust-grid">
+
+            <div class="home-trust-item">
+
+                <strong>Practical</strong>
+
+                <span>
+                    Clear workplace-focused content
+                </span>
+
+            </div>
+
+            <div class="home-trust-item">
+
+                <strong>Flexible</strong>
+
+                <span>
+                    Study at your own pace
+                </span>
+
+            </div>
+
+            <div class="home-trust-item">
+
+                <strong>Accessible</strong>
+
+                <span>
+                    Learn on mobile or computer
+                </span>
+
+            </div>
+
+            <div class="home-trust-item">
+
+                <strong>Relevant</strong>
+
+                <span>
+                    Skills for working in Ireland
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- How It Works -->
+<section
+    id="how-it-works"
+    class="home-process-section"
+>
+    <div class="container">
+
+        <div class="home-section-heading text-center">
+
+            <span class="home-section-label">
+                Simple online learning
+            </span>
+
+            <h2>
+                Start developing your skills today
+            </h2>
+
+            <p>
+                Choose a course, follow the lessons and build useful
+                workplace knowledge at your own pace.
+            </p>
+
+        </div>
+
+        <div class="row g-4 mt-4">
+
+            <div class="col-12 col-md-4">
+
+                <article class="home-process-card">
+
+                    <span class="home-process-number">
+                        01
+                    </span>
+
+                    <div class="home-process-icon">
+                        ⌕
+                    </div>
+
+                    <h3>
+                        Choose a course
+                    </h3>
+
+                    <p>
+                        Browse the course catalogue and select the subject
+                        that best supports your goals.
+                    </p>
+
+                </article>
+
+            </div>
+
+            <div class="col-12 col-md-4">
+
+                <article class="home-process-card">
+
+                    <span class="home-process-number">
+                        02
+                    </span>
+
+                    <div class="home-process-icon">
+                        📖
+                    </div>
+
+                    <h3>
+                        Follow the lessons
+                    </h3>
+
+                    <p>
+                        Work through structured content designed to be
+                        clear and easy to understand.
+                    </p>
+
+                </article>
+
+            </div>
+
+            <div class="col-12 col-md-4">
+
+                <article class="home-process-card">
+
+                    <span class="home-process-number">
+                        03
+                    </span>
+
+                    <div class="home-process-icon">
+                        ✓
+                    </div>
+
+                    <h3>
+                        Build your knowledge
+                    </h3>
+
+                    <p>
+                        Develop practical understanding that can support
+                        you in workplace environments.
+                    </p>
+
+                </article>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Course Categories -->
+<section class="home-categories-section">
+    <div class="container">
+
+        <div class="home-categories-heading">
+
+            <div>
+
+                <span class="home-section-label">
+                    Explore learning areas
+                </span>
+
+                <h2>
+                    Practical courses for different workplaces
+                </h2>
+
+                <p>
+                    Build essential knowledge for warehouse, food,
+                    hospitality and other workplace environments.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'course_list' %}"
+                class="home-heading-link"
+            >
+                View all courses
+                <span aria-hidden="true">→</span>
+            </a>
+
+        </div>
+
+        <div class="row g-4 mt-2">
+
+            <div class="col-12 col-md-6 col-xl-4">
+
+                <article class="home-category-card">
+
+                    <div class="home-category-top">
+
+                        <span class="home-category-number">
+                            01
+                        </span>
+
+                        <span class="home-category-tag">
+                            Warehouse
+                        </span>
+
+                    </div>
+
+                    <div class="home-category-icon">
+                        W
+                    </div>
+
+                    <h3>
+                        Warehouse and safety
+                    </h3>
 
                     <p>
                         Learn workplace safety, manual handling,
                         forklift theory and warehouse terminology.
                     </p>
 
-                    <a href="#" class="course-category-link">
-                        View courses
+                    <ul class="home-category-list">
+                        <li>Manual handling awareness</li>
+                        <li>Warehouse terminology</li>
+                        <li>Workplace safety basics</li>
+                    </ul>
+
+                    <a
+                        href="{% url 'course_list' %}?search=warehouse"
+                        class="home-category-link"
+                    >
+                        Explore warehouse courses
+                        <span aria-hidden="true">→</span>
                     </a>
-                </div>
+
+                </article>
+
             </div>
 
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="course-category-card h-100">
-                    <div class="course-category-icon">🍴</div>
+            <div class="col-12 col-md-6 col-xl-4">
 
-                    <h3>Kitchen & Food Safety</h3>
+                <article class="home-category-card">
+
+                    <div class="home-category-top">
+
+                        <span class="home-category-number">
+                            02
+                        </span>
+
+                        <span class="home-category-tag">
+                            Food safety
+                        </span>
+
+                    </div>
+
+                    <div class="home-category-icon">
+                        F
+                    </div>
+
+                    <h3>
+                        Kitchen and food safety
+                    </h3>
 
                     <p>
-                        Study HACCP, food hygiene, kitchen safety
-                        and essential preparation practices.
+                        Study food hygiene, HACCP awareness, kitchen
+                        safety and preparation practices.
                     </p>
 
-                    <a href="#" class="course-category-link">
-                        View courses
+                    <ul class="home-category-list">
+                        <li>Food hygiene awareness</li>
+                        <li>HACCP fundamentals</li>
+                        <li>Safe kitchen practices</li>
+                    </ul>
+
+                    <a
+                        href="{% url 'course_list' %}?search=food"
+                        class="home-category-link"
+                    >
+                        Explore food courses
+                        <span aria-hidden="true">→</span>
                     </a>
-                </div>
+
+                </article>
+
             </div>
 
-            <div class="col-12 col-md-6 col-lg-4">
-                <div class="course-category-card h-100">
-                    <div class="course-category-icon">🏨</div>
+            <div class="col-12 col-md-6 col-xl-4">
 
-                    <h3>Hospitality</h3>
+                <article class="home-category-card">
+
+                    <div class="home-category-top">
+
+                        <span class="home-category-number">
+                            03
+                        </span>
+
+                        <span class="home-category-tag">
+                            Workplace
+                        </span>
+
+                    </div>
+
+                    <div class="home-category-icon">
+                        P
+                    </div>
+
+                    <h3>
+                        Professional workplace skills
+                    </h3>
 
                     <p>
-                        Develop practical skills for cleaning,
-                        customer service and hospitality roles.
+                        Develop practical knowledge for hospitality,
+                        cleaning and customer-facing roles.
                     </p>
 
-                    <a href="#" class="course-category-link">
-                        View courses
+                    <ul class="home-category-list">
+                        <li>Professional communication</li>
+                        <li>Customer service basics</li>
+                        <li>Workplace standards</li>
+                    </ul>
+
+                    <a
+                        href="{% url 'course_list' %}?search=workplace"
+                        class="home-category-link"
+                    >
+                        Explore workplace courses
+                        <span aria-hidden="true">→</span>
                     </a>
-                </div>
+
+                </article>
+
             </div>
 
         </div>
+
+    </div>
+</section>
+
+<!-- Final CTA -->
+<section class="home-final-cta">
+    <div class="container">
+
+        <div class="home-final-cta-box">
+
+            <div>
+
+                <span class="home-final-label">
+                    Start learning today
+                </span>
+
+                <h2>
+                    Ready to develop your workplace skills?
+                </h2>
+
+                <p>
+                    Explore practical courses designed to support your
+                    learning and career development in Ireland.
+                </p>
+
+            </div>
+
+            <a
+                href="{% url 'course_list' %}"
+                class="home-final-button"
+            >
+                Browse all courses
+                <span aria-hidden="true">→</span>
+            </a>
+
+        </div>
+
     </div>
 </section>
 

@@ -6,122 +6,329 @@
 
 {% block content %}
 
-<section class="course-detail-section py-5">
+<!-- Course Header -->
+<section class="course-detail-hero">
     <div class="container">
 
         <a
             href="{% url 'course_list' %}"
-            class="course-back-link"
+            class="course-detail-back"
         >
-            ← Back to Courses
+            <span aria-hidden="true">←</span>
+            Back to courses
         </a>
 
-        <div class="row align-items-center g-5 mt-2">
-
-            <div class="col-12 col-lg-5">
-                <div class="course-detail-image-wrapper">
-
-                    {% if course.image %}
-                        <img
-                            src="{{ course.image.url }}"
-                            alt="{{ course.title }}"
-                            class="course-detail-image"
-                        >
-                    {% else %}
-                        <div class="course-detail-placeholder">
-                            No image available
-                        </div>
-                    {% endif %}
-
-                </div>
-            </div>
+        <div class="row align-items-center g-5">
 
             <div class="col-12 col-lg-7">
 
-                <p class="course-detail-category">
+                <span class="course-detail-category-label">
                     {{ course.category.name }}
-                </p>
+                </span>
 
-                <h1 class="course-detail-title">
+                <h1 class="course-detail-main-title">
                     {{ course.title }}
                 </h1>
 
-                <div class="course-detail-description">
+                <div class="course-detail-introduction">
                     {{ course.description|linebreaks }}
                 </div>
 
-                <div class="course-detail-notice">
-                    <strong>Online learning course</strong>
+                <div class="course-detail-highlights">
 
-                    <p class="mb-0">
-                        Study the lessons at your own pace and build
-                        practical workplace knowledge.
-                    </p>
-                </div>
+                    <div class="course-detail-highlight">
+                        <span class="course-highlight-icon">✓</span>
 
-            </div>
-        </div>
-
-        <div class="course-lessons-section mt-5">
-
-            <div class="course-lessons-header">
-                <div>
-                    <p class="course-detail-category mb-2">
-                        Course content
-                    </p>
-
-                    <h2 class="fw-bold mb-0">
-                        Course Lessons
-                    </h2>
-                </div>
-
-                <span class="lesson-count">
-                    {{ lessons|length }}
-                    lesson{{ lessons|length|pluralize }}
-                </span>
-            </div>
-
-            <div class="mt-4">
-
-                {% for lesson in lessons %}
-
-                    <article class="lesson-card">
-
-                        <div class="lesson-number">
-                            {{ lesson.order }}
+                        <div>
+                            <strong>Self-paced learning</strong>
+                            <small>Study when it suits you</small>
                         </div>
-
-                        <div class="lesson-content">
-
-                            <div class="lesson-meta">
-                                Lesson {{ lesson.order }}
-
-                                <span class="lesson-available">
-                                    Available
-                                </span>
-                            </div>
-
-                            <h3 class="lesson-title">
-                                {{ lesson.title }}
-                            </h3>
-
-                            <div class="lesson-description">
-                                {{ lesson.content|linebreaks }}
-                            </div>
-
-                        </div>
-
-                    </article>
-
-                {% empty %}
-
-                    <div class="alert alert-light border">
-                        No lessons are available for this course yet.
                     </div>
 
-                {% endfor %}
+                    <div class="course-detail-highlight">
+                        <span class="course-highlight-icon">✓</span>
+
+                        <div>
+                            <strong>Practical content</strong>
+                            <small>Workplace-focused lessons</small>
+                        </div>
+                    </div>
+
+                    <div class="course-detail-highlight">
+                        <span class="course-highlight-icon">✓</span>
+
+                        <div>
+                            <strong>
+                                {{ lessons|length }}
+                                lesson{{ lessons|length|pluralize }}
+                            </strong>
+
+                            <small>Structured course content</small>
+                        </div>
+                    </div>
+
+                </div>
 
             </div>
+
+            <div class="col-12 col-lg-5">
+
+                <div class="course-detail-media">
+
+                    {% if course.image %}
+
+                        <img
+                            src="{{ course.image.url }}"
+                            alt="{{ course.title }}"
+                            class="course-detail-main-image"
+                        >
+
+                    {% else %}
+
+                        <div class="course-detail-image-placeholder">
+                            <span>SkillStart Ireland</span>
+                        </div>
+
+                    {% endif %}
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<!-- Course Main Content -->
+<section class="course-detail-content-section">
+    <div class="container">
+
+        <div class="row g-5">
+
+            <!-- Lessons -->
+            <div class="col-12 col-lg-8">
+
+                <div class="course-content-heading">
+
+                    <div>
+                        <span class="course-content-label">
+                            Course curriculum
+                        </span>
+
+                        <h2>
+                            What you will learn
+                        </h2>
+
+                        <p>
+                            Work through each lesson in order and develop
+                            practical knowledge at your own pace.
+                        </p>
+                    </div>
+
+                    <span class="course-content-count">
+                        {{ lessons|length }}
+                        lesson{{ lessons|length|pluralize }}
+                    </span>
+
+                </div>
+
+                <div
+                    class="accordion course-lessons-accordion"
+                    id="courseLessonsAccordion"
+                >
+
+                    {% for lesson in lessons %}
+
+                        <div class="accordion-item course-lesson-item">
+
+                            <h3
+                                class="accordion-header"
+                                id="lesson-heading-{{ lesson.id }}"
+                            >
+
+                                <button
+                                    class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
+                                    type="button"
+                                    data-bs-toggle="collapse"
+                                    data-bs-target="#lesson-content-{{ lesson.id }}"
+                                    aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
+                                    aria-controls="lesson-content-{{ lesson.id }}"
+                                >
+
+                                    <span class="course-lesson-number">
+                                        {{ lesson.order }}
+                                    </span>
+
+                                    <span class="course-lesson-heading-content">
+
+                                        <span class="course-lesson-label">
+                                            Lesson {{ lesson.order }}
+                                        </span>
+
+                                        <span class="course-lesson-heading-title">
+                                            {{ lesson.title }}
+                                        </span>
+
+                                    </span>
+
+                                </button>
+
+                            </h3>
+
+                            <div
+                                id="lesson-content-{{ lesson.id }}"
+                                class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
+                                aria-labelledby="lesson-heading-{{ lesson.id }}"
+                                data-bs-parent="#courseLessonsAccordion"
+                            >
+
+                                <div class="accordion-body course-lesson-body">
+
+                                    <div class="course-lesson-body-label">
+                                        Lesson content
+                                    </div>
+
+                                    <div class="course-lesson-text">
+                                        {{ lesson.content|linebreaks }}
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% empty %}
+
+                        <div class="course-no-lessons">
+
+                            <div
+                                class="course-no-lessons-icon"
+                                aria-hidden="true"
+                            >
+                                📚
+                            </div>
+
+                            <h3>Lessons coming soon</h3>
+
+                            <p>
+                                The content for this course is currently
+                                being prepared.
+                            </p>
+
+                        </div>
+
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <!-- Course Sidebar -->
+            <div class="col-12 col-lg-4">
+
+                <aside class="course-detail-sidebar">
+
+                    <div class="course-sidebar-badge">
+                        Online learning
+                    </div>
+
+                    <h2>Course overview</h2>
+
+                    <p class="course-sidebar-description">
+                        Develop practical workplace knowledge through
+                        structured and easy-to-follow lessons.
+                    </p>
+
+                    <div class="course-sidebar-information">
+
+                        <div class="course-sidebar-row">
+
+                            <span class="course-sidebar-icon">
+                                📖
+                            </span>
+
+                            <div>
+                                <small>Lessons</small>
+
+                                <strong>
+                                    {{ lessons|length }}
+                                    lesson{{ lessons|length|pluralize }}
+                                </strong>
+                            </div>
+
+                        </div>
+
+                        <div class="course-sidebar-row">
+
+                            <span class="course-sidebar-icon">
+                                🕒
+                            </span>
+
+                            <div>
+                                <small>Study format</small>
+                                <strong>Self-paced</strong>
+                            </div>
+
+                        </div>
+
+                        <div class="course-sidebar-row">
+
+                            <span class="course-sidebar-icon">
+                                💻
+                            </span>
+
+                            <div>
+                                <small>Delivery</small>
+                                <strong>Online</strong>
+                            </div>
+
+                        </div>
+
+                        <div class="course-sidebar-row">
+
+                            <span class="course-sidebar-icon">
+                                📂
+                            </span>
+
+                            <div>
+                                <small>Category</small>
+                                <strong>{{ course.category.name }}</strong>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                    {% if lessons %}
+
+                        <a
+                            href="#lesson-heading-{{ lessons.0.id }}"
+                            class="course-sidebar-button"
+                        >
+                            Start learning
+                            <span aria-hidden="true">→</span>
+                        </a>
+
+                    {% else %}
+
+                        <span class="course-sidebar-button disabled">
+                            Lessons coming soon
+                        </span>
+
+                    {% endif %}
+
+                    <p class="course-sidebar-notice">
+                        This learning content supports workplace knowledge
+                        and does not replace any legally required official
+                        training or certification.
+                    </p>
+
+                </aside>
+
+            </div>
+
         </div>
 
     </div>
