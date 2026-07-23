@@ -1,0 +1,313 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    {{ lesson.title }} | {{ course.title }} | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section
+    class="lesson-detail-section"
+    data-course-slug="{{ course.slug }}"
+    data-current-lesson-id="{{ lesson.id }}"
+>
+    <div class="container">
+
+        <div class="lesson-detail-breadcrumb">
+
+            <a href="{% url 'home' %}">
+                Home
+            </a>
+
+            <span>/</span>
+
+            <a href="{% url 'courses:course_list' %}">
+                Courses
+            </a>
+
+            <span>/</span>
+
+            <a href="{% url 'courses:course_detail' course.slug %}">
+                {{ course.title }}
+            </a>
+
+            <span>/</span>
+
+            <span>
+                {{ lesson.title }}
+            </span>
+
+        </div>
+
+        <div class="row g-5">
+
+            <div class="col-12 col-lg-8">
+
+                <article class="lesson-content-card">
+
+                    <div class="lesson-header">
+
+                        <span class="lesson-category">
+                            {{ course.category.name }}
+                        </span>
+
+                        <div class="lesson-position">
+                            Lesson {{ current_position }}
+                            of {{ published_lessons|length }}
+                        </div>
+
+                        <h1>
+                            {{ lesson.title }}
+                        </h1>
+
+                        <p>
+                            Part of the course:
+                            <a href="{% url 'courses:course_detail' course.slug %}">
+                                {{ course.title }}
+                            </a>
+                        </p>
+
+                    </div>
+
+                    <div class="lesson-body">
+                        {{ lesson.content|linebreaks }}
+                    </div>
+
+                    <div class="lesson-completion-area">
+
+                        <div class="lesson-completion-information">
+
+                            <span
+                                class="lesson-completion-icon"
+                                aria-hidden="true"
+                            >
+                                ✓
+                            </span>
+
+                            <div>
+                                <strong>Finished this lesson?</strong>
+
+                                <p>
+                                    Mark it as completed to update your
+                                    course progress.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <button
+                            type="button"
+                            class="lesson-completion-button"
+                            id="lesson-completion-button"
+                            data-lesson-id="{{ lesson.id }}"
+                            aria-pressed="false"
+                        >
+                            <span
+                                class="lesson-completion-button-icon"
+                                aria-hidden="true"
+                            >
+                                ✓
+                            </span>
+
+                            <span class="lesson-completion-button-text">
+                                Mark as completed
+                            </span>
+                        </button>
+
+                    </div>
+
+                </article>
+
+                <nav
+                    class="lesson-navigation"
+                    aria-label="Lesson navigation"
+                >
+
+                    <div class="lesson-navigation-previous">
+
+                        {% if previous_lesson %}
+
+                            <a
+                                href="{% url 'courses:lesson_detail' course.slug previous_lesson.id %}"
+                                class="lesson-navigation-link"
+                            >
+                                <span class="lesson-navigation-label">
+                                    ← Previous lesson
+                                </span>
+
+                                <strong>
+                                    {{ previous_lesson.title }}
+                                </strong>
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'courses:course_detail' course.slug %}"
+                                class="lesson-navigation-link"
+                            >
+                                <span class="lesson-navigation-label">
+                                    ← Back to course
+                                </span>
+
+                                <strong>
+                                    {{ course.title }}
+                                </strong>
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="lesson-navigation-next">
+
+                        {% if next_lesson %}
+
+                            <a
+                                href="{% url 'courses:lesson_detail' course.slug next_lesson.id %}"
+                                class="lesson-navigation-link lesson-navigation-link-next"
+                            >
+                                <span class="lesson-navigation-label">
+                                    Next lesson →
+                                </span>
+
+                                <strong>
+                                    {{ next_lesson.title }}
+                                </strong>
+                            </a>
+
+                        {% else %}
+
+                            <a
+                                href="{% url 'courses:course_detail' course.slug %}"
+                                class="lesson-navigation-link lesson-navigation-link-next"
+                            >
+                                <span class="lesson-navigation-label">
+                                    Course completed
+                                </span>
+
+                                <strong>
+                                    Return to course overview →
+                                </strong>
+                            </a>
+
+                        {% endif %}
+
+                    </div>
+
+                </nav>
+
+            </div>
+
+            <div class="col-12 col-lg-4">
+
+                <aside class="lesson-sidebar-card">
+
+                    <span class="lesson-sidebar-label">
+                        Course progress
+                    </span>
+
+                    <h2>
+                        {{ course.title }}
+                    </h2>
+
+                    <div class="lesson-progress-header">
+
+                        <div
+                            class="lesson-progress-summary"
+                            id="lesson-progress-summary"
+                        >
+                            0 of {{ published_lessons|length }}
+                            lessons completed
+                        </div>
+
+                        <strong
+                            class="lesson-progress-percentage"
+                            id="lesson-progress-percentage"
+                        >
+                            0%
+                        </strong>
+
+                    </div>
+
+                    <div
+                        class="lesson-progress-bar"
+                        id="lesson-progress-bar"
+                        role="progressbar"
+                        aria-label="Course progress"
+                        aria-valuemin="0"
+                        aria-valuemax="100"
+                        aria-valuenow="0"
+                    >
+                        <div
+                            class="lesson-progress-fill"
+                            id="lesson-progress-fill"
+                            style="width: 0%;"
+                        ></div>
+                    </div>
+
+                    <div class="lesson-sidebar-list">
+
+                        {% for course_lesson in published_lessons %}
+
+                            <a
+                                href="{% url 'courses:lesson_detail' course.slug course_lesson.id %}"
+                                class="lesson-sidebar-item
+                                    {% if course_lesson.id == lesson.id %}
+                                        active
+                                    {% endif %}
+                                "
+                                data-sidebar-lesson-id="{{ course_lesson.id }}"
+                            >
+
+                                <span class="lesson-sidebar-number">
+
+                                    <span class="lesson-sidebar-position">
+                                        {{ forloop.counter|stringformat:"02d" }}
+                                    </span>
+
+                                    <span
+                                        class="lesson-sidebar-check"
+                                        aria-hidden="true"
+                                    >
+                                        ✓
+                                    </span>
+
+                                </span>
+
+                                <span class="lesson-sidebar-title">
+                                    {{ course_lesson.title }}
+                                </span>
+
+                                <span
+                                    class="lesson-sidebar-status"
+                                    aria-label="Lesson completed"
+                                >
+                                    Completed
+                                </span>
+
+                            </a>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <a
+                        href="{% url 'courses:course_detail' course.slug %}"
+                        class="lesson-sidebar-back-link"
+                    >
+                        ← Back to course overview
+                    </a>
+
+                </aside>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+<script src="{% static 'core/js/lesson_progress.js' %}"></script>
+{% endblock %}

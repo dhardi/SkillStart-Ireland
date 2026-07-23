@@ -1,3 +1,4 @@
+from .models import Category, Course, Lesson
 from django.db.models import Count, Q
 from django.shortcuts import get_object_or_404, render
 
@@ -75,5 +76,50 @@ def course_detail(request, slug):
     return render(
         request,
         "courses/course_detail.html",
+        context,
+    )
+def lesson_detail(request, course_slug, lesson_id):
+    course = get_object_or_404(
+        Course.objects.select_related("category"),
+        slug=course_slug,
+        is_published=True,
+    )
+
+    lesson = get_object_or_404(
+        Lesson,
+        id=lesson_id,
+        course=course,
+        is_published=True,
+    )
+
+    published_lessons = list(
+        course.lessons
+        .filter(is_published=True)
+        .order_by("order", "id")
+    )
+
+    current_position = published_lessons.index(lesson)
+
+    previous_lesson = None
+    next_lesson = None
+
+    if current_position > 0:
+        previous_lesson = published_lessons[current_position - 1]
+
+    if current_position < len(published_lessons) - 1:
+        next_lesson = published_lessons[current_position + 1]
+
+    context = {
+        "course": course,
+        "lesson": lesson,
+        "published_lessons": published_lessons,
+        "current_position": current_position + 1,
+        "previous_lesson": previous_lesson,
+        "next_lesson": next_lesson,
+    }
+
+    return render(
+        request,
+        "courses/lesson_detail.html",
         context,
     )

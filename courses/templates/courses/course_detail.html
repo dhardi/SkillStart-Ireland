@@ -173,32 +173,41 @@
 
                     {% for lesson in lessons %}
 
-                        <article class="course-lesson-card">
+    <a
+        href="{% url 'courses:lesson_detail' course.slug lesson.id %}"
+        class="course-lesson-card course-lesson-link"
+    >
 
-                            <div class="course-lesson-number">
-                                {{ forloop.counter|stringformat:"02d" }}
-                            </div>
+        <div class="course-lesson-number">
+            {{ forloop.counter|stringformat:"02d" }}
+        </div>
 
-                            <div class="course-lesson-content">
+        <div class="course-lesson-content">
 
-                                <span class="course-lesson-label">
-                                    Lesson {{ forloop.counter }}
-                                </span>
+            <span class="course-lesson-label">
+                Lesson {{ forloop.counter }}
+            </span>
 
-                                <h3>
-                                    {{ lesson.title }}
-                                </h3>
+            <h3>
+                {{ lesson.title }}
+            </h3>
 
-                                <div class="course-lesson-text">
-                                    {{ lesson.content|linebreaks }}
-                                </div>
+            <p class="course-lesson-preview">
+                {{ lesson.content|striptags|truncatewords:24 }}
+            </p>
 
-                            </div>
+        </div>
 
-                        </article>
+        <div
+            class="course-lesson-open-icon"
+            aria-hidden="true"
+        >
+            →
+        </div>
 
-                    {% empty %}
+    </a>
 
+{% empty %}
                         <div class="course-lessons-empty">
 
                             <div
