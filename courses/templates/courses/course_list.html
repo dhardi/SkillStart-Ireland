@@ -1,375 +1,393 @@
 {% extends "base.html" %}
 
 {% block title %}
-    Courses | SkillStart Ireland
+Courses | SkillStart Ireland
 {% endblock %}
 
 {% block content %}
 
 <!-- Courses Hero -->
+
 <section class="courses-hero">
     <div class="container">
         <div class="row align-items-center g-4">
 
-            <div class="col-12 col-lg-8">
+```
+        <div class="col-12 col-lg-8">
 
-                <span class="courses-hero-label">
-                    Practical workplace learning
-                </span>
+            <span class="courses-hero-label">
+                Practical workplace learning
+            </span>
 
-                <h1 class="courses-hero-title">
-                    Build skills that support your career in Ireland
-                </h1>
+            <h1 class="courses-hero-title">
+                Build skills that support your career in Ireland
+            </h1>
 
-                <p class="courses-hero-text">
-                    Explore practical online courses designed to help you
-                    understand workplace standards, safety procedures and
-                    essential professional skills.
-                </p>
+            <p class="courses-hero-text">
+                Explore practical online courses designed to help you
+                understand workplace standards, safety procedures and
+                essential professional skills.
+            </p>
 
-            </div>
+        </div>
 
-            <div class="col-12 col-lg-4">
+        <div class="col-12 col-lg-4">
 
-                <div class="courses-hero-info">
+            <div class="courses-hero-info">
 
-                    <div class="courses-hero-info-icon">
-                        ✓
-                    </div>
+                <div class="courses-hero-info-icon">
+                    ✓
+                </div>
 
-                    <div>
-                        <strong>Learn at your own pace</strong>
+                <div>
+                    <strong>Learn at your own pace</strong>
 
-                        <p>
-                            Access clear lessons and practical information
-                            wherever you are.
-                        </p>
-                    </div>
-
+                    <p>
+                        Access clear lessons and practical information
+                        wherever you are.
+                    </p>
                 </div>
 
             </div>
 
         </div>
+
     </div>
+</div>
+```
+
 </section>
 
 <!-- Courses List -->
+
 <section class="courses-page-section">
     <div class="container">
 
-        <!-- Search and Filters -->
-        <div class="course-filter-panel">
+```
+    <!-- Search and Filters -->
+    <div class="course-filter-panel">
 
-            <form
-                method="get"
-                action="{% url 'course_list' %}"
-                class="course-filter-form"
-            >
+        <form
+            method="get"
+            action="{% url 'courses:course_list' %}"
+            class="course-filter-form"
+        >
 
-                <div class="course-search-group">
+            <div class="course-search-group">
 
-                    <label
-                        for="course-search"
-                        class="course-filter-label"
+                <label
+                    for="course-search"
+                    class="course-filter-label"
+                >
+                    Search courses
+                </label>
+
+                <div class="course-search-input-wrapper">
+
+                    <span
+                        class="course-search-icon"
+                        aria-hidden="true"
                     >
-                        Search courses
-                    </label>
+                        ⌕
+                    </span>
 
-                    <div class="course-search-input-wrapper">
+                    <input
+                        type="search"
+                        id="course-search"
+                        name="search"
+                        value="{{ search_query|default:'' }}"
+                        class="course-search-input"
+                        placeholder="Search by course, skill or category"
+                    >
 
-                        <span
-                            class="course-search-icon"
-                            aria-hidden="true"
+                </div>
+
+            </div>
+
+            <div class="course-category-group">
+
+                <label
+                    for="course-category"
+                    class="course-filter-label"
+                >
+                    Category
+                </label>
+
+                <select
+                    id="course-category"
+                    name="category"
+                    class="course-category-select"
+                >
+
+                    <option value="">
+                        All categories
+                    </option>
+
+                    {% for category in categories %}
+
+                        <option
+                            value="{{ category.slug }}"
+                            {% if selected_category == category.slug %}
+                                selected
+                            {% endif %}
                         >
-                            ⌕
+                            {{ category.name }}
+                        </option>
+
+                    {% endfor %}
+
+                </select>
+
+            </div>
+
+            <div class="course-filter-actions">
+
+                <button
+                    type="submit"
+                    class="course-filter-button"
+                >
+                    Search courses
+                </button>
+
+                {% if search_query or selected_category %}
+
+                    <a
+                        href="{% url 'courses:course_list' %}"
+                        class="course-filter-clear"
+                    >
+                        Clear filters
+                    </a>
+
+                {% endif %}
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <!-- Courses Heading -->
+    <div class="courses-section-heading">
+
+        <div>
+
+            <span class="courses-section-label">
+                Course catalogue
+            </span>
+
+            <h2 class="courses-section-title">
+                Explore our courses
+            </h2>
+
+            <p class="courses-section-description">
+                Choose a course and start developing useful workplace
+                knowledge today.
+            </p>
+
+        </div>
+
+        <div class="courses-total">
+            {{ courses|length }}
+            result{{ courses|length|pluralize }}
+        </div>
+
+    </div>
+
+    <!-- Active Filters -->
+    {% if search_query or selected_category %}
+
+        <div class="active-course-filters">
+
+            <span class="active-filters-title">
+                Showing filtered results:
+            </span>
+
+            {% if search_query %}
+
+                <span class="active-filter-tag">
+                    Search: “{{ search_query }}”
+                </span>
+
+            {% endif %}
+
+            {% if selected_category %}
+
+                {% for category in categories %}
+
+                    {% if category.slug == selected_category %}
+
+                        <span class="active-filter-tag">
+                            Category: {{ category.name }}
                         </span>
 
-                        <input
-                            type="search"
-                            id="course-search"
-                            name="search"
-                            value="{{ search_query }}"
-                            class="course-search-input"
-                            placeholder="Search by course, skill or category"
-                        >
+                    {% endif %}
+
+                {% endfor %}
+
+            {% endif %}
+
+        </div>
+
+    {% endif %}
+
+    <!-- Course Cards -->
+    <div class="row g-4 mt-2">
+
+        {% for course in courses %}
+
+            <div class="col-12 col-md-6 col-xl-4">
+
+                <article class="professional-course-card">
+
+                    <a
+                        href="{% url 'courses:course_detail' course.slug %}"
+                        class="course-card-image-link"
+                        aria-label="View {{ course.title }}"
+                    >
+
+                        <div class="professional-course-image-wrapper">
+
+                            {% if course.image %}
+
+                                <img
+                                    src="{{ course.image.url }}"
+                                    alt="{{ course.title }}"
+                                    class="professional-course-image"
+                                >
+
+                            {% else %}
+
+                                <div class="professional-course-placeholder">
+                                    <span>SkillStart Ireland</span>
+                                </div>
+
+                            {% endif %}
+
+                            <span class="course-format-badge">
+                                Online course
+                            </span>
+
+                        </div>
+
+                    </a>
+
+                    <div class="professional-course-body">
+
+                        <div class="professional-course-category">
+                            {{ course.category.name }}
+                        </div>
+
+                        <h3 class="professional-course-title">
+
+                            <a href="{% url 'courses:course_detail' course.slug %}">
+                                {{ course.title }}
+                            </a>
+
+                        </h3>
+
+                        <p class="professional-course-description">
+                            {{ course.description|truncatewords:24 }}
+                        </p>
+
+                        <div class="professional-course-features">
+
+                            <span>
+                                <span
+                                    class="course-feature-icon"
+                                    aria-hidden="true"
+                                >
+                                    ✓
+                                </span>
+                                Self-paced
+                            </span>
+
+                            <span>
+                                <span
+                                    class="course-feature-icon"
+                                    aria-hidden="true"
+                                >
+                                    ✓
+                                </span>
+                                Practical lessons
+                            </span>
+
+                        </div>
 
                     </div>
 
-                </div>
+                    <div class="professional-course-footer">
 
-                <div class="course-category-group">
+                        <div class="course-lesson-information">
+                            {{ course.published_lesson_count|default:0 }}
+                            lesson{{ course.published_lesson_count|default:0|pluralize }}
+                        </div>
 
-                    <label
-                        for="course-category"
-                        class="course-filter-label"
+                        <a
+                            href="{% url 'courses:course_detail' course.slug %}"
+                            class="professional-course-button"
+                        >
+                            View course
+                            <span aria-hidden="true">→</span>
+                        </a>
+
+                    </div>
+
+                </article>
+
+            </div>
+
+        {% empty %}
+
+            <div class="col-12">
+
+                <div class="courses-empty-state">
+
+                    <div
+                        class="courses-empty-icon"
+                        aria-hidden="true"
                     >
-                        Category
-                    </label>
-
-                    <select
-                        id="course-category"
-                        name="category"
-                        class="course-category-select"
-                    >
-
-                        <option value="">
-                            All categories
-                        </option>
-
-                        {% for category in categories %}
-
-                            <option
-                                value="{{ category.slug }}"
-                                {% if selected_category == category.slug %}
-                                    selected
-                                {% endif %}
-                            >
-                                {{ category.name }}
-                            </option>
-
-                        {% endfor %}
-
-                    </select>
-
-                </div>
-
-                <div class="course-filter-actions">
-
-                    <button
-                        type="submit"
-                        class="course-filter-button"
-                    >
-                        Search courses
-                    </button>
+                        ⌕
+                    </div>
 
                     {% if search_query or selected_category %}
 
+                        <h3>No matching courses found</h3>
+
+                        <p>
+                            We could not find a course matching your current
+                            search or category. Try changing the filters or
+                            viewing the complete catalogue.
+                        </p>
+
                         <a
-                            href="{% url 'course_list' %}"
-                            class="course-filter-clear"
+                            href="{% url 'courses:course_list' %}"
+                            class="empty-state-button"
                         >
-                            Clear filters
+                            View all courses
                         </a>
+
+                    {% else %}
+
+                        <h3>No courses available yet</h3>
+
+                        <p>
+                            New courses are currently being prepared.
+                            Please check again soon.
+                        </p>
 
                     {% endif %}
 
                 </div>
 
-            </form>
-
-        </div>
-
-        <!-- Courses Heading -->
-        <div class="courses-section-heading">
-
-            <div>
-
-                <span class="courses-section-label">
-                    Course catalogue
-                </span>
-
-                <h2 class="courses-section-title">
-                    Explore our courses
-                </h2>
-
-                <p class="courses-section-description">
-                    Choose a course and start developing useful workplace
-                    knowledge today.
-                </p>
-
             </div>
 
-            <div class="courses-total">
-                {{ courses|length }}
-                result{{ courses|length|pluralize }}
-            </div>
-
-        </div>
-
-        <!-- Active Filters -->
-        {% if search_query or selected_category %}
-
-            <div class="active-course-filters">
-
-                <span class="active-filters-title">
-                    Showing filtered results:
-                </span>
-
-                {% if search_query %}
-
-                    <span class="active-filter-tag">
-                        Search: “{{ search_query }}”
-                    </span>
-
-                {% endif %}
-
-                {% if selected_category %}
-
-                    {% for category in categories %}
-
-                        {% if category.slug == selected_category %}
-
-                            <span class="active-filter-tag">
-                                Category: {{ category.name }}
-                            </span>
-
-                        {% endif %}
-
-                    {% endfor %}
-
-                {% endif %}
-
-            </div>
-
-        {% endif %}
-
-        <!-- Course Cards -->
-        <div class="row g-4 mt-2">
-
-            {% for course in courses %}
-
-                <div class="col-12 col-md-6 col-xl-4">
-
-                    <article class="professional-course-card">
-
-                        <a
-                            href="{% url 'course_detail' course.slug %}"
-                            class="course-card-image-link"
-                            aria-label="View {{ course.title }}"
-                        >
-
-                            <div class="professional-course-image-wrapper">
-
-                                {% if course.image %}
-
-                                    <img
-                                        src="{{ course.image.url }}"
-                                        alt="{{ course.title }}"
-                                        class="professional-course-image"
-                                    >
-
-                                {% else %}
-
-                                    <div class="professional-course-placeholder">
-                                        <span>SkillStart Ireland</span>
-                                    </div>
-
-                                {% endif %}
-
-                                <span class="course-format-badge">
-                                    Online course
-                                </span>
-
-                            </div>
-
-                        </a>
-
-                        <div class="professional-course-body">
-
-                            <div class="professional-course-category">
-                                {{ course.category.name }}
-                            </div>
-
-                            <h3 class="professional-course-title">
-
-                                <a href="{% url 'course_detail' course.slug %}">
-                                    {{ course.title }}
-                                </a>
-
-                            </h3>
-
-                            <p class="professional-course-description">
-                                {{ course.description|truncatewords:24 }}
-                            </p>
-
-                            <div class="professional-course-features">
-
-                                <span>
-                                    <span class="course-feature-icon">✓</span>
-                                    Self-paced
-                                </span>
-
-                                <span>
-                                    <span class="course-feature-icon">✓</span>
-                                    Practical lessons
-                                </span>
-
-                            </div>
-
-                        </div>
-
-                        <div class="professional-course-footer">
-
-                            <div class="course-lesson-information">
-                                {{ course.published_lesson_count }}
-                                lesson{{ course.published_lesson_count|pluralize }}
-                            </div>
-
-                            <a
-                                href="{% url 'course_detail' course.slug %}"
-                                class="professional-course-button"
-                            >
-                                View course
-                                <span aria-hidden="true">→</span>
-                            </a>
-
-                        </div>
-
-                    </article>
-
-                </div>
-
-            {% empty %}
-
-                <div class="col-12">
-
-                    <div class="courses-empty-state">
-
-                        <div
-                            class="courses-empty-icon"
-                            aria-hidden="true"
-                        >
-                            ⌕
-                        </div>
-
-                        {% if search_query or selected_category %}
-
-                            <h3>No matching courses found</h3>
-
-                            <p>
-                                We could not find a course matching your current
-                                search or category. Try changing the filters or
-                                viewing the complete catalogue.
-                            </p>
-
-                            <a
-                                href="{% url 'course_list' %}"
-                                class="empty-state-button"
-                            >
-                                View all courses
-                            </a>
-
-                        {% else %}
-
-                            <h3>No courses available yet</h3>
-
-                            <p>
-                                New courses are currently being prepared.
-                                Please check again soon.
-                            </p>
-
-                        {% endif %}
-
-                    </div>
-
-                </div>
-
-            {% endfor %}
-
-        </div>
+        {% endfor %}
 
     </div>
+
+</div>
+```
+
 </section>
 
 {% endblock %}

@@ -6,56 +6,70 @@
 
 {% block content %}
 
-<!-- Course Header -->
+<!-- Course Hero -->
 <section class="course-detail-hero">
     <div class="container">
 
         <a
-            href="{% url 'course_list' %}"
-            class="course-detail-back"
+            href="{% url 'courses:course_list' %}"
+            class="course-detail-back-link"
         >
-            <span aria-hidden="true">←</span>
-            Back to courses
+            ← Back to courses
         </a>
 
         <div class="row align-items-center g-5">
 
             <div class="col-12 col-lg-7">
 
-                <span class="course-detail-category-label">
+                <span class="course-detail-category">
                     {{ course.category.name }}
                 </span>
 
-                <h1 class="course-detail-main-title">
+                <h1 class="course-detail-title">
                     {{ course.title }}
                 </h1>
 
-                <div class="course-detail-introduction">
+                <div class="course-detail-description">
                     {{ course.description|linebreaks }}
                 </div>
 
-                <div class="course-detail-highlights">
+                <div class="course-detail-benefits">
 
-                    <div class="course-detail-highlight">
-                        <span class="course-highlight-icon">✓</span>
+                    <div class="course-detail-benefit">
+                        <span
+                            class="course-detail-benefit-icon"
+                            aria-hidden="true"
+                        >
+                            ✓
+                        </span>
 
                         <div>
                             <strong>Self-paced learning</strong>
-                            <small>Study when it suits you</small>
+                            <span>Study when it suits you</span>
                         </div>
                     </div>
 
-                    <div class="course-detail-highlight">
-                        <span class="course-highlight-icon">✓</span>
+                    <div class="course-detail-benefit">
+                        <span
+                            class="course-detail-benefit-icon"
+                            aria-hidden="true"
+                        >
+                            ✓
+                        </span>
 
                         <div>
                             <strong>Practical content</strong>
-                            <small>Workplace-focused lessons</small>
+                            <span>Workplace-focused lessons</span>
                         </div>
                     </div>
 
-                    <div class="course-detail-highlight">
-                        <span class="course-highlight-icon">✓</span>
+                    <div class="course-detail-benefit">
+                        <span
+                            class="course-detail-benefit-icon"
+                            aria-hidden="true"
+                        >
+                            ✓
+                        </span>
 
                         <div>
                             <strong>
@@ -63,45 +77,67 @@
                                 lesson{{ lessons|length|pluralize }}
                             </strong>
 
-                            <small>Structured course content</small>
+                            <span>Structured course content</span>
                         </div>
                     </div>
 
                 </div>
 
+                {% if lessons %}
+                    <a
+                        href="#course-curriculum"
+                        class="course-detail-primary-button"
+                    >
+                        Start learning
+                        <span aria-hidden="true">↓</span>
+                    </a>
+                {% else %}
+                    <span class="course-detail-disabled-button">
+                        Lessons coming soon
+                    </span>
+                {% endif %}
+
             </div>
 
             <div class="col-12 col-lg-5">
 
-                <div class="course-detail-media">
+                <div class="course-detail-image-wrapper">
 
                     {% if course.image %}
 
                         <img
                             src="{{ course.image.url }}"
                             alt="{{ course.title }}"
-                            class="course-detail-main-image"
+                            class="course-detail-image"
                         >
 
                     {% else %}
 
                         <div class="course-detail-image-placeholder">
                             <span>SkillStart Ireland</span>
+                            <strong>{{ course.title }}</strong>
                         </div>
 
                     {% endif %}
+
+                    <span class="course-detail-format-badge">
+                        Online course
+                    </span>
 
                 </div>
 
             </div>
 
         </div>
-
     </div>
 </section>
 
-<!-- Course Main Content -->
-<section class="course-detail-content-section">
+
+<!-- Course Content -->
+<section
+    id="course-curriculum"
+    class="course-curriculum-section"
+>
     <div class="container">
 
         <div class="row g-5">
@@ -109,10 +145,10 @@
             <!-- Lessons -->
             <div class="col-12 col-lg-8">
 
-                <div class="course-content-heading">
+                <div class="course-curriculum-heading">
 
                     <div>
-                        <span class="course-content-label">
+                        <span class="course-section-label">
                             Course curriculum
                         </span>
 
@@ -122,99 +158,61 @@
 
                         <p>
                             Work through each lesson in order and develop
-                            practical knowledge at your own pace.
+                            practical workplace knowledge at your own pace.
                         </p>
                     </div>
 
-                    <span class="course-content-count">
+                    <span class="course-lesson-count">
                         {{ lessons|length }}
                         lesson{{ lessons|length|pluralize }}
                     </span>
 
                 </div>
 
-                <div
-                    class="accordion course-lessons-accordion"
-                    id="courseLessonsAccordion"
-                >
+                <div class="course-lessons-list">
 
                     {% for lesson in lessons %}
 
-                        <div class="accordion-item course-lesson-item">
+                        <article class="course-lesson-card">
 
-                            <h3
-                                class="accordion-header"
-                                id="lesson-heading-{{ lesson.id }}"
-                            >
+                            <div class="course-lesson-number">
+                                {{ forloop.counter|stringformat:"02d" }}
+                            </div>
 
-                                <button
-                                    class="accordion-button {% if not forloop.first %}collapsed{% endif %}"
-                                    type="button"
-                                    data-bs-toggle="collapse"
-                                    data-bs-target="#lesson-content-{{ lesson.id }}"
-                                    aria-expanded="{% if forloop.first %}true{% else %}false{% endif %}"
-                                    aria-controls="lesson-content-{{ lesson.id }}"
-                                >
+                            <div class="course-lesson-content">
 
-                                    <span class="course-lesson-number">
-                                        {{ lesson.order }}
-                                    </span>
+                                <span class="course-lesson-label">
+                                    Lesson {{ forloop.counter }}
+                                </span>
 
-                                    <span class="course-lesson-heading-content">
+                                <h3>
+                                    {{ lesson.title }}
+                                </h3>
 
-                                        <span class="course-lesson-label">
-                                            Lesson {{ lesson.order }}
-                                        </span>
-
-                                        <span class="course-lesson-heading-title">
-                                            {{ lesson.title }}
-                                        </span>
-
-                                    </span>
-
-                                </button>
-
-                            </h3>
-
-                            <div
-                                id="lesson-content-{{ lesson.id }}"
-                                class="accordion-collapse collapse {% if forloop.first %}show{% endif %}"
-                                aria-labelledby="lesson-heading-{{ lesson.id }}"
-                                data-bs-parent="#courseLessonsAccordion"
-                            >
-
-                                <div class="accordion-body course-lesson-body">
-
-                                    <div class="course-lesson-body-label">
-                                        Lesson content
-                                    </div>
-
-                                    <div class="course-lesson-text">
-                                        {{ lesson.content|linebreaks }}
-                                    </div>
-
+                                <div class="course-lesson-text">
+                                    {{ lesson.content|linebreaks }}
                                 </div>
 
                             </div>
 
-                        </div>
+                        </article>
 
                     {% empty %}
 
-                        <div class="course-no-lessons">
+                        <div class="course-lessons-empty">
 
                             <div
-                                class="course-no-lessons-icon"
+                                class="course-lessons-empty-icon"
                                 aria-hidden="true"
                             >
-                                📚
+                                ✦
                             </div>
 
                             <h3>Lessons coming soon</h3>
 
                             <p>
-                                The content for this course is currently
-                                being prepared.
+                                The learning content for this course is
+                                currently being prepared.
                             </p>
 
                         </div>
@@ -225,78 +223,46 @@
 
             </div>
 
-            <!-- Course Sidebar -->
+            <!-- Course Overview -->
             <div class="col-12 col-lg-4">
 
-                <aside class="course-detail-sidebar">
+                <aside class="course-overview-card">
 
-                    <div class="course-sidebar-badge">
+                    <span class="course-overview-label">
                         Online learning
-                    </div>
+                    </span>
 
                     <h2>Course overview</h2>
 
-                    <p class="course-sidebar-description">
+                    <p class="course-overview-introduction">
                         Develop practical workplace knowledge through
                         structured and easy-to-follow lessons.
                     </p>
 
-                    <div class="course-sidebar-information">
+                    <div class="course-overview-details">
 
-                        <div class="course-sidebar-row">
+                        <div class="course-overview-item">
+                            <span>Lessons</span>
 
-                            <span class="course-sidebar-icon">
-                                📖
-                            </span>
-
-                            <div>
-                                <small>Lessons</small>
-
-                                <strong>
-                                    {{ lessons|length }}
-                                    lesson{{ lessons|length|pluralize }}
-                                </strong>
-                            </div>
-
+                            <strong>
+                                {{ lessons|length }}
+                                lesson{{ lessons|length|pluralize }}
+                            </strong>
                         </div>
 
-                        <div class="course-sidebar-row">
-
-                            <span class="course-sidebar-icon">
-                                🕒
-                            </span>
-
-                            <div>
-                                <small>Study format</small>
-                                <strong>Self-paced</strong>
-                            </div>
-
+                        <div class="course-overview-item">
+                            <span>Study format</span>
+                            <strong>Self-paced</strong>
                         </div>
 
-                        <div class="course-sidebar-row">
-
-                            <span class="course-sidebar-icon">
-                                💻
-                            </span>
-
-                            <div>
-                                <small>Delivery</small>
-                                <strong>Online</strong>
-                            </div>
-
+                        <div class="course-overview-item">
+                            <span>Delivery</span>
+                            <strong>Online</strong>
                         </div>
 
-                        <div class="course-sidebar-row">
-
-                            <span class="course-sidebar-icon">
-                                📂
-                            </span>
-
-                            <div>
-                                <small>Category</small>
-                                <strong>{{ course.category.name }}</strong>
-                            </div>
-
+                        <div class="course-overview-item">
+                            <span>Category</span>
+                            <strong>{{ course.category.name }}</strong>
                         </div>
 
                     </div>
@@ -304,8 +270,8 @@
                     {% if lessons %}
 
                         <a
-                            href="#lesson-heading-{{ lessons.0.id }}"
-                            class="course-sidebar-button"
+                            href="#course-curriculum"
+                            class="course-overview-button"
                         >
                             Start learning
                             <span aria-hidden="true">→</span>
@@ -313,17 +279,23 @@
 
                     {% else %}
 
-                        <span class="course-sidebar-button disabled">
+                        <span class="course-overview-disabled-button">
                             Lessons coming soon
                         </span>
 
                     {% endif %}
 
-                    <p class="course-sidebar-notice">
-                        This learning content supports workplace knowledge
-                        and does not replace any legally required official
-                        training or certification.
-                    </p>
+                    <div class="course-certification-notice">
+
+                        <strong>Important information</strong>
+
+                        <p>
+                            This learning content supports workplace knowledge
+                            and does not replace any legally required official
+                            training or certification.
+                        </p>
+
+                    </div>
 
                 </aside>
 
