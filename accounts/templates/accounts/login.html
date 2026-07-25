@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Login | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section class="auth-section">
+    <div class="container">
+
+        <div class="auth-card">
+
+            <div class="auth-header">
+                <span class="auth-label">
+                    Student access
+                </span>
+
+                <h1>
+                    Welcome back
+                </h1>
+
+                <p>
+                    Sign in to continue your courses and track your progress.
+                </p>
+            </div>
+
+            {% if form.errors %}
+                <div class="alert alert-danger">
+                    Your username or password is incorrect.
+                </div>
+            {% endif %}
+
+            <form method="post" class="auth-form">
+                {% csrf_token %}
+
+                <div class="auth-form-group">
+                    <label for="{{ form.username.id_for_label }}">
+                        Username
+                    </label>
+
+                    {{ form.username }}
+                </div>
+
+                <div class="auth-form-group">
+                    <label for="{{ form.password.id_for_label }}">
+                        Password
+                    </label>
+
+                    {{ form.password }}
+                </div>
+
+                {% if next %}
+                    <input
+                        type="hidden"
+                        name="next"
+                        value="{{ next }}"
+                    >
+                {% endif %}
+
+                <button
+                    type="submit"
+                    class="auth-submit-button"
+                >
+                    Sign in
+                </button>
+            </form>
+
+            <div class="auth-footer">
+                <p>
+                    Do not have an account yet?
+                    Registration will be available soon.
+                </p>
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,217 @@
+{% extends "base.html" %}
+
+{% block title %}
+    My Dashboard | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section class="dashboard-section">
+    <div class="container">
+
+        <div class="dashboard-header">
+            <div>
+                <span class="dashboard-label">
+                    Student area
+                </span>
+
+                <h1>
+                    Welcome, {{ request.user.username }}
+                </h1>
+
+                <p>
+                    Continue learning and keep track of your course progress.
+                </p>
+            </div>
+        </div>
+
+        <div class="row g-4 dashboard-statistics">
+
+            <div class="col-12 col-md-4">
+                <div class="dashboard-stat-card">
+                    <span class="dashboard-stat-label">
+                        Courses started
+                    </span>
+
+                    <strong>
+                        {{ courses_started }}
+                    </strong>
+
+                    <p>
+                        Courses currently in progress.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="dashboard-stat-card">
+                    <span class="dashboard-stat-label">
+                        Lessons completed
+                    </span>
+
+                    <strong>
+                        {{ lessons_completed }}
+                    </strong>
+
+                    <p>
+                        Lessons completed across all courses.
+                    </p>
+                </div>
+            </div>
+
+            <div class="col-12 col-md-4">
+                <div class="dashboard-stat-card">
+                    <span class="dashboard-stat-label">
+                        Courses completed
+                    </span>
+
+                    <strong>
+                        {{ courses_completed }}
+                    </strong>
+
+                    <p>
+                        Courses successfully completed.
+                    </p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="dashboard-content-card">
+            <div class="dashboard-content-header">
+                <div>
+                    <span class="dashboard-label">
+                        My learning
+                    </span>
+
+                    <h2>
+                        Your courses
+                    </h2>
+                </div>
+
+                <a
+                    href="{% url 'courses:course_list' %}"
+                    class="dashboard-browse-link"
+                >
+                    Browse courses
+                    <span aria-hidden="true">→</span>
+                </a>
+            </div>
+
+            {% if enrollments %}
+
+    <div class="dashboard-course-list">
+
+        {% for enrollment in enrollments %}
+
+            <article class="dashboard-course-item">
+
+                <div class="dashboard-course-image">
+                    {% if enrollment.course.image %}
+                        <img
+                            src="{{ enrollment.course.image.url }}"
+                            alt="{{ enrollment.course.title }}"
+                        >
+                    {% else %}
+                        <div class="dashboard-course-placeholder">
+                            📘
+                        </div>
+                    {% endif %}
+                </div>
+
+                <div class="dashboard-course-content">
+
+                    <span class="dashboard-course-status">
+                        {% if enrollment.is_completed %}
+                            Completed
+                        {% else %}
+                            In progress
+                        {% endif %}
+                    </span>
+
+                    <h3>
+                        {{ enrollment.course.title }}
+                    </h3>
+
+                    <p>
+                        {{ enrollment.course.description|truncatewords:20 }}
+                    </p>
+
+                    <div class="dashboard-course-meta">
+                        <span>
+                            {{ enrollment.course.duration }}
+                        </span>
+
+                        <span>
+                            {{ enrollment.course.level }}
+                        </span>
+                    </div>
+
+                </div>
+
+                <div class="dashboard-course-action">
+                    <a
+                        href="{% url 'courses:course_detail' enrollment.course.slug %}"
+                        class="dashboard-primary-button"
+                    >
+                        {% if enrollment.is_completed %}
+                            Review course
+                        {% else %}
+                            Continue course
+                        {% endif %}
+                    </a>
+                </div>
+
+            </article>
+
+        {% endfor %}
+
+    </div>
+
+{% else %}
+
+    <div class="dashboard-empty-state">
+        <div class="dashboard-empty-icon">
+            📚
+        </div>
+
+        <h3>
+            You have not started a course yet
+        </h3>
+
+        <p>
+            Explore the available courses and begin building
+            practical workplace skills.
+        </p>
+
+        <a
+            href="{% url 'courses:course_list' %}"
+            class="dashboard-primary-button"
+        >
+            Explore courses
+        </a>
+    </div>
+
+{% endif %}
+                <h3>
+                    You have not started a course yet
+                </h3>
+
+                <p>
+                    Explore the available courses and begin building
+                    practical workplace skills.
+                </p>
+
+                <a
+                    href="{% url 'courses:course_list' %}"
+                    class="dashboard-primary-button"
+                >
+                    Explore courses
+                </a>
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

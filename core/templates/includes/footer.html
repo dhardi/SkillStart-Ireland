@@ -1,45 +1,111 @@
 <footer class="site-footer">
     <div class="container">
-        <div class="row g-4">
 
-            <div class="col-12 col-md-6 col-lg-4">
-                <h2 class="footer-brand">SkillStart Ireland</h2>
+        <div class="footer-main">
+            <div class="row g-5">
 
-                <p class="footer-text">
-                    Practical online courses designed to help people
-                    build essential workplace skills in Ireland.
-                </p>
+                <div class="col-12 col-lg-4">
+                    <a
+                        class="footer-brand"
+                        href="{% url 'home' %}"
+                    >
+                        <span class="footer-brand-logo">S</span>
+
+                        <span class="footer-brand-text">
+                            SkillStart
+                            <small>Ireland</small>
+                        </span>
+                    </a>
+
+                    <p class="footer-description">
+                        Practical online courses designed to help people
+                        build essential workplace skills for jobs in Ireland.
+                    </p>
+
+                    <div class="footer-status">
+                        <span class="footer-status-dot"></span>
+                        Courses available online
+                    </div>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-2">
+                    <h2 class="footer-title">
+                        Explore
+                    </h2>
+
+                    <ul class="footer-links">
+                        <li>
+                            <a href="{% url 'home' %}">
+                                Home
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'courses:course_list' %}">
+                                Courses
+                            </a>
+                        </li>
+
+                        <li>
+                            <span class="footer-link-disabled">
+                                About
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-6 col-md-4 col-lg-2">
+                    <h2 class="footer-title">
+                        Account
+                    </h2>
+
+                    <ul class="footer-links">
+                        <li>
+                            <span class="footer-link-disabled">
+                                Login
+                            </span>
+                        </li>
+
+                        <li>
+                            <span class="footer-link-disabled">
+                                Register
+                            </span>
+                        </li>
+
+                        <li>
+                            <span class="footer-link-disabled">
+                                My courses
+                            </span>
+                        </li>
+                    </ul>
+                </div>
+
+                <div class="col-12 col-md-4 col-lg-4">
+                    <div class="footer-feature">
+                        <span class="footer-feature-label">
+                            Built for Ireland
+                        </span>
+
+                        <h2>
+                            Learn practical skills at your own pace.
+                        </h2>
+
+                        <p>
+                            Explore training for warehouse work, hospitality,
+                            kitchen environments and workplace safety.
+                        </p>
+
+                        <a
+                            class="footer-course-button"
+                            href="{% url 'courses:course_list' %}"
+                        >
+                            Browse courses
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    </div>
+                </div>
+
             </div>
-
-            <div class="col-6 col-md-3 col-lg-2">
-                <h3 class="footer-title">Explore</h3>
-
-                <ul class="footer-links">
-                    <li><a href="/">Home</a></li>
-                    <li><a href="#">Courses</a></li>
-                    <li><a href="#">About</a></li>
-                </ul>
-            </div>
-
-            <div class="col-6 col-md-3 col-lg-2">
-                <h3 class="footer-title">Account</h3>
-
-                <ul class="footer-links">
-                    <li><a href="#">Login</a></li>
-                    <li><a href="#">Register</a></li>
-                    <li><a href="#">My courses</a></li>
-                </ul>
-            </div>
-
-            <div class="col-12 col-lg-4">
-                <h3 class="footer-title">Learn practical skills</h3>
-
-                <p class="footer-text">
-                    Start with warehouse, kitchen, hospitality
-                    and workplace safety courses.
-                </p>
-            </div>
-
         </div>
 
         <div class="footer-bottom">
@@ -47,6 +113,11 @@
                 &copy; {% now "Y" %} SkillStart Ireland.
                 All rights reserved.
             </p>
+
+            <p class="footer-bottom-note">
+                Practical training for workplace opportunities in Ireland.
+            </p>
         </div>
+
     </div>
 </footer>

@@ -1,7 +1,10 @@
 <nav class="site-navbar navbar navbar-expand-lg navbar-dark">
     <div class="container">
 
-        <a class="navbar-brand site-navbar-brand" href="{% url 'home' %}">
+        <a
+            class="navbar-brand site-navbar-brand"
+            href="{% url 'home' %}"
+        >
             <span class="site-navbar-logo">S</span>
 
             <span class="site-navbar-name">
@@ -22,15 +25,15 @@
             <span class="navbar-toggler-icon"></span>
         </button>
 
-        <div class="collapse navbar-collapse" id="mainNavbar">
+        <div
+            class="collapse navbar-collapse"
+            id="mainNavbar"
+        >
             <ul class="navbar-nav ms-auto align-items-lg-center">
 
                 <li class="nav-item">
                     <a
-                        class="nav-link site-navbar-link
-                        {% if request.resolver_match.url_name == 'home' %}
-                            active
-                        {% endif %}"
+                        class="nav-link site-navbar-link {% if request.resolver_match.url_name == 'home' %}active{% endif %}"
                         href="{% url 'home' %}"
                     >
                         Home
@@ -39,25 +42,53 @@
 
                 <li class="nav-item">
                     <a
-                        class="nav-link site-navbar-link
-                        {% if request.resolver_match.app_name == 'courses' %}
-                            active
-                        {% endif %}"
+                        class="nav-link site-navbar-link {% if request.resolver_match.app_name == 'courses' %}active{% endif %}"
                         href="{% url 'courses:course_list' %}"
                     >
                         Courses
                     </a>
                 </li>
 
-                <li class="nav-item ms-lg-2">
-                    <span
-                        class="site-navbar-account disabled"
-                        aria-disabled="true"
-                        title="Account area coming soon"
-                    >
-                        Login
-                    </span>
-                </li>
+                {% if request.user.is_authenticated %}
+
+                    <li class="nav-item">
+                        <a
+                            class="nav-link site-navbar-link {% if request.resolver_match.app_name == 'accounts' %}active{% endif %}"
+                            href="{% url 'accounts:dashboard' %}"
+                        >
+                            Dashboard
+                        </a>
+                    </li>
+
+                    <li class="nav-item ms-lg-2">
+                        <form
+                            method="post"
+                            action="{% url 'accounts:logout' %}"
+                            class="d-inline"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="site-navbar-account border-0 bg-transparent"
+                            >
+                                Logout
+                            </button>
+                        </form>
+                    </li>
+
+                {% else %}
+
+                    <li class="nav-item ms-lg-2">
+                        <a
+                            class="site-navbar-account"
+                            href="{% url 'accounts:login' %}"
+                        >
+                            Login
+                        </a>
+                    </li>
+
+                {% endif %}
 
             </ul>
         </div>
