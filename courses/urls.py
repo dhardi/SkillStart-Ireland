@@ -22,4 +22,9 @@ urlpatterns = [
         views.lesson_detail,
         name="lesson_detail",
     ),
+    path(
+        "<slug:course_slug>/lessons/<int:lesson_id>/complete/",
+        views.mark_lesson_completed,
+        name="mark_lesson_completed",
+    ),
 ]
