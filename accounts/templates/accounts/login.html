@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 
 {% block title %}
     Login | SkillStart Ireland
@@ -6,76 +7,312 @@
 
 {% block content %}
 
-<section class="auth-section">
+<section class="login-page">
+
     <div class="container">
+        <div class="login-layout">
 
-        <div class="auth-card">
+            <div class="login-presentation">
 
-            <div class="auth-header">
-                <span class="auth-label">
-                    Student access
-                </span>
+                <a
+                    href="{% url 'home' %}"
+                    class="login-brand"
+                >
+                    <span class="login-brand-icon">
+                        S
+                    </span>
 
-                <h1>
-                    Welcome back
-                </h1>
+                    <span>
+                        SkillStart Ireland
+                    </span>
+                </a>
 
-                <p>
-                    Sign in to continue your courses and track your progress.
+                <div class="login-presentation-content">
+
+                    <span class="login-presentation-label">
+                        Learn practical skills
+                    </span>
+
+                    <h1>
+                        Build your confidence for work in Ireland.
+                    </h1>
+
+                    <p>
+                        Access practical courses, continue where you
+                        stopped and monitor your learning progress.
+                    </p>
+
+                    <div class="login-benefits">
+
+                        <div class="login-benefit-item">
+                            <span class="login-benefit-icon">
+                                ✓
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Practical courses
+                                </strong>
+
+                                <p>
+                                    Workplace-focused lessons designed
+                                    for life and work in Ireland.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="login-benefit-item">
+                            <span class="login-benefit-icon">
+                                ✓
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Track your progress
+                                </strong>
+
+                                <p>
+                                    Continue from your next lesson and
+                                    see what you have completed.
+                                </p>
+                            </div>
+                        </div>
+
+                        <div class="login-benefit-item">
+                            <span class="login-benefit-icon">
+                                ✓
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Learn at your own pace
+                                </strong>
+
+                                <p>
+                                    Access your courses whenever it is
+                                    convenient for you.
+                                </p>
+                            </div>
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <p class="login-presentation-footer">
+                    Practical learning for a better start in Ireland.
                 </p>
+
             </div>
 
-            {% if form.errors %}
-                <div class="alert alert-danger">
-                    Your username or password is incorrect.
-                </div>
-            {% endif %}
+            <div class="login-form-column">
 
-            <form method="post" class="auth-form">
-                {% csrf_token %}
+                <div class="login-card">
 
-                <div class="auth-form-group">
-                    <label for="{{ form.username.id_for_label }}">
-                        Username
-                    </label>
+                    <div class="login-card-header">
 
-                    {{ form.username }}
-                </div>
+                        <span class="login-card-label">
+                            Student access
+                        </span>
 
-                <div class="auth-form-group">
-                    <label for="{{ form.password.id_for_label }}">
-                        Password
-                    </label>
+                        <h2>
+                            Welcome back
+                        </h2>
 
-                    {{ form.password }}
-                </div>
+                        <p>
+                            Sign in to continue your courses and
+                            track your progress.
+                        </p>
 
-                {% if next %}
-                    <input
-                        type="hidden"
-                        name="next"
-                        value="{{ next }}"
+                    </div>
+
+                    {% if form.errors %}
+
+                        <div
+                            class="login-alert"
+                            role="alert"
+                        >
+                            <span
+                                class="login-alert-icon"
+                                aria-hidden="true"
+                            >
+                                !
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Sign-in failed
+                                </strong>
+
+                                <p>
+                                    Check your username and password,
+                                    then try again.
+                                </p>
+                            </div>
+                        </div>
+
+                    {% endif %}
+
+                    {% if next and request.user.is_authenticated %}
+
+                        <div
+                            class="login-alert"
+                            role="alert"
+                        >
+                            <span
+                                class="login-alert-icon"
+                                aria-hidden="true"
+                            >
+                                !
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Access restricted
+                                </strong>
+
+                                <p>
+                                    Your account does not have permission
+                                    to access that page.
+                                </p>
+                            </div>
+                        </div>
+
+                    {% endif %}
+
+                    <form
+                        method="post"
+                        class="login-form"
+                        novalidate
                     >
-                {% endif %}
+                        {% csrf_token %}
 
-                <button
-                    type="submit"
-                    class="auth-submit-button"
-                >
-                    Sign in
-                </button>
-            </form>
+                        <div class="login-form-group">
 
-            <div class="auth-footer">
-                <p>
-                    Do not have an account yet?
-                    Registration will be available soon.
-                </p>
+                            <label
+                                for="{{ form.username.id_for_label }}"
+                            >
+                                Username
+                            </label>
+
+                            <div class="login-input-wrapper">
+
+                                <span
+                                    class="login-input-icon"
+                                    aria-hidden="true"
+                                >
+                                    @
+                                </span>
+
+                                {{ form.username }}
+
+                            </div>
+
+                            {% if form.username.errors %}
+                                <div class="login-field-error">
+                                    {{ form.username.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        <div class="login-form-group">
+
+                            <div class="login-password-heading">
+
+                                <label
+                                    for="{{ form.password.id_for_label }}"
+                                >
+                                    Password
+                                </label>
+
+                                <button
+                                    type="button"
+                                    class="login-password-toggle"
+                                    id="login-password-toggle"
+                                    aria-controls="{{ form.password.id_for_label }}"
+                                    aria-pressed="false"
+                                >
+                                    Show password
+                                </button>
+
+                            </div>
+
+                            <div class="login-input-wrapper">
+
+                                <span
+                                    class="login-input-icon"
+                                    aria-hidden="true"
+                                >
+                                    ●
+                                </span>
+
+                                {{ form.password }}
+
+                            </div>
+
+                            {% if form.password.errors %}
+                                <div class="login-field-error">
+                                    {{ form.password.errors|striptags }}
+                                </div>
+                            {% endif %}
+
+                        </div>
+
+                        {% if next %}
+                            <input
+                                type="hidden"
+                                name="next"
+                                value="{{ next }}"
+                            >
+                        {% endif %}
+
+                        <button
+                            type="submit"
+                            class="login-submit-button"
+                        >
+                            <span>
+                                Sign in
+                            </span>
+
+                            <span aria-hidden="true">
+                                →
+                            </span>
+                        </button>
+
+                    </form>
+
+                    <div class="login-card-footer">
+
+                        <p>
+                            Do not have an account yet?
+                        </p>
+
+                        <span>
+                            Registration will be available soon.
+                        </span>
+
+                    </div>
+
+                    <div class="login-security-message">
+                        <span aria-hidden="true">
+                            🔒
+                        </span>
+
+                        <span>
+                            Your account information is securely protected.
+                        </span>
+                    </div>
+
+                </div>
+
             </div>
 
         </div>
-
     </div>
+
 </section>
+
+<script src="{% static 'core/js/login.js' %}"></script>
 
 {% endblock %}
