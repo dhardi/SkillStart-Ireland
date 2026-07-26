@@ -9,75 +9,108 @@
 <section class="dashboard-section">
     <div class="container">
 
-        <div class="dashboard-header">
+        <header class="dashboard-header">
             <div>
                 <span class="dashboard-label">
                     Student area
                 </span>
 
                 <h1>
-                    Welcome, {{ request.user.username }}
+                    Welcome,
+                    {% if request.user.first_name %}
+                        {{ request.user.first_name }}
+                    {% else %}
+                        {{ request.user.username }}
+                    {% endif %}
                 </h1>
 
                 <p>
-                    Continue learning and keep track of your course progress.
+                    Continue learning and track your progress
+                    across your SkillStart Ireland courses.
                 </p>
             </div>
-        </div>
+
+            <a
+                href="{% url 'courses:course_list' %}"
+                class="dashboard-header-button"
+            >
+                Browse courses
+                <span aria-hidden="true">→</span>
+            </a>
+        </header>
 
         <div class="row g-4 dashboard-statistics">
 
             <div class="col-12 col-md-4">
-                <div class="dashboard-stat-card">
-                    <span class="dashboard-stat-label">
-                        Courses started
-                    </span>
+                <article class="dashboard-stat-card">
+                    <div class="dashboard-stat-icon">
+                        ▶
+                    </div>
 
-                    <strong>
-                        {{ courses_started }}
-                    </strong>
+                    <div>
+                        <span class="dashboard-stat-label">
+                            Courses in progress
+                        </span>
 
-                    <p>
-                        Courses currently in progress.
-                    </p>
-                </div>
+                        <strong>
+                            {{ courses_started }}
+                        </strong>
+
+                        <p>
+                            Courses you are currently studying.
+                        </p>
+                    </div>
+                </article>
             </div>
 
             <div class="col-12 col-md-4">
-                <div class="dashboard-stat-card">
-                    <span class="dashboard-stat-label">
-                        Lessons completed
-                    </span>
+                <article class="dashboard-stat-card">
+                    <div class="dashboard-stat-icon">
+                        ✓
+                    </div>
 
-                    <strong>
-                        {{ lessons_completed }}
-                    </strong>
+                    <div>
+                        <span class="dashboard-stat-label">
+                            Lessons completed
+                        </span>
 
-                    <p>
-                        Lessons completed across all courses.
-                    </p>
-                </div>
+                        <strong>
+                            {{ lessons_completed }}
+                        </strong>
+
+                        <p>
+                            Lessons completed across all courses.
+                        </p>
+                    </div>
+                </article>
             </div>
 
             <div class="col-12 col-md-4">
-                <div class="dashboard-stat-card">
-                    <span class="dashboard-stat-label">
-                        Courses completed
-                    </span>
+                <article class="dashboard-stat-card">
+                    <div class="dashboard-stat-icon">
+                        ★
+                    </div>
 
-                    <strong>
-                        {{ courses_completed }}
-                    </strong>
+                    <div>
+                        <span class="dashboard-stat-label">
+                            Courses completed
+                        </span>
 
-                    <p>
-                        Courses successfully completed.
-                    </p>
-                </div>
+                        <strong>
+                            {{ courses_completed }}
+                        </strong>
+
+                        <p>
+                            Courses completed successfully.
+                        </p>
+                    </div>
+                </article>
             </div>
 
         </div>
 
-        <div class="dashboard-content-card">
+        <section class="dashboard-learning-section">
+
             <div class="dashboard-content-header">
                 <div>
                     <span class="dashboard-label">
@@ -85,131 +118,386 @@
                     </span>
 
                     <h2>
-                        Your courses
+                        Continue learning
                     </h2>
-                </div>
-
-                <a
-                    href="{% url 'courses:course_list' %}"
-                    class="dashboard-browse-link"
-                >
-                    Browse courses
-                    <span aria-hidden="true">→</span>
-                </a>
-            </div>
-
-            {% if enrollments %}
-
-    <div class="dashboard-course-list">
-
-        {% for enrollment in enrollments %}
-
-            <article class="dashboard-course-item">
-
-                <div class="dashboard-course-image">
-                    {% if enrollment.course.image %}
-                        <img
-                            src="{{ enrollment.course.image.url }}"
-                            alt="{{ enrollment.course.title }}"
-                        >
-                    {% else %}
-                        <div class="dashboard-course-placeholder">
-                            📘
-                        </div>
-                    {% endif %}
-                </div>
-
-                <div class="dashboard-course-content">
-
-                    <span class="dashboard-course-status">
-                        {% if enrollment.is_completed %}
-                            Completed
-                        {% else %}
-                            In progress
-                        {% endif %}
-                    </span>
-
-                    <h3>
-                        {{ enrollment.course.title }}
-                    </h3>
 
                     <p>
-                        {{ enrollment.course.description|truncatewords:20 }}
+                        Resume your current courses or review
+                        lessons you have already completed.
                     </p>
+                </div>
+            </div>
 
-                    <div class="dashboard-course-meta">
-                        <span>
-                            {{ enrollment.course.duration }}
-                        </span>
+            {% if in_progress_enrollments %}
 
-                        <span>
-                            {{ enrollment.course.level }}
+                <div class="dashboard-subsection">
+
+                    <div class="dashboard-subsection-header">
+                        <div>
+                            <h3>
+                                Courses in progress
+                            </h3>
+
+                            <p>
+                                Continue from the next lesson
+                                waiting for you.
+                            </p>
+                        </div>
+
+                        <span class="dashboard-section-count">
+                            {{ courses_started }}
                         </span>
+                    </div>
+
+                    <div class="dashboard-course-list">
+
+                        {% for enrollment in in_progress_enrollments %}
+
+                            <article class="dashboard-course-item">
+
+                                <div class="dashboard-course-image">
+
+                                    {% if enrollment.course.image %}
+
+                                        <img
+                                            src="{{ enrollment.course.image.url }}"
+                                            alt="{{ enrollment.course.title }}"
+                                        >
+
+                                    {% else %}
+
+                                        <div class="dashboard-course-placeholder">
+                                            <span aria-hidden="true">
+                                                📘
+                                            </span>
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="dashboard-course-content">
+
+                                    <div class="dashboard-course-topline">
+
+                                        <span
+                                            class="
+                                                dashboard-course-status
+                                                dashboard-course-status-progress
+                                            "
+                                        >
+                                            In progress
+                                        </span>
+
+                                        {% if enrollment.course.category %}
+                                            <span class="dashboard-course-category">
+                                                {{ enrollment.course.category.name }}
+                                            </span>
+                                        {% endif %}
+
+                                    </div>
+
+                                    <h3>
+                                        {{ enrollment.course.title }}
+                                    </h3>
+
+                                    <p class="dashboard-course-description">
+                                        {{ enrollment.course.description|truncatewords:22 }}
+                                    </p>
+
+                                    <div class="dashboard-course-progress-info">
+                                        <span>
+                                            {{ enrollment.completed_lessons }}
+                                            of
+                                            {{ enrollment.total_lessons }}
+                                            lessons completed
+                                        </span>
+
+                                        <strong>
+                                            {{ enrollment.progress_percentage }}%
+                                        </strong>
+                                    </div>
+
+                                    <div
+                                        class="dashboard-progress-bar"
+                                        role="progressbar"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
+                                        aria-valuenow="{{ enrollment.progress_percentage }}"
+                                        aria-label="Course progress"
+                                    >
+                                        <div
+                                            class="dashboard-progress-fill"
+                                            style="width: {{ enrollment.progress_percentage }}%;"
+                                        ></div>
+                                    </div>
+
+                                </div>
+
+                                <div class="dashboard-course-action">
+
+                                    {% if enrollment.resume_lesson %}
+
+                                        <a
+                                            href="{% url 'courses:lesson_detail' enrollment.course.slug enrollment.resume_lesson.id %}"
+                                            class="dashboard-primary-button"
+                                        >
+                                            {% if enrollment.progress_percentage > 0 %}
+                                                Resume course
+                                            {% else %}
+                                                Start course
+                                            {% endif %}
+                                        </a>
+
+                                    {% else %}
+
+                                        <a
+                                            href="{% url 'courses:course_detail' enrollment.course.slug %}"
+                                            class="dashboard-primary-button"
+                                        >
+                                            View course
+                                        </a>
+
+                                    {% endif %}
+
+                                </div>
+
+                            </article>
+
+                        {% endfor %}
+
                     </div>
 
                 </div>
 
-                <div class="dashboard-course-action">
+            {% else %}
+
+                <div class="dashboard-empty-state">
+
+                    <div class="dashboard-empty-icon">
+                        📚
+                    </div>
+
+                    <h3>
+                        No courses in progress
+                    </h3>
+
+                    <p>
+                        Explore the course catalogue and start
+                        building practical workplace skills.
+                    </p>
+
                     <a
-                        href="{% url 'courses:course_detail' enrollment.course.slug %}"
+                        href="{% url 'courses:course_list' %}"
                         class="dashboard-primary-button"
                     >
-                        {% if enrollment.is_completed %}
-                            Review course
-                        {% else %}
-                            Continue course
-                        {% endif %}
+                        Explore courses
                     </a>
+
                 </div>
 
-            </article>
+            {% endif %}
 
-        {% endfor %}
+            {% if completed_enrollments %}
 
-    </div>
+                <div class="dashboard-subsection">
 
-{% else %}
+                    <div class="dashboard-subsection-header">
+                        <div>
+                            <h3>
+                                Completed courses
+                            </h3>
 
-    <div class="dashboard-empty-state">
-        <div class="dashboard-empty-icon">
-            📚
-        </div>
+                            <p>
+                                Review courses you have successfully completed.
+                            </p>
+                        </div>
 
-        <h3>
-            You have not started a course yet
-        </h3>
+                        <span class="dashboard-section-count">
+                            {{ courses_completed }}
+                        </span>
+                    </div>
 
-        <p>
-            Explore the available courses and begin building
-            practical workplace skills.
-        </p>
+                    <div class="dashboard-course-list">
 
-        <a
-            href="{% url 'courses:course_list' %}"
-            class="dashboard-primary-button"
-        >
-            Explore courses
-        </a>
-    </div>
+                        {% for enrollment in completed_enrollments %}
 
-{% endif %}
-                <h3>
-                    You have not started a course yet
-                </h3>
+                            <article class="dashboard-course-item">
 
-                <p>
-                    Explore the available courses and begin building
-                    practical workplace skills.
-                </p>
+                                <div class="dashboard-course-image">
 
-                <a
-                    href="{% url 'courses:course_list' %}"
-                    class="dashboard-primary-button"
-                >
-                    Explore courses
-                </a>
+                                    {% if enrollment.course.image %}
+
+                                        <img
+                                            src="{{ enrollment.course.image.url }}"
+                                            alt="{{ enrollment.course.title }}"
+                                        >
+
+                                    {% else %}
+
+                                        <div class="dashboard-course-placeholder">
+                                            <span aria-hidden="true">
+                                                📘
+                                            </span>
+                                        </div>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="dashboard-course-content">
+
+                                    <div class="dashboard-course-topline">
+
+                                        <span
+                                            class="
+                                                dashboard-course-status
+                                                dashboard-course-status-completed
+                                            "
+                                        >
+                                            Completed
+                                        </span>
+
+                                        {% if enrollment.course.category %}
+                                            <span class="dashboard-course-category">
+                                                {{ enrollment.course.category.name }}
+                                            </span>
+                                        {% endif %}
+
+                                    </div>
+
+                                    <h3>
+                                        {{ enrollment.course.title }}
+                                    </h3>
+
+                                    <p class="dashboard-course-description">
+                                        {{ enrollment.course.description|truncatewords:22 }}
+                                    </p>
+
+                                    <div class="dashboard-course-progress-info">
+                                        <span>
+                                            All course requirements completed
+                                        </span>
+
+                                        <strong>
+                                            100%
+                                        </strong>
+                                    </div>
+
+                                    <div
+                                        class="dashboard-progress-bar"
+                                        role="progressbar"
+                                        aria-valuemin="0"
+                                        aria-valuemax="100"
+                                        aria-valuenow="100"
+                                        aria-label="Course completed"
+                                    >
+                                        <div
+                                            class="dashboard-progress-fill"
+                                            style="width: 100%;"
+                                        ></div>
+                                    </div>
+
+                                </div>
+
+                                <div class="dashboard-course-action">
+
+                                    <a
+                                        href="{% url 'courses:course_detail' enrollment.course.slug %}"
+                                        class="dashboard-secondary-button"
+                                    >
+                                        Review course
+                                    </a>
+
+                                </div>
+
+                            </article>
+
+                        {% endfor %}
+
+                    </div>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <section class="dashboard-activity-section">
+
+            <div class="dashboard-content-header">
+                <div>
+                    <span class="dashboard-label">
+                        Recent activity
+                    </span>
+
+                    <h2>
+                        Latest completed lessons
+                    </h2>
+
+                    <p>
+                        Your most recent learning activity
+                        across all courses.
+                    </p>
+                </div>
             </div>
-        </div>
+
+            {% if recent_activity %}
+
+                <div class="dashboard-activity-list">
+
+                    {% for progress in recent_activity %}
+
+                        <a
+                            href="{% url 'courses:lesson_detail' progress.lesson.course.slug progress.lesson.id %}"
+                            class="dashboard-activity-item"
+                        >
+
+                            <div class="dashboard-activity-icon">
+                                ✓
+                            </div>
+
+                            <div class="dashboard-activity-content">
+
+                                <strong>
+                                    {{ progress.lesson.title }}
+                                </strong>
+
+                                <span>
+                                    {{ progress.lesson.course.title }}
+                                </span>
+
+                            </div>
+
+                            <time
+                                datetime="{{ progress.completed_at|date:'c' }}"
+                            >
+                                {{ progress.completed_at|date:"d M Y, H:i" }}
+                            </time>
+
+                            <span
+                                class="dashboard-activity-arrow"
+                                aria-hidden="true"
+                            >
+                                →
+                            </span>
+
+                        </a>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="dashboard-activity-empty">
+                    Complete your first lesson and your
+                    recent activity will appear here.
+                </div>
+
+            {% endif %}
+
+        </section>
 
     </div>
 </section>
