@@ -83,19 +83,23 @@
 
                 </div>
 
-                {% if lessons %}
-                    <a
-                        href="#course-curriculum"
-                        class="course-detail-primary-button"
-                    >
-                        Start learning
-                        <span aria-hidden="true">↓</span>
-                    </a>
-                {% else %}
-                    <span class="course-detail-disabled-button">
-                        Lessons coming soon
-                    </span>
-                {% endif %}
+                {% if course_button_lesson %}
+
+    <a
+        href="{% url 'courses:lesson_detail' course.slug course_button_lesson.id %}"
+        class="course-detail-primary-button"
+    >
+        {{ course_button_text }}
+        <span aria-hidden="true">→</span>
+    </a>
+
+{% else %}
+
+    <span class="course-detail-disabled-button">
+        Lessons coming soon
+    </span>
+
+{% endif %}
 
             </div>
 
@@ -276,23 +280,23 @@
 
                     </div>
 
-                    {% if lessons %}
+                    {% if course_button_lesson %}
 
-                        <a
-                            href="#course-curriculum"
-                            class="course-overview-button"
-                        >
-                            Start learning
-                            <span aria-hidden="true">→</span>
-                        </a>
+    <a
+        href="{% url 'courses:lesson_detail' course.slug course_button_lesson.id %}"
+        class="course-overview-button"
+    >
+        {{ course_button_text }}
+        <span aria-hidden="true">→</span>
+    </a>
 
-                    {% else %}
+{% else %}
 
-                        <span class="course-overview-disabled-button">
-                            Lessons coming soon
-                        </span>
+    <span class="course-overview-disabled-button">
+        Lessons coming soon
+    </span>
 
-                    {% endif %}
+{% endif %}
 
                     <div class="course-certification-notice">
 

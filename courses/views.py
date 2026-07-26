@@ -59,23 +59,69 @@ def course_list(request):
         context,
     )
 
-
 def course_detail(request, slug):
     course = get_object_or_404(
-        Course,
+        Course.objects.select_related("category"),
         slug=slug,
         is_published=True,
     )
 
-    lessons = (
+    lessons = list(
         course.lessons
         .filter(is_published=True)
         .order_by("order", "id")
     )
 
+    course_button_text = "Start learning"
+    course_button_lesson = None
+
+    if lessons:
+        course_button_lesson = lessons[0]
+
+    if request.user.is_authenticated and lessons:
+        enrollment = Enrollment.objects.filter(
+            user=request.user,
+            course=course,
+        ).first()
+
+        if enrollment:
+            completed_lesson_ids = set(
+                LessonProgress.objects.filter(
+                    enrollment=enrollment,
+                    completed=True,
+                    lesson__course=course,
+                    lesson__is_published=True,
+                ).values_list(
+                    "lesson_id",
+                    flat=True,
+                )
+            )
+
+            if completed_lesson_ids:
+                first_incomplete_lesson = next(
+                    (
+                        course_lesson
+                        for course_lesson in lessons
+                        if course_lesson.id
+                        not in completed_lesson_ids
+                    ),
+                    None,
+                )
+
+                if first_incomplete_lesson:
+                    course_button_text = "Resume course"
+                    course_button_lesson = (
+                        first_incomplete_lesson
+                    )
+                else:
+                    course_button_text = "Review lessons"
+                    course_button_lesson = lessons[-1]
+
     context = {
         "course": course,
         "lessons": lessons,
+        "course_button_text": course_button_text,
+        "course_button_lesson": course_button_lesson,
     }
 
     return render(
@@ -83,6 +129,9 @@ def course_detail(request, slug):
         "courses/course_detail.html",
         context,
     )
+
+
+
 
 
 def lesson_detail(request, course_slug, lesson_id):

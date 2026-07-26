@@ -1,23 +1,35 @@
 document.addEventListener("DOMContentLoaded", function () {
-    const completionButton = document.getElementById(
-        "lesson-completion-button"
+    const lessonSection = document.querySelector(
+        ".lesson-detail-section"
     );
 
-    if (!completionButton) {
+    if (!lessonSection) {
         return;
     }
 
     const completeUrl =
-        completionButton.dataset.completeUrl;
+        lessonSection.dataset.completeUrl;
 
-    if (!completeUrl) {
-        return;
-    }
+    const currentLessonId =
+        lessonSection.dataset.currentLessonId;
 
-    const completionButtonText =
-        completionButton.querySelector(
-            ".lesson-completion-button-text"
-        );
+    const hasVideo =
+        lessonSection.dataset.hasVideo === "true";
+
+    let currentLessonCompleted =
+        lessonSection.dataset.isCompleted === "true";
+
+    const nextLessonLink = document.querySelector(
+        ".lesson-navigation-link-next"
+    );
+
+    const completionStatus = document.getElementById(
+        "lesson-completion-status"
+    );
+
+    const completionMessage = document.getElementById(
+        "lesson-completion-message"
+    );
 
     const progressSummary = document.getElementById(
         "lesson-progress-summary"
@@ -34,6 +46,19 @@ document.addEventListener("DOMContentLoaded", function () {
     const progressFill = document.getElementById(
         "lesson-progress-fill"
     );
+
+    const youtubePlayerElement =
+        document.getElementById(
+            "lesson-youtube-player"
+        );
+
+    let lessonIsBeingSaved = false;
+
+    /*
+     * Uma lesson que já foi concluída anteriormente
+     * não precisa ficar bloqueada novamente.
+     */
+    let videoHasEnded = currentLessonCompleted;
 
     function getCookie(cookieName) {
         const cookies = document.cookie
@@ -59,99 +84,351 @@ document.addEventListener("DOMContentLoaded", function () {
         return null;
     }
 
-    completionButton.addEventListener(
-        "click",
-        async function () {
-            completionButton.disabled = true;
+    function lockNextLesson() {
+        if (!nextLessonLink) {
+            return;
+        }
 
-            if (completionButtonText) {
-                completionButtonText.textContent =
-                    "Saving...";
+        nextLessonLink.classList.add("locked");
+
+        nextLessonLink.setAttribute(
+            "aria-disabled",
+            "true"
+        );
+    }
+
+    function unlockNextLesson() {
+        if (!nextLessonLink) {
+            return;
+        }
+
+        nextLessonLink.classList.remove("locked");
+
+        nextLessonLink.removeAttribute(
+            "aria-disabled"
+        );
+    }
+
+    function showVideoRequiredMessage() {
+        if (completionStatus) {
+            completionStatus.textContent =
+                "Watch the video to continue";
+        }
+
+        if (completionMessage) {
+            completionMessage.textContent =
+                "The next lesson will be unlocked " +
+                "when the video finishes.";
+        }
+    }
+
+    function updateProgressDisplay(data) {
+        const sidebarLesson = document.querySelector(
+            `[data-sidebar-lesson-id="${currentLessonId}"]`
+        );
+
+        if (sidebarLesson) {
+            sidebarLesson.classList.add(
+                "completed"
+            );
+        }
+
+        if (completionStatus) {
+            completionStatus.textContent =
+                "Lesson completed";
+        }
+
+        if (completionMessage) {
+            completionMessage.textContent =
+                "Your progress has been saved.";
+        }
+
+        if (progressSummary) {
+            const lessonWord =
+                data.total_lessons === 1
+                    ? "lesson"
+                    : "lessons";
+
+            progressSummary.textContent =
+                `${data.completed_count} of ` +
+                `${data.total_lessons} ` +
+                `${lessonWord} completed`;
+        }
+
+        if (progressPercentage) {
+            progressPercentage.textContent =
+                `${data.percentage}%`;
+        }
+
+        if (progressFill) {
+            progressFill.style.width =
+                `${data.percentage}%`;
+        }
+
+        if (progressBar) {
+            progressBar.setAttribute(
+                "aria-valuenow",
+                String(data.percentage)
+            );
+        }
+    }
+
+    async function completeCurrentLesson() {
+        if (currentLessonCompleted) {
+            return null;
+        }
+
+        if (!completeUrl) {
+            return null;
+        }
+
+        if (lessonIsBeingSaved) {
+            return null;
+        }
+
+        lessonIsBeingSaved = true;
+
+        try {
+            const response = await fetch(
+                completeUrl,
+                {
+                    method: "POST",
+                    headers: {
+                        "X-CSRFToken": getCookie(
+                            "csrftoken"
+                        ),
+                        "X-Requested-With":
+                            "XMLHttpRequest",
+                    },
+                }
+            );
+
+            if (!response.ok) {
+                throw new Error(
+                    "Could not save lesson progress."
+                );
             }
 
-            try {
-                const response = await fetch(
-                    completeUrl,
-                    {
-                        method: "POST",
-                        headers: {
-                            "X-CSRFToken": getCookie(
-                                "csrftoken"
-                            ),
-                            "X-Requested-With":
-                                "XMLHttpRequest",
-                        },
-                    }
-                );
+            const data = await response.json();
 
-                if (!response.ok) {
-                    throw new Error(
-                        "Could not save lesson progress."
-                    );
+            currentLessonCompleted = true;
+
+            updateProgressDisplay(data);
+
+            return data;
+        } finally {
+            lessonIsBeingSaved = false;
+        }
+    }
+
+    /*
+     * Lessons com vídeo começam bloqueadas,
+     * exceto quando já foram concluídas.
+     */
+    if (
+        hasVideo &&
+        !currentLessonCompleted
+    ) {
+        lockNextLesson();
+        showVideoRequiredMessage();
+    }
+
+    if (nextLessonLink) {
+        nextLessonLink.addEventListener(
+            "click",
+            async function (event) {
+                /*
+                 * Vídeo ainda não terminou:
+                 * não permite avançar.
+                 */
+                if (
+                    hasVideo &&
+                    !videoHasEnded &&
+                    !currentLessonCompleted
+                ) {
+                    event.preventDefault();
+
+                    showVideoRequiredMessage();
+
+                    return;
                 }
 
-                const data = await response.json();
+                /*
+                 * Usuário não está autenticado.
+                 * Não existe progresso para salvar.
+                 */
+                if (!completeUrl) {
+                    return;
+                }
 
-                completionButton.classList.add(
-                    "completed"
+                /*
+                 * Lesson já concluída:
+                 * segue o link normalmente.
+                 */
+                if (currentLessonCompleted) {
+                    return;
+                }
+
+                event.preventDefault();
+
+                const destination =
+                    nextLessonLink.href;
+
+                nextLessonLink.classList.add(
+                    "saving"
                 );
 
-                completionButton.setAttribute(
-                    "aria-pressed",
+                nextLessonLink.setAttribute(
+                    "aria-disabled",
                     "true"
                 );
 
-                if (completionButtonText) {
-                    completionButtonText.textContent =
-                        "Completed";
-                }
+                try {
+                    await completeCurrentLesson();
 
-                const sidebarLesson =
-                    document.querySelector(
-                        `[data-sidebar-lesson-id="${data.lesson_id}"]`
+                    window.location.href =
+                        destination;
+                } catch (error) {
+                    console.error(error);
+
+                    nextLessonLink.classList.remove(
+                        "saving"
                     );
 
-                if (sidebarLesson) {
-                    sidebarLesson.classList.add(
-                        "completed"
-                    );
-                }
+                    if (
+                        !hasVideo ||
+                        videoHasEnded
+                    ) {
+                        unlockNextLesson();
+                    }
 
-                if (progressSummary) {
-                    progressSummary.textContent =
-                        `${data.completed_count} of ` +
-                        `${data.total_lessons} ` +
-                        `lesson` +
-                        `${data.total_lessons === 1 ? "" : "s"} ` +
-                        `completed`;
-                }
+                    if (completionStatus) {
+                        completionStatus.textContent =
+                            "Progress could not be saved";
+                    }
 
-                if (progressPercentage) {
-                    progressPercentage.textContent =
-                        `${data.percentage}%`;
-                }
-
-                if (progressFill) {
-                    progressFill.style.width =
-                        `${data.percentage}%`;
-                }
-
-                if (progressBar) {
-                    progressBar.setAttribute(
-                        "aria-valuenow",
-                        String(data.percentage)
-                    );
-                }
-            } catch (error) {
-                console.error(error);
-
-                completionButton.disabled = false;
-
-                if (completionButtonText) {
-                    completionButtonText.textContent =
-                        "Try again";
+                    if (completionMessage) {
+                        completionMessage.textContent =
+                            "Please check your connection " +
+                            "and try again.";
+                    }
                 }
             }
+        );
+    }
+
+    function initializeYouTubePlayer() {
+        if (
+            !youtubePlayerElement ||
+            !youtubePlayerElement.dataset
+                .youtubeVideoId
+        ) {
+            return;
         }
-    );
+
+        const videoId =
+            youtubePlayerElement.dataset
+                .youtubeVideoId;
+
+        new YT.Player(
+            "lesson-youtube-player",
+            {
+                videoId: videoId,
+
+                playerVars: {
+                    rel: 0,
+                    modestbranding: 1,
+                },
+
+                events: {
+                    onStateChange:
+                        handleYouTubeStateChange,
+                },
+            }
+        );
+    }
+
+    async function handleYouTubeStateChange(
+        event
+    ) {
+        if (
+            event.data !==
+            YT.PlayerState.ENDED
+        ) {
+            return;
+        }
+
+        videoHasEnded = true;
+
+        /*
+         * O vídeo terminou, então o aluno
+         * já pode avançar.
+         */
+        unlockNextLesson();
+
+        if (!completeUrl) {
+            if (completionStatus) {
+                completionStatus.textContent =
+                    "Video completed";
+            }
+
+            if (completionMessage) {
+                completionMessage.textContent =
+                    "Sign in to save your progress.";
+            }
+
+            return;
+        }
+
+        try {
+            await completeCurrentLesson();
+
+            unlockNextLesson();
+        } catch (error) {
+            console.error(
+                "Could not save progress after video:",
+                error
+            );
+
+            /*
+             * O botão continua liberado porque
+             * o aluno assistiu ao vídeo.
+             *
+             * Ao clicar em Next, o sistema
+             * tentará salvar novamente.
+             */
+            unlockNextLesson();
+
+            if (completionStatus) {
+                completionStatus.textContent =
+                    "Video completed";
+            }
+
+            if (completionMessage) {
+                completionMessage.textContent =
+                    "Your progress could not be saved. " +
+                    "Click Next lesson to try again.";
+            }
+        }
+    }
+
+    if (youtubePlayerElement) {
+        /*
+         * Caso a API do YouTube já tenha
+         * terminado de carregar.
+         */
+        if (
+            window.YT &&
+            typeof window.YT.Player === "function"
+        ) {
+            initializeYouTubePlayer();
+        } else {
+            /*
+             * A API chama esta função global
+             * quando estiver pronta.
+             */
+            window.onYouTubeIframeAPIReady =
+                initializeYouTubePlayer;
+        }
+    }
 });

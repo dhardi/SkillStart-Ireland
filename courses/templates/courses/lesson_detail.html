@@ -11,6 +11,11 @@
     class="lesson-detail-section"
     data-course-slug="{{ course.slug }}"
     data-current-lesson-id="{{ lesson.id }}"
+    data-has-video="{% if lesson.youtube_video_id %}true{% else %}false{% endif %}"
+    data-is-completed="{% if current_lesson_completed %}true{% else %}false{% endif %}"
+    {% if request.user.is_authenticated %}
+        data-complete-url="{% url 'courses:mark_lesson_completed' course.slug lesson.id %}"
+    {% endif %}
 >
     <div class="container">
 
@@ -71,8 +76,42 @@
                     </div>
 
                     <div class="lesson-body">
-                        {{ lesson.content|linebreaks }}
-                    </div>
+
+    {% if lesson.youtube_video_id %}
+
+        <div class="lesson-video-wrapper">
+
+            <div
+                id="lesson-youtube-player"
+                class="lesson-youtube-player"
+                data-youtube-video-id="{{ lesson.youtube_video_id }}"
+            ></div>
+
+        </div>
+
+    {% elif lesson.image %}
+
+        <div class="lesson-image-wrapper">
+
+            <img
+                src="{{ lesson.image.url }}"
+                alt="{{ lesson.title }}"
+                class="lesson-content-image"
+            >
+
+        </div>
+
+    {% endif %}
+
+    {% if lesson.content %}
+
+        <div class="lesson-text-content">
+            {{ lesson.content|linebreaks }}
+        </div>
+
+    {% endif %}
+
+</div>
 
                     <div class="lesson-completion-area">
 
@@ -86,78 +125,28 @@
                             </span>
 
                             <div>
-                                <strong>Finished this lesson?</strong>
 
-                                <p>
-                                    Mark it as completed to update your
-                                    course progress.
+                                <strong id="lesson-completion-status">
+                                    {% if current_lesson_completed %}
+                                        Lesson completed
+                                    {% else %}
+                                        Continue when you are ready
+                                    {% endif %}
+                                </strong>
+
+                                <p id="lesson-completion-message">
+                                    {% if current_lesson_completed %}
+                                        Your progress has been saved.
+                                    {% else %}
+                                        This lesson will be completed
+                                        automatically when you continue
+                                        to the next lesson.
+                                    {% endif %}
                                 </p>
+
                             </div>
 
                         </div>
-
-                        {% if request.user.is_authenticated %}
-
-    <button
-        type="button"
-        class="lesson-completion-button
-            {% if current_lesson_completed %}
-                completed
-            {% endif %}
-        "
-        id="lesson-completion-button"
-        data-complete-url="{% url 'courses:mark_lesson_completed' course.slug lesson.id %}"
-        aria-pressed="{% if current_lesson_completed %}true{% else %}false{% endif %}"
-        {% if current_lesson_completed %}
-            disabled
-        {% endif %}
-    >
-        <span
-            class="lesson-completion-button-icon"
-            aria-hidden="true"
-        >
-            ✓
-        </span>
-
-        <span class="lesson-completion-button-text">
-            {% if current_lesson_completed %}
-                Completed
-            {% else %}
-                Mark as completed
-            {% endif %}
-        </span>
-    </button>
-
-{% else %}
-
-    <a
-        href="{% url 'accounts:login' %}?next={{ request.path }}"
-        class="lesson-completion-button"
-    >
-        <span
-            class="lesson-completion-button-icon"
-            aria-hidden="true"
-        >
-            ✓
-        </span>
-
-        <span class="lesson-completion-button-text">
-            Sign in to save progress
-        </span>
-    </a>
-
-{% endif %}
-                            <span
-                                class="lesson-completion-button-icon"
-                                aria-hidden="true"
-                            >
-                                ✓
-                            </span>
-
-                            <span class="lesson-completion-button-text">
-                                Mark as completed
-                            </span>
-                        </button>
 
                     </div>
 
@@ -228,7 +217,7 @@
                                 class="lesson-navigation-link lesson-navigation-link-next"
                             >
                                 <span class="lesson-navigation-label">
-                                    Course completed
+                                    Lessons completed
                                 </span>
 
                                 <strong>
@@ -263,7 +252,7 @@
                             id="lesson-progress-summary"
                         >
                             {{ completed_count }} of {{ total_lessons }}
-lesson{{ total_lessons|pluralize }} completed
+                            lesson{{ total_lessons|pluralize }} completed
                         </div>
 
                         <strong
@@ -298,14 +287,14 @@ lesson{{ total_lessons|pluralize }} completed
                             <a
                                 href="{% url 'courses:lesson_detail' course.slug course_lesson.id %}"
                                 class="lesson-sidebar-item
-    {% if course_lesson.id == lesson.id %}
-        active
-    {% endif %}
+                                    {% if course_lesson.id == lesson.id %}
+                                        active
+                                    {% endif %}
 
-    {% if course_lesson.id in completed_lesson_ids %}
-        completed
-    {% endif %}
-"
+                                    {% if course_lesson.id in completed_lesson_ids %}
+                                        completed
+                                    {% endif %}
+                                "
                                 data-sidebar-lesson-id="{{ course_lesson.id }}"
                             >
 
@@ -357,5 +346,11 @@ lesson{{ total_lessons|pluralize }} completed
     </div>
 </section>
 
+{% if lesson.youtube_video_id %}
+    <script src="https://www.youtube.com/iframe_api"></script>
+{% endif %}
+
 <script src="{% static 'core/js/lesson_progress.js' %}"></script>
+
 {% endblock %}
+

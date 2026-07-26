@@ -3987,3 +3987,55 @@ body {
         width: 100%;
     }
 }
+
+/* =========================================================
+   LESSON MEDIA
+========================================================= */
+
+.lesson-video-wrapper {
+    position: relative;
+    width: 100%;
+    margin-bottom: 2rem;
+    padding-top: 56.25%;
+    overflow: hidden;
+    border-radius: 16px;
+    background: #000;
+}
+
+.lesson-youtube-player,
+.lesson-video-wrapper iframe {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    border: 0;
+}
+
+.lesson-image-wrapper {
+    width: 100%;
+    margin-bottom: 2rem;
+    overflow: hidden;
+    border-radius: 16px;
+}
+
+.lesson-content-image {
+    display: block;
+    width: 100%;
+    height: auto;
+    max-height: 520px;
+    object-fit: contain;
+}
+
+.lesson-text-content {
+    line-height: 1.8;
+}
+
+.lesson-navigation-link-next.locked {
+    cursor: not-allowed;
+    opacity: 0.55;
+}
+
+.lesson-navigation-link-next.saving {
+    pointer-events: none;
+    opacity: 0.7;
+}
