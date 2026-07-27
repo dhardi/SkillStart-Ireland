@@ -5113,11 +5113,12 @@ body {
     position: sticky;
     top: 0;
     height: 100vh;
+    min-height: 0;
+    overflow: hidden;
     padding: 1.5rem;
     background: #17212b;
     color: #ffffff;
 }
-
 .management-sidebar-header {
     padding-bottom: 1.5rem;
     border-bottom: 1px solid rgba(255, 255, 255, 0.1);
@@ -5163,9 +5164,30 @@ body {
 .management-navigation {
     display: flex;
     flex: 1;
+    min-height: 0;
     flex-direction: column;
     gap: 0.25rem;
     margin-top: 1.5rem;
+    padding-right: 0.45rem;
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+.management-navigation::-webkit-scrollbar {
+    width: 6px;
+}
+
+.management-navigation::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.management-navigation::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgba(255, 255, 255, 0.18);
+}
+
+.management-navigation::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.3);
 }
 
 .management-navigation-title {
@@ -5485,11 +5507,17 @@ body {
     .management-sidebar {
         position: static;
         height: auto;
+        overflow: visible;
     }
+
+      
 
     .management-navigation {
         display: grid;
         grid-template-columns: repeat(2, minmax(0, 1fr));
+        max-height: none;
+        overflow: visible;
+        padding-right: 0;
     }
 
     .management-navigation-title {
@@ -5791,6 +5819,580 @@ body {
     .management-filter-actions a,
     .management-filter-actions button,
     .management-page-heading > a {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   MANAGEMENT COURSE PRICING
+========================================================= */
+
+.management-status-free {
+    background: #e7f3ed;
+    color: #17614f;
+}
+
+.management-status-paid {
+    background: #fff3d6;
+    color: #8a5a00;
+}
+
+.management-course-price {
+    color: #2e3944;
+    font-size: 0.82rem;
+    font-weight: 750;
+    white-space: nowrap;
+}
+
+/* =========================================================
+   MANAGEMENT STUDENT LIST
+========================================================= */
+
+.management-student-filter-form {
+    display: grid;
+    grid-template-columns:
+        minmax(260px, 1.5fr)
+        minmax(180px, 0.6fr)
+        auto;
+    align-items: end;
+    gap: 1rem;
+}
+
+.management-student-table {
+    min-width: 1150px;
+}
+
+.management-student-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    min-width: 230px;
+}
+
+.management-student-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #e1f0ec;
+    color: #1f6f5c;
+    font-size: 0.9rem;
+    font-weight: 800;
+}
+
+.management-student-cell strong,
+.management-student-cell span {
+    display: block;
+}
+
+.management-student-cell strong {
+    margin-bottom: 0.2rem;
+    color: #28343f;
+    font-size: 0.82rem;
+}
+
+.management-student-cell span {
+    max-width: 240px;
+    overflow: hidden;
+    color: #8a949e;
+    font-size: 0.72rem;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.management-status-active {
+    background: #e4f3ee;
+    color: #17614f;
+}
+
+.management-status-inactive {
+    background: #fbe8e8;
+    color: #9a3030;
+}
+
+@media (max-width: 900px) {
+    .management-student-filter-form {
+        grid-template-columns: 1fr 1fr;
+    }
+
+    .management-student-filter-form
+    .management-filter-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 650px) {
+    .management-student-filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .management-student-filter-form
+    .management-filter-actions {
+        grid-column: auto;
+    }
+}
+
+/* =========================================================
+   MANAGEMENT STUDENT PROFILE
+========================================================= */
+
+.management-student-profile-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.management-student-profile-main {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.management-student-profile-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 68px;
+    height: 68px;
+    flex-shrink: 0;
+    border-radius: 50%;
+    background: #1f6f5c;
+    color: #ffffff;
+    font-size: 1.5rem;
+    font-weight: 800;
+}
+
+.management-back-link {
+    display: inline-block;
+    margin-bottom: 0.35rem;
+    color: #1f6f5c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.management-back-link:hover {
+    text-decoration: underline;
+}
+
+.management-student-profile-heading h2 {
+    margin-bottom: 0.25rem;
+    color: #17212b;
+    font-size: 1.7rem;
+    font-weight: 770;
+}
+
+.management-student-profile-heading p {
+    margin: 0;
+    color: #7c8792;
+    font-size: 0.85rem;
+}
+
+.management-student-profile-actions {
+    display: flex;
+    gap: 0.75rem;
+}
+
+.management-student-profile-grid {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1.1fr)
+        minmax(300px, 0.9fr);
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.management-detail-list {
+    margin: 0;
+}
+
+.management-detail-list > div {
+    display: grid;
+    grid-template-columns: 140px minmax(0, 1fr);
+    gap: 1rem;
+    padding: 0.9rem 0;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.management-detail-list > div:last-child {
+    border-bottom: 0;
+}
+
+.management-detail-list dt {
+    color: #7e8994;
+    font-size: 0.76rem;
+    font-weight: 650;
+}
+
+.management-detail-list dd {
+    margin: 0;
+    color: #35414c;
+    font-size: 0.82rem;
+    overflow-wrap: anywhere;
+}
+
+.management-account-control {
+    padding: 1.1rem 0;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.management-account-control:last-child {
+    border-bottom: 0;
+}
+
+.management-account-control strong {
+    display: block;
+    margin-bottom: 0.35rem;
+    color: #35414c;
+    font-size: 0.86rem;
+}
+
+.management-account-control p {
+    margin-bottom: 0.9rem;
+    color: #858f99;
+    font-size: 0.78rem;
+    line-height: 1.55;
+}
+
+.management-danger-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0.65rem 1rem;
+    border: 1px solid #d9a9a9;
+    border-radius: 9px;
+    background: #ffffff;
+    color: #a13232;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.management-danger-button:hover {
+    border-color: #b64a4a;
+    background: #fdf4f4;
+}
+
+.management-message-list {
+    margin-bottom: 1.5rem;
+}
+
+.management-message {
+    padding: 0.9rem 1rem;
+    border: 1px solid #cbe4d9;
+    border-radius: 10px;
+    background: #eaf5f0;
+    color: #17614f;
+    font-size: 0.82rem;
+    font-weight: 650;
+}
+
+.management-enrollment-card-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.management-enrollment-card {
+    display: grid;
+    grid-template-columns:
+        minmax(260px, 1.3fr)
+        minmax(220px, 1fr)
+        120px
+        auto;
+    align-items: center;
+    gap: 1.5rem;
+    padding: 1.2rem;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.management-enrollment-card:last-child {
+    border-bottom: 0;
+}
+
+.management-enrollment-course {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+}
+
+.management-enrollment-course h4 {
+    margin-bottom: 0.2rem;
+    color: #2d3944;
+    font-size: 0.88rem;
+    font-weight: 750;
+}
+
+.management-enrollment-course p {
+    margin: 0;
+    color: #8a949e;
+    font-size: 0.72rem;
+}
+
+.management-progress-heading {
+    display: flex;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 0.45rem;
+    color: #77828d;
+    font-size: 0.73rem;
+}
+
+.management-progress-heading strong {
+    color: #35414c;
+}
+
+.management-progress-track {
+    width: 100%;
+    height: 7px;
+    overflow: hidden;
+    border-radius: 999px;
+    background: #e6ebee;
+}
+
+.management-progress-fill {
+    height: 100%;
+    border-radius: inherit;
+    background: #1f6f5c;
+}
+
+@media (max-width: 1050px) {
+    .management-student-profile-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .management-enrollment-card {
+        grid-template-columns:
+            minmax(250px, 1fr)
+            minmax(200px, 1fr);
+    }
+}
+
+@media (max-width: 700px) {
+    .management-student-profile-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .management-student-profile-actions {
+        width: 100%;
+    }
+
+    .management-student-profile-actions a {
+        width: 100%;
+    }
+
+    .management-detail-list > div {
+        grid-template-columns: 1fr;
+        gap: 0.25rem;
+    }
+
+    .management-enrollment-card {
+        grid-template-columns: 1fr;
+    }
+}
+
+/* =========================================================
+   MANAGEMENT ENROLLMENT LIST
+========================================================= */
+
+.management-enrollment-filter-form {
+    display: grid;
+    grid-template-columns:
+        minmax(240px, 1.4fr)
+        minmax(190px, 0.8fr)
+        minmax(160px, 0.6fr)
+        auto;
+    align-items: end;
+    gap: 1rem;
+}
+
+.management-enrollment-table {
+    min-width: 1150px;
+}
+
+.management-enrollment-course-cell {
+    min-width: 190px;
+}
+
+.management-enrollment-course-cell strong,
+.management-enrollment-course-cell span {
+    display: block;
+}
+
+.management-enrollment-course-cell strong {
+    margin-bottom: 0.2rem;
+    color: #2d3944;
+    font-size: 0.82rem;
+}
+
+.management-enrollment-course-cell span {
+    color: #8a949e;
+    font-size: 0.72rem;
+}
+
+.management-table-progress {
+    width: 190px;
+}
+
+@media (max-width: 1050px) {
+    .management-enrollment-filter-form {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .management-enrollment-filter-form
+    .management-filter-actions {
+        grid-column: 1 / -1;
+    }
+}
+
+@media (max-width: 650px) {
+    .management-enrollment-filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .management-enrollment-filter-form
+    .management-filter-actions {
+        grid-column: auto;
+    }
+}
+
+/* =========================================================
+   MANAGEMENT ENROLLMENT FORM
+========================================================= */
+
+.management-form-layout {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 1fr)
+        minmax(280px, 0.4fr);
+    align-items: start;
+    gap: 1rem;
+}
+
+.management-form-card,
+.management-form-information {
+    border: 1px solid #e1e6ea;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 8px 28px rgba(26, 39, 52, 0.04);
+}
+
+.management-form-card {
+    padding: 1.35rem;
+}
+
+.management-form {
+    display: flex;
+    flex-direction: column;
+    gap: 1.25rem;
+    padding-top: 1.25rem;
+}
+
+.management-form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.management-form-group label {
+    color: #3e4a55;
+    font-size: 0.8rem;
+    font-weight: 700;
+}
+
+.management-form-control {
+    width: 100%;
+    min-height: 46px;
+    padding: 0.7rem 0.8rem;
+    border: 1px solid #dbe1e6;
+    border-radius: 9px;
+    outline: none;
+    background: #ffffff;
+    color: #26313b;
+    font-size: 0.84rem;
+}
+
+.management-form-control:focus {
+    border-color: #1f6f5c;
+    box-shadow: 0 0 0 3px rgba(31, 111, 92, 0.1);
+}
+
+.management-form-help {
+    margin: 0;
+    color: #8a949e;
+    font-size: 0.73rem;
+}
+
+.management-field-error {
+    color: #a13232;
+    font-size: 0.75rem;
+    font-weight: 650;
+}
+
+.management-form-actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 0.75rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid #edf0f2;
+}
+
+.management-form-information {
+    padding: 1.35rem;
+}
+
+.management-form-information h3 {
+    margin-bottom: 0.65rem;
+    color: #2d3944;
+    font-size: 1.05rem;
+    font-weight: 750;
+}
+
+.management-form-information p {
+    color: #7e8994;
+    font-size: 0.79rem;
+    line-height: 1.6;
+}
+
+.management-form-information ul {
+    margin: 1rem 0 0;
+    padding-left: 1.2rem;
+    color: #64717c;
+    font-size: 0.77rem;
+    line-height: 1.7;
+}
+
+.management-message-error {
+    border-color: #edcaca;
+    background: #fdf1f1;
+    color: #a13232;
+}
+
+.management-message-error p {
+    margin: 0;
+}
+
+@media (max-width: 850px) {
+    .management-form-layout {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 575px) {
+    .management-form-actions {
+        align-items: stretch;
+        flex-direction: column-reverse;
+    }
+
+    .management-form-actions a,
+    .management-form-actions button {
         width: 100%;
     }
 }

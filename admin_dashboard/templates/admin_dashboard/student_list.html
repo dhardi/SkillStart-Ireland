@@ -1,0 +1,327 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    Students | SkillStart Management
+{% endblock %}
+
+{% block page_title %}
+    Students
+{% endblock %}
+
+{% block management_content %}
+
+<section class="management-page-heading">
+
+    <div>
+        <span class="management-section-label">
+            Student management
+        </span>
+
+        <h2>
+            Manage students
+        </h2>
+
+        <p>
+            Search student accounts, review their learning activity
+            and manage access to the platform.
+        </p>
+    </div>
+
+    <a
+        href="/admin/auth/user/add/"
+        class="management-primary-button"
+    >
+        + Add student
+    </a>
+
+</section>
+
+<section class="management-filter-panel">
+
+    <form
+        method="get"
+        class="management-student-filter-form"
+    >
+
+        <div class="management-filter-search">
+
+            <label for="student-search">
+                Search
+            </label>
+
+            <input
+                type="search"
+                id="student-search"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Name, username or email..."
+            >
+
+        </div>
+
+        <div class="management-filter-group">
+
+            <label for="student-status">
+                Account status
+            </label>
+
+            <select
+                id="student-status"
+                name="status"
+            >
+                <option value="">
+                    All students
+                </option>
+
+                <option
+                    value="active"
+                    {% if selected_status == "active" %}
+                        selected
+                    {% endif %}
+                >
+                    Active
+                </option>
+
+                <option
+                    value="inactive"
+                    {% if selected_status == "inactive" %}
+                        selected
+                    {% endif %}
+                >
+                    Inactive
+                </option>
+            </select>
+
+        </div>
+
+        <div class="management-filter-actions">
+
+            <button
+                type="submit"
+                class="management-primary-button"
+            >
+                Apply filters
+            </button>
+
+            {% if search_query or selected_status %}
+
+                <a
+                    href="{% url 'admin_dashboard:student_list' %}"
+                    class="management-secondary-button"
+                >
+                    Clear
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </form>
+
+</section>
+
+<section class="management-list-section">
+
+    <div class="management-list-heading">
+
+        <div>
+            <h3>
+                Student accounts
+            </h3>
+
+            <p>
+                {{ filtered_student_count }}
+                student{{ filtered_student_count|pluralize }}
+                found
+            </p>
+        </div>
+
+    </div>
+
+    {% if students %}
+
+        <div class="management-table-wrapper">
+
+            <table class="management-table management-student-table">
+
+                <thead>
+                    <tr>
+                        <th>
+                            Student
+                        </th>
+
+                        <th>
+                            Username
+                        </th>
+
+                        <th>
+                            Courses
+                        </th>
+
+                        <th>
+                            Lessons completed
+                        </th>
+
+                        <th>
+                            Courses completed
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Joined
+                        </th>
+
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for student in students %}
+
+                        <tr>
+
+                            <td>
+                                <div class="management-student-cell">
+
+                                    <div class="management-student-avatar">
+                                        {{ student.username|first|upper }}
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            {% if student.get_full_name %}
+                                                {{ student.get_full_name }}
+                                            {% else %}
+                                                {{ student.username }}
+                                            {% endif %}
+                                        </strong>
+
+                                        <span>
+                                            {% if student.email %}
+                                                {{ student.email }}
+                                            {% else %}
+                                                No email registered
+                                            {% endif %}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ student.username }}
+                            </td>
+
+                            <td>
+                                {{ student.enrollment_count }}
+                            </td>
+
+                            <td>
+                                {{ student.completed_lesson_count }}
+                            </td>
+
+                            <td>
+                                {{ student.completed_course_count }}
+                            </td>
+
+                            <td>
+
+                                {% if student.is_active %}
+
+                                    <span
+                                        class="
+                                            management-status
+                                            management-status-active
+                                        "
+                                    >
+                                        Active
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="
+                                            management-status
+                                            management-status-inactive
+                                        "
+                                    >
+                                        Inactive
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ student.date_joined|date:"d M Y" }}
+                            </td>
+
+                            <td>
+
+                                <div class="management-row-actions">
+
+                                    <a
+    href="{% url 'admin_dashboard:student_detail' student.id %}"
+>
+    View profile
+</a>
+
+                                    <a
+                                        href="/admin/accounts/enrollment/?user__id__exact={{ student.id }}"
+                                    >
+                                        Enrollments
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div
+            class="
+                management-empty-state
+                management-empty-state-bordered
+            "
+        >
+
+            <strong>
+                No students found
+            </strong>
+
+            <p>
+                Try changing the search text or account status.
+            </p>
+
+            <a
+                href="{% url 'admin_dashboard:student_list' %}"
+                class="management-secondary-button"
+            >
+                View all students
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

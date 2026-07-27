@@ -109,19 +109,28 @@
                 </span>
 
                 <a
-                    href="#"
-                    class="management-navigation-link"
-                >
-                    Students
-                </a>
+    href="{% url 'admin_dashboard:student_list' %}"
+    class="
+        management-navigation-link
+        {% if request.resolver_match.url_name == 'student_list' %}
+            active
+        {% endif %}
+    "
+>
+    Students
+</a>
 
                 <a
-                    href="#"
-                    class="management-navigation-link"
-                >
-                    Enrollments
-                </a>
-
+    href="{% url 'admin_dashboard:enrollment_list' %}"
+    class="
+        management-navigation-link
+        {% if request.resolver_match.url_name == 'enrollment_list' %}
+            active
+        {% endif %}
+    "
+>
+    Enrollments
+</a>
                 <a
                     href="#"
                     class="management-navigation-link"

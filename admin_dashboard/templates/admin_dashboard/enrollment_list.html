@@ -1,0 +1,405 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    Enrollments | SkillStart Management
+{% endblock %}
+
+{% block page_title %}
+    Enrollments
+{% endblock %}
+
+{% block management_content %}
+
+<section class="management-page-heading">
+
+    <div>
+        <span class="management-section-label">
+            Student access
+        </span>
+
+        <h2>
+            Manage enrollments
+        </h2>
+
+        <p>
+            Review course access, learning progress and
+            enrollment status for every student.
+        </p>
+    </div>
+
+    <a
+    href="{% url 'admin_dashboard:enrollment_create' %}"
+    class="management-primary-button"
+>
+    + Add enrollment
+</a>
+
+</section>
+
+<section class="management-filter-panel">
+
+    <form
+        method="get"
+        class="management-enrollment-filter-form"
+    >
+
+        <div class="management-filter-search">
+
+            <label for="enrollment-search">
+                Search
+            </label>
+
+            <input
+                type="search"
+                id="enrollment-search"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Student, email or course..."
+            >
+
+        </div>
+
+        <div class="management-filter-group">
+
+            <label for="enrollment-course">
+                Course
+            </label>
+
+            <select
+                id="enrollment-course"
+                name="course"
+            >
+
+                <option value="">
+                    All courses
+                </option>
+
+                {% for course in courses %}
+
+                    <option
+                        value="{{ course.slug }}"
+                        {% if selected_course == course.slug %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ course.title }}
+                    </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+        <div class="management-filter-group">
+
+            <label for="enrollment-status">
+                Status
+            </label>
+
+            <select
+                id="enrollment-status"
+                name="status"
+            >
+
+                <option value="">
+                    All statuses
+                </option>
+
+                <option
+                    value="in_progress"
+                    {% if selected_status == "in_progress" %}
+                        selected
+                    {% endif %}
+                >
+                    In progress
+                </option>
+
+                <option
+                    value="completed"
+                    {% if selected_status == "completed" %}
+                        selected
+                    {% endif %}
+                >
+                    Completed
+                </option>
+
+            </select>
+
+        </div>
+
+        <div class="management-filter-actions">
+
+            <button
+                type="submit"
+                class="management-primary-button"
+            >
+                Apply filters
+            </button>
+
+            {% if search_query or selected_course or selected_status %}
+
+                <a
+                    href="{% url 'admin_dashboard:enrollment_list' %}"
+                    class="management-secondary-button"
+                >
+                    Clear
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </form>
+
+</section>
+
+<section class="management-list-section">
+
+    <div class="management-list-heading">
+
+        <div>
+            <h3>
+                Course enrollments
+            </h3>
+
+            <p>
+                {{ filtered_enrollment_count }}
+                enrollment{{ filtered_enrollment_count|pluralize }}
+                found
+            </p>
+        </div>
+
+    </div>
+
+    {% if enrollments %}
+
+        <div class="management-table-wrapper">
+
+            <table
+                class="
+                    management-table
+                    management-enrollment-table
+                "
+            >
+
+                <thead>
+                    <tr>
+                        <th>
+                            Student
+                        </th>
+
+                        <th>
+                            Course
+                        </th>
+
+                        <th>
+                            Progress
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Started
+                        </th>
+
+                        <th>
+                            Completed
+                        </th>
+
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for enrollment in enrollments %}
+
+                        <tr>
+
+                            <td>
+
+                                <div class="management-student-cell">
+
+                                    <div class="management-student-avatar">
+                                        {{ enrollment.user.username|first|upper }}
+                                    </div>
+
+                                    <div>
+
+                                        <strong>
+                                            {% if enrollment.user.get_full_name %}
+                                                {{ enrollment.user.get_full_name }}
+                                            {% else %}
+                                                {{ enrollment.user.username }}
+                                            {% endif %}
+                                        </strong>
+
+                                        <span>
+                                            {{ enrollment.user.email|default:"No email" }}
+                                        </span>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="management-enrollment-course-cell">
+
+                                    <strong>
+                                        {{ enrollment.course.title }}
+                                    </strong>
+
+                                    <span>
+                                        {{ enrollment.course.category.name }}
+                                    </span>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                <div class="management-table-progress">
+
+                                    <div class="management-progress-heading">
+
+                                        <span>
+                                            {{ enrollment.completed_lessons }}
+                                            of
+                                            {{ enrollment.total_lessons }}
+                                        </span>
+
+                                        <strong>
+                                            {{ enrollment.progress_percentage }}%
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="management-progress-track">
+
+                                        <div
+                                            class="management-progress-fill"
+                                            style="width: {{ enrollment.progress_percentage }}%;"
+                                        ></div>
+
+                                    </div>
+
+                                </div>
+
+                            </td>
+
+                            <td>
+
+                                {% if enrollment.is_completed %}
+
+                                    <span
+                                        class="
+                                            management-status
+                                            management-status-published
+                                        "
+                                    >
+                                        Completed
+                                    </span>
+
+                                {% else %}
+
+                                    <span
+                                        class="
+                                            management-status
+                                            management-status-paid
+                                        "
+                                    >
+                                        In progress
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ enrollment.started_at|date:"d M Y" }}
+                            </td>
+
+                            <td>
+
+                                {% if enrollment.completed_at %}
+
+                                    {{ enrollment.completed_at|date:"d M Y" }}
+
+                                {% else %}
+
+                                    —
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+
+                                <div class="management-row-actions">
+
+                                    <a
+                                        href="{% url 'admin_dashboard:student_detail' enrollment.user.id %}"
+                                    >
+                                        Student
+                                    </a>
+
+                                    <a
+                                        href="/admin/accounts/enrollment/{{ enrollment.id }}/change/"
+                                    >
+                                        Manage
+                                    </a>
+
+                                </div>
+
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div
+            class="
+                management-empty-state
+                management-empty-state-bordered
+            "
+        >
+
+            <strong>
+                No enrollments found
+            </strong>
+
+            <p>
+                Try changing the search or filter options.
+            </p>
+
+            <a
+                href="{% url 'admin_dashboard:enrollment_list' %}"
+                class="management-secondary-button"
+            >
+                View all enrollments
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

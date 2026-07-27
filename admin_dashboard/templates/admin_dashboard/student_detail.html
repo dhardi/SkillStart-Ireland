@@ -1,0 +1,527 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    {{ student.username }} | SkillStart Management
+{% endblock %}
+
+{% block page_title %}
+    Student profile
+{% endblock %}
+
+{% block management_content %}
+
+<section class="management-student-profile-heading">
+
+    <div class="management-student-profile-main">
+
+        <div class="management-student-profile-avatar">
+            {{ student.username|first|upper }}
+        </div>
+
+        <div>
+
+            <a
+                href="{% url 'admin_dashboard:student_list' %}"
+                class="management-back-link"
+            >
+                ← Back to students
+            </a>
+
+            <h2>
+                {% if student.get_full_name %}
+                    {{ student.get_full_name }}
+                {% else %}
+                    {{ student.username }}
+                {% endif %}
+            </h2>
+
+            <p>
+                {{ student.email|default:"No email registered" }}
+            </p>
+
+        </div>
+
+    </div>
+
+    <div class="management-student-profile-actions">
+
+        <a
+            href="/admin/auth/user/{{ student.id }}/change/"
+            class="management-secondary-button"
+        >
+            Edit account
+        </a>
+
+    </div>
+
+</section>
+
+{% if messages %}
+
+    <div class="management-message-list">
+
+        {% for message in messages %}
+
+            <div
+                class="
+                    management-message
+                    management-message-{{ message.tags }}
+                "
+            >
+                {{ message }}
+            </div>
+
+        {% endfor %}
+
+    </div>
+
+{% endif %}
+
+<section class="management-statistics-grid">
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Enrollments
+        </span>
+
+        <strong>
+            {{ total_enrollments }}
+        </strong>
+
+        <p>
+            Courses assigned to this student
+        </p>
+
+    </article>
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Lessons completed
+        </span>
+
+        <strong>
+            {{ total_completed_lessons }}
+        </strong>
+
+        <p>
+            Completed learning activities
+        </p>
+
+    </article>
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Courses completed
+        </span>
+
+        <strong>
+            {{ completed_courses }}
+        </strong>
+
+        <p>
+            Completed course enrollments
+        </p>
+
+    </article>
+
+</section>
+
+<section class="management-student-profile-grid">
+
+    <article class="management-panel">
+
+        <div class="management-panel-header">
+
+            <div>
+                <span class="management-section-label">
+                    Account information
+                </span>
+
+                <h3>
+                    Student details
+                </h3>
+            </div>
+
+        </div>
+
+        <dl class="management-detail-list">
+
+            <div>
+                <dt>
+                    Username
+                </dt>
+
+                <dd>
+                    {{ student.username }}
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    First name
+                </dt>
+
+                <dd>
+                    {{ student.first_name|default:"Not provided" }}
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    Last name
+                </dt>
+
+                <dd>
+                    {{ student.last_name|default:"Not provided" }}
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    Email
+                </dt>
+
+                <dd>
+                    {{ student.email|default:"Not provided" }}
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    Joined
+                </dt>
+
+                <dd>
+                    {{ student.date_joined|date:"d M Y, H:i" }}
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    Last login
+                </dt>
+
+                <dd>
+                    {% if student.last_login %}
+                        {{ student.last_login|date:"d M Y, H:i" }}
+                    {% else %}
+                        Never logged in
+                    {% endif %}
+                </dd>
+            </div>
+
+            <div>
+                <dt>
+                    Account status
+                </dt>
+
+                <dd>
+
+                    {% if student.is_active %}
+
+                        <span
+                            class="
+                                management-status
+                                management-status-active
+                            "
+                        >
+                            Active
+                        </span>
+
+                    {% else %}
+
+                        <span
+                            class="
+                                management-status
+                                management-status-inactive
+                            "
+                        >
+                            Inactive
+                        </span>
+
+                    {% endif %}
+
+                </dd>
+            </div>
+
+        </dl>
+
+    </article>
+
+    <article class="management-panel">
+
+        <div class="management-panel-header">
+
+            <div>
+                <span class="management-section-label">
+                    Account access
+                </span>
+
+                <h3>
+                    Access controls
+                </h3>
+            </div>
+
+        </div>
+
+        <div class="management-account-control">
+
+            {% if student.is_active %}
+
+                <strong>
+                    This account is active
+                </strong>
+
+                <p>
+                    The student can sign in and access
+                    their available courses.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="deactivate"
+                    >
+
+                    <button
+                        type="submit"
+                        class="management-danger-button"
+                    >
+                        Deactivate account
+                    </button>
+                </form>
+
+            {% else %}
+
+                <strong>
+                    This account is inactive
+                </strong>
+
+                <p>
+                    The student cannot currently sign in
+                    to the platform.
+                </p>
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="activate"
+                    >
+
+                    <button
+                        type="submit"
+                        class="management-primary-button"
+                    >
+                        Activate account
+                    </button>
+                </form>
+
+            {% endif %}
+
+        </div>
+
+        <div class="management-account-control">
+
+            <strong>
+                Password assistance
+            </strong>
+
+            <p>
+                Password reset by email will be added
+                in the authentication phase.
+            </p>
+
+            <button
+                type="button"
+                class="management-secondary-button"
+                disabled
+            >
+                Send password reset
+            </button>
+
+        </div>
+
+    </article>
+
+</section>
+
+<section class="management-list-section">
+
+    <div class="management-list-heading">
+
+        <div>
+            <h3>
+                Course enrollments
+            </h3>
+
+            <p>
+                Review this student's course access and progress.
+            </p>
+        </div>
+
+        <a
+    href="
+        {% url 'admin_dashboard:enrollment_create' %}
+        ?student={{ student.id }}
+    "
+    class="management-primary-button"
+>
+    + Add enrollment
+</a>
+
+    </div>
+
+    {% if enrollments %}
+
+        <div class="management-enrollment-card-list">
+
+            {% for enrollment in enrollments %}
+
+                <article class="management-enrollment-card">
+
+                    <div class="management-enrollment-course">
+
+                        <div class="management-course-image">
+
+                            {% if enrollment.course.image %}
+
+                                <img
+                                    src="{{ enrollment.course.image.url }}"
+                                    alt="{{ enrollment.course.title }}"
+                                >
+
+                            {% else %}
+
+                                <span>
+                                    {{ enrollment.course.title|first|upper }}
+                                </span>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div>
+
+                            <span class="management-section-label">
+                                {{ enrollment.course.category.name }}
+                            </span>
+
+                            <h4>
+                                {{ enrollment.course.title }}
+                            </h4>
+
+                            <p>
+                                Enrolled
+                                {{ enrollment.started_at|date:"d M Y" }}
+                            </p>
+
+                        </div>
+
+                    </div>
+
+                    <div class="management-enrollment-progress">
+
+                        <div class="management-progress-heading">
+
+                            <span>
+                                {{ enrollment.completed_lessons }}
+                                of
+                                {{ enrollment.total_lessons }}
+                                lessons
+                            </span>
+
+                            <strong>
+                                {{ enrollment.progress_percentage }}%
+                            </strong>
+
+                        </div>
+
+                        <div class="management-progress-track">
+
+                            <div
+                                class="management-progress-fill"
+                                style="width: {{ enrollment.progress_percentage }}%;"
+                            ></div>
+
+                        </div>
+
+                    </div>
+
+                    <div class="management-enrollment-status">
+
+                        {% if enrollment.is_completed %}
+
+                            <span
+                                class="
+                                    management-status
+                                    management-status-published
+                                "
+                            >
+                                Completed
+                            </span>
+
+                        {% else %}
+
+                            <span
+                                class="
+                                    management-status
+                                    management-status-paid
+                                "
+                            >
+                                In progress
+                            </span>
+
+                        {% endif %}
+
+                    </div>
+
+                    <div class="management-row-actions">
+
+                        <a
+                            href="/admin/accounts/enrollment/{{ enrollment.id }}/change/"
+                        >
+                            Manage
+                        </a>
+
+                    </div>
+
+                </article>
+
+            {% endfor %}
+
+        </div>
+
+    {% else %}
+
+        <div
+            class="
+                management-empty-state
+                management-empty-state-bordered
+            "
+        >
+
+            <strong>
+                No enrollments yet
+            </strong>
+
+            <p>
+                This student has not been enrolled
+                in any courses.
+            </p>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

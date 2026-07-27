@@ -1,0 +1,197 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    Add enrollment | SkillStart Management
+{% endblock %}
+
+{% block page_title %}
+    Add enrollment
+{% endblock %}
+
+{% block management_content %}
+
+<section class="management-page-heading">
+
+    <div>
+
+        <a
+            href="{% url 'admin_dashboard:enrollment_list' %}"
+            class="management-back-link"
+        >
+            ← Back to enrollments
+        </a>
+
+        <span class="management-section-label">
+            Student access
+        </span>
+
+        <h2>
+            Create enrollment
+        </h2>
+
+        <p>
+            Select a student and a published course
+            to grant access to the course.
+        </p>
+
+    </div>
+
+</section>
+
+<section class="management-form-layout">
+
+    <div class="management-form-card">
+
+        <div class="management-panel-header">
+
+            <div>
+                <span class="management-section-label">
+                    Enrollment details
+                </span>
+
+                <h3>
+                    Student and course
+                </h3>
+            </div>
+
+        </div>
+
+        <form
+            method="post"
+            class="management-form"
+            novalidate
+        >
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+
+                <div
+                    class="
+                        management-message
+                        management-message-error
+                    "
+                >
+
+                    {% for error in form.non_field_errors %}
+                        <p>
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            {% endif %}
+
+            <div class="management-form-group">
+
+                <label for="{{ form.user.id_for_label }}">
+                    {{ form.user.label }}
+                </label>
+
+                {{ form.user }}
+
+                {% if form.user.errors %}
+
+                    <div class="management-field-error">
+
+                        {% for error in form.user.errors %}
+                            {{ error }}
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+                <p class="management-form-help">
+                    Only active student accounts are available.
+                </p>
+
+            </div>
+
+            <div class="management-form-group">
+
+                <label for="{{ form.course.id_for_label }}">
+                    {{ form.course.label }}
+                </label>
+
+                {{ form.course }}
+
+                {% if form.course.errors %}
+
+                    <div class="management-field-error">
+
+                        {% for error in form.course.errors %}
+                            {{ error }}
+                        {% endfor %}
+
+                    </div>
+
+                {% endif %}
+
+                <p class="management-form-help">
+                    Only published courses can be assigned.
+                </p>
+
+            </div>
+
+            <div class="management-form-actions">
+
+                <a
+                    href="{% url 'admin_dashboard:enrollment_list' %}"
+                    class="management-secondary-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="management-primary-button"
+                >
+                    Create enrollment
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+    <aside class="management-form-information">
+
+        <span class="management-section-label">
+            What happens next?
+        </span>
+
+        <h3>
+            Course access
+        </h3>
+
+        <p>
+            After the enrollment is created, the course
+            will appear in the student's dashboard.
+        </p>
+
+        <ul>
+            <li>
+                The enrollment starts immediately.
+            </li>
+
+            <li>
+                Course progress begins at zero.
+            </li>
+
+            <li>
+                The student can access published lessons.
+            </li>
+
+            <li>
+                Course completion remains controlled by
+                assessment and certificate rules.
+            </li>
+        </ul>
+
+    </aside>
+
+</section>
+
+{% endblock %}

@@ -191,7 +191,13 @@
                         <th>
                             Enrollments
                         </th>
+<th>
+    Access
+</th>
 
+<th>
+    Price
+</th>
                         <th>
                             Status
                         </th>
@@ -258,7 +264,51 @@
                             <td>
                                 {{ course.enrollment_count }}
                             </td>
+                            <td>
 
+    {% if course.is_free %}
+
+        <span
+            class="
+                management-status
+                management-status-free
+            "
+        >
+            Free
+        </span>
+
+    {% else %}
+
+        <span
+            class="
+                management-status
+                management-status-paid
+            "
+        >
+            Paid
+        </span>
+
+    {% endif %}
+
+</td>
+
+<td>
+
+    {% if course.is_free %}
+
+        <strong class="management-course-price">
+            Free
+        </strong>
+
+    {% else %}
+
+        <strong class="management-course-price">
+            €{{ course.price|floatformat:2 }}
+        </strong>
+
+    {% endif %}
+
+</td>
                             <td>
 
                                 {% if course.is_published %}

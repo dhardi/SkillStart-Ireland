@@ -19,17 +19,51 @@ class Course(models.Model):
         on_delete=models.CASCADE,
         related_name="courses",
     )
-    title = models.CharField(max_length=150)
+
+    title = models.CharField(
+        max_length=150,
+    )
+
     description = models.TextField()
-    slug = models.SlugField(max_length=170, unique=True)
+
+    slug = models.SlugField(
+        max_length=170,
+        unique=True,
+    )
+
     image = models.ImageField(
         upload_to="courses/",
         blank=True,
         null=True,
     )
-    is_published = models.BooleanField(default=False)
-    created_at = models.DateTimeField(auto_now_add=True)
 
+    is_free = models.BooleanField(
+        default=True,
+    )
+
+    price = models.DecimalField(
+        max_digits=8,
+        decimal_places=2,
+        default=0,
+    )
+
+    currency = models.CharField(
+        max_length=3,
+        default="EUR",
+    )
+
+    is_published = models.BooleanField(
+        default=False,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    def __str__(self):
+        return self.title
+
+    
     def __str__(self):
         return self.title
         
