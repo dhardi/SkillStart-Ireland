@@ -1,0 +1,338 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    Courses | SkillStart Management
+{% endblock %}
+
+{% block page_title %}
+    Courses
+{% endblock %}
+
+{% block management_content %}
+
+<section class="management-page-heading">
+
+    <div>
+        <span class="management-section-label">
+            Content management
+        </span>
+
+        <h2>
+            Manage courses
+        </h2>
+
+        <p>
+            Search, review and manage the courses available
+            on SkillStart Ireland.
+        </p>
+    </div>
+
+    <a
+        href="/admin/courses/course/add/"
+        class="management-primary-button"
+    >
+        + Create course
+    </a>
+
+</section>
+
+<section class="management-filter-panel">
+
+    <form
+        method="get"
+        class="management-filter-form"
+    >
+
+        <div class="management-filter-search">
+
+            <label for="course-search">
+                Search
+            </label>
+
+            <input
+                type="search"
+                id="course-search"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Search courses..."
+            >
+
+        </div>
+
+        <div class="management-filter-group">
+
+            <label for="course-category">
+                Category
+            </label>
+
+            <select
+                id="course-category"
+                name="category"
+            >
+                <option value="">
+                    All categories
+                </option>
+
+                {% for category in categories %}
+
+                    <option
+                        value="{{ category.slug }}"
+                        {% if selected_category == category.slug %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ category.name }}
+                    </option>
+
+                {% endfor %}
+            </select>
+
+        </div>
+
+        <div class="management-filter-group">
+
+            <label for="course-status">
+                Status
+            </label>
+
+            <select
+                id="course-status"
+                name="status"
+            >
+                <option value="">
+                    All statuses
+                </option>
+
+                <option
+                    value="published"
+                    {% if selected_status == "published" %}
+                        selected
+                    {% endif %}
+                >
+                    Published
+                </option>
+
+                <option
+                    value="draft"
+                    {% if selected_status == "draft" %}
+                        selected
+                    {% endif %}
+                >
+                    Draft
+                </option>
+            </select>
+
+        </div>
+
+        <div class="management-filter-actions">
+
+            <button
+                type="submit"
+                class="management-primary-button"
+            >
+                Apply filters
+            </button>
+
+            {% if search_query or selected_category or selected_status %}
+
+                <a
+                    href="{% url 'admin_dashboard:course_list' %}"
+                    class="management-secondary-button"
+                >
+                    Clear
+                </a>
+
+            {% endif %}
+
+        </div>
+
+    </form>
+
+</section>
+
+<section class="management-list-section">
+
+    <div class="management-list-heading">
+
+        <div>
+            <h3>
+                All courses
+            </h3>
+
+            <p>
+                {{ filtered_course_count }}
+                course{{ filtered_course_count|pluralize }}
+                found
+            </p>
+        </div>
+
+    </div>
+
+    {% if courses %}
+
+        <div class="management-table-wrapper">
+
+            <table class="management-table">
+
+                <thead>
+                    <tr>
+                        <th>
+                            Course
+                        </th>
+
+                        <th>
+                            Category
+                        </th>
+
+                        <th>
+                            Lessons
+                        </th>
+
+                        <th>
+                            Enrollments
+                        </th>
+
+                        <th>
+                            Status
+                        </th>
+
+                        <th>
+                            Created
+                        </th>
+
+                        <th>
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for course in courses %}
+
+                        <tr>
+
+                            <td>
+                                <div class="management-course-cell">
+
+                                    <div class="management-course-image">
+
+                                        {% if course.image %}
+
+                                            <img
+                                                src="{{ course.image.url }}"
+                                                alt="{{ course.title }}"
+                                            >
+
+                                        {% else %}
+
+                                            <span>
+                                                {{ course.title|first|upper }}
+                                            </span>
+
+                                        {% endif %}
+
+                                    </div>
+
+                                    <div>
+                                        <strong>
+                                            {{ course.title }}
+                                        </strong>
+
+                                        <span>
+                                            {{ course.description|truncatechars:70 }}
+                                        </span>
+                                    </div>
+
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ course.category.name }}
+                            </td>
+
+                            <td>
+                                {{ course.lesson_count }}
+                            </td>
+
+                            <td>
+                                {{ course.enrollment_count }}
+                            </td>
+
+                            <td>
+
+                                {% if course.is_published %}
+
+                                    <span class="management-status management-status-published">
+                                        Published
+                                    </span>
+
+                                {% else %}
+
+                                    <span class="management-status management-status-draft">
+                                        Draft
+                                    </span>
+
+                                {% endif %}
+
+                            </td>
+
+                            <td>
+                                {{ course.created_at|date:"d M Y" }}
+                            </td>
+
+                            <td>
+                                <div class="management-row-actions">
+
+                                    <a
+                                        href="{% url 'courses:course_detail' course.slug %}"
+                                        target="_blank"
+                                    >
+                                        Preview
+                                    </a>
+
+                                    <a
+                                        href="/admin/courses/course/{{ course.id }}/change/"
+                                    >
+                                        Edit
+                                    </a>
+
+                                </div>
+                            </td>
+
+                        </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    {% else %}
+
+        <div class="management-empty-state management-empty-state-bordered">
+
+            <strong>
+                No courses found
+            </strong>
+
+            <p>
+                Try changing the search or filter options.
+            </p>
+
+            <a
+                href="{% url 'admin_dashboard:course_list' %}"
+                class="management-secondary-button"
+            >
+                View all courses
+            </a>
+
+        </div>
+
+    {% endif %}
+
+</section>
+
+{% endblock %}

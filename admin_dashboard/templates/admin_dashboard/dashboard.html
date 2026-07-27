@@ -1,0 +1,224 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    Dashboard | SkillStart Management
+{% endblock %}
+
+{% block page_title %}
+    Dashboard
+{% endblock %}
+
+{% block management_content %}
+
+<section class="management-welcome">
+
+    <div>
+        <span class="management-section-label">
+            Overview
+        </span>
+
+        <h2>
+            Welcome back,
+            {{ request.user.first_name|default:request.user.username }}.
+        </h2>
+
+        <p>
+            Here is an overview of the current activity
+            on SkillStart Ireland.
+        </p>
+    </div>
+
+    <div class="management-quick-actions">
+
+        <a
+            href="/admin/courses/course/add/"
+            class="management-primary-button"
+        >
+            + Create course
+        </a>
+
+        <a
+            href="/admin/courses/lesson/add/"
+            class="management-secondary-button"
+        >
+            + Create lesson
+        </a>
+
+    </div>
+
+</section>
+
+<section class="management-statistics-grid">
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Students
+        </span>
+
+        <strong>
+            {{ total_students }}
+        </strong>
+
+        <p>
+            Registered student accounts
+        </p>
+
+    </article>
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Courses
+        </span>
+
+        <strong>
+            {{ total_courses }}
+        </strong>
+
+        <p>
+            {{ published_courses }} published
+        </p>
+
+    </article>
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Lessons
+        </span>
+
+        <strong>
+            {{ total_lessons }}
+        </strong>
+
+        <p>
+            Lessons created
+        </p>
+
+    </article>
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Enrollments
+        </span>
+
+        <strong>
+            {{ total_enrollments }}
+        </strong>
+
+        <p>
+            Total course enrollments
+        </p>
+
+    </article>
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Lessons completed
+        </span>
+
+        <strong>
+            {{ completed_lessons }}
+        </strong>
+
+        <p>
+            Student lesson completions
+        </p>
+
+    </article>
+
+    <article class="management-stat-card">
+
+        <span class="management-stat-label">
+            Courses completed
+        </span>
+
+        <strong>
+            {{ completed_courses }}
+        </strong>
+
+        <p>
+            Completed enrollments
+        </p>
+
+    </article>
+
+</section>
+
+<section class="management-placeholder-grid">
+
+    <article class="management-panel">
+
+        <div class="management-panel-header">
+            <div>
+                <span class="management-section-label">
+                    Activity
+                </span>
+
+                <h3>
+                    Recent activity
+                </h3>
+            </div>
+        </div>
+
+        <div class="management-empty-state">
+
+            <strong>
+                Activity feed coming next
+            </strong>
+
+            <p>
+                Recent enrollments and completed lessons
+                will appear in this area.
+            </p>
+
+        </div>
+
+    </article>
+
+    <article class="management-panel">
+
+        <div class="management-panel-header">
+            <div>
+                <span class="management-section-label">
+                    Quick access
+                </span>
+
+                <h3>
+                    Management tools
+                </h3>
+            </div>
+        </div>
+
+        <div class="management-tool-list">
+
+            <a href="/admin/courses/course/">
+                Manage courses
+                <span>→</span>
+            </a>
+
+            <a href="/admin/courses/lesson/">
+                Manage lessons
+                <span>→</span>
+            </a>
+
+            <a href="/admin/accounts/enrollment/">
+                Manage enrollments
+                <span>→</span>
+            </a>
+
+            <a href="/admin/auth/user/">
+                Manage users
+                <span>→</span>
+            </a>
+
+        </div>
+
+    </article>
+
+</section>
+
+{% endblock %}

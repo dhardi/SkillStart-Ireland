@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "core",
     "courses",
     "accounts",
+    "admin_dashboard",
 ]
 
 MIDDLEWARE = [

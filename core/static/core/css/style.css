@@ -5089,3 +5089,708 @@ body {
         font-size: 1.8rem;
     }
 }
+
+/* =========================================================
+   MANAGEMENT DASHBOARD
+========================================================= */
+
+.management-body {
+    min-height: 100vh;
+    margin: 0;
+    background: #f4f6f8;
+    color: #17212b;
+}
+
+.management-layout {
+    display: grid;
+    grid-template-columns: 270px minmax(0, 1fr);
+    min-height: 100vh;
+}
+
+.management-sidebar {
+    display: flex;
+    flex-direction: column;
+    position: sticky;
+    top: 0;
+    height: 100vh;
+    padding: 1.5rem;
+    background: #17212b;
+    color: #ffffff;
+}
+
+.management-sidebar-header {
+    padding-bottom: 1.5rem;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.management-brand {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    color: #ffffff;
+    font-size: 1.05rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.management-brand:hover {
+    color: #ffffff;
+}
+
+.management-brand-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 11px;
+    background: #1f6f5c;
+    color: #ffffff;
+    font-weight: 850;
+}
+
+.management-brand-label {
+    display: block;
+    margin-top: 0.7rem;
+    margin-left: 3.25rem;
+    color: rgba(255, 255, 255, 0.48);
+    font-size: 0.7rem;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.management-navigation {
+    display: flex;
+    flex: 1;
+    flex-direction: column;
+    gap: 0.25rem;
+    margin-top: 1.5rem;
+}
+
+.management-navigation-title {
+    margin: 1.4rem 0 0.45rem;
+    padding: 0 0.75rem;
+    color: rgba(255, 255, 255, 0.38);
+    font-size: 0.67rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.management-navigation-link {
+    display: block;
+    padding: 0.75rem;
+    border-radius: 9px;
+    color: rgba(255, 255, 255, 0.7);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+    transition:
+        background 0.2s ease,
+        color 0.2s ease;
+}
+
+.management-navigation-link:hover,
+.management-navigation-link.active {
+    background: rgba(255, 255, 255, 0.09);
+    color: #ffffff;
+}
+
+.management-navigation-link.active {
+    border-left: 3px solid #41a78e;
+}
+
+.management-sidebar-footer {
+    display: flex;
+    flex-direction: column;
+    gap: 0.65rem;
+    padding-top: 1.25rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.management-site-link,
+.management-logout-button {
+    display: block;
+    width: 100%;
+    padding: 0.7rem 0.8rem;
+    border: 0;
+    border-radius: 9px;
+    background: transparent;
+    color: rgba(255, 255, 255, 0.65);
+    font-size: 0.82rem;
+    text-align: left;
+    text-decoration: none;
+}
+
+.management-site-link:hover,
+.management-logout-button:hover {
+    background: rgba(255, 255, 255, 0.08);
+    color: #ffffff;
+}
+
+.management-main {
+    min-width: 0;
+}
+
+.management-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    min-height: 96px;
+    padding: 1.5rem 2rem;
+    border-bottom: 1px solid #e2e7eb;
+    background: #ffffff;
+}
+
+.management-header-label,
+.management-section-label {
+    display: inline-block;
+    margin-bottom: 0.3rem;
+    color: #1f6f5c;
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.management-header h1 {
+    margin: 0;
+    color: #17212b;
+    font-size: 1.55rem;
+    font-weight: 770;
+}
+
+.management-user {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.management-user-avatar {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: #e1f0ec;
+    color: #1f6f5c;
+    font-weight: 800;
+}
+
+.management-user strong,
+.management-user span {
+    display: block;
+}
+
+.management-user strong {
+    color: #29333d;
+    font-size: 0.83rem;
+}
+
+.management-user span {
+    color: #8a949f;
+    font-size: 0.72rem;
+}
+
+.management-content {
+    padding: 2rem;
+}
+
+.management-welcome {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 2rem;
+}
+
+.management-welcome h2 {
+    margin-bottom: 0.45rem;
+    color: #17212b;
+    font-size: 1.8rem;
+    font-weight: 770;
+}
+
+.management-welcome p {
+    max-width: 650px;
+    margin: 0;
+    color: #74808c;
+}
+
+.management-quick-actions {
+    display: flex;
+    gap: 0.75rem;
+    flex-shrink: 0;
+}
+
+.management-primary-button,
+.management-secondary-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 42px;
+    padding: 0.65rem 1rem;
+    border-radius: 9px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.management-primary-button {
+    background: #1f6f5c;
+    color: #ffffff;
+}
+
+.management-primary-button:hover {
+    background: #185847;
+    color: #ffffff;
+}
+
+.management-secondary-button {
+    border: 1px solid #dce2e7;
+    background: #ffffff;
+    color: #33404c;
+}
+
+.management-secondary-button:hover {
+    border-color: #bfc9d1;
+    color: #17212b;
+}
+
+.management-statistics-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.management-stat-card,
+.management-panel {
+    border: 1px solid #e1e6ea;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 8px 28px rgba(26, 39, 52, 0.04);
+}
+
+.management-stat-card {
+    padding: 1.35rem;
+}
+
+.management-stat-label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: #7b8691;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.management-stat-card strong {
+    display: block;
+    margin-bottom: 0.25rem;
+    color: #17212b;
+    font-size: 2rem;
+    font-weight: 780;
+}
+
+.management-stat-card p {
+    margin: 0;
+    color: #9099a2;
+    font-size: 0.78rem;
+}
+
+.management-placeholder-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(300px, 0.6fr);
+    gap: 1rem;
+}
+
+.management-panel {
+    padding: 1.35rem;
+}
+
+.management-panel-header {
+    padding-bottom: 1rem;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.management-panel-header h3 {
+    margin: 0;
+    color: #26313b;
+    font-size: 1.05rem;
+    font-weight: 750;
+}
+
+.management-empty-state {
+    padding: 3rem 1rem;
+    text-align: center;
+}
+
+.management-empty-state strong {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #3d4853;
+    font-size: 0.9rem;
+}
+
+.management-empty-state p {
+    max-width: 420px;
+    margin: 0 auto;
+    color: #929ba4;
+    font-size: 0.8rem;
+}
+
+.management-tool-list {
+    display: flex;
+    flex-direction: column;
+}
+
+.management-tool-list a {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.95rem 0;
+    border-bottom: 1px solid #edf0f2;
+    color: #46525d;
+    font-size: 0.83rem;
+    font-weight: 650;
+    text-decoration: none;
+}
+
+.management-tool-list a:last-child {
+    border-bottom: 0;
+}
+
+.management-tool-list a:hover {
+    color: #1f6f5c;
+}
+
+@media (max-width: 1100px) {
+    .management-statistics-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .management-placeholder-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 800px) {
+    .management-layout {
+        grid-template-columns: 1fr;
+    }
+
+    .management-sidebar {
+        position: static;
+        height: auto;
+    }
+
+    .management-navigation {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    .management-navigation-title {
+        grid-column: 1 / -1;
+    }
+
+    .management-welcome {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+}
+
+@media (max-width: 575px) {
+    .management-header {
+        align-items: flex-start;
+        flex-direction: column;
+        gap: 1rem;
+        padding: 1.25rem;
+    }
+
+    .management-content {
+        padding: 1.25rem;
+    }
+
+    .management-statistics-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .management-quick-actions {
+        width: 100%;
+        flex-direction: column;
+    }
+
+    .management-primary-button,
+    .management-secondary-button {
+        width: 100%;
+    }
+}
+/* =========================================================
+   MANAGEMENT COURSE LIST
+========================================================= */
+
+.management-page-heading {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+}
+
+.management-page-heading h2 {
+    margin-bottom: 0.4rem;
+    color: #17212b;
+    font-size: 1.8rem;
+    font-weight: 770;
+}
+
+.management-page-heading p {
+    max-width: 650px;
+    margin: 0;
+    color: #74808c;
+}
+
+.management-filter-panel {
+    margin-bottom: 1.5rem;
+    padding: 1.25rem;
+    border: 1px solid #e1e6ea;
+    border-radius: 14px;
+    background: #ffffff;
+}
+
+.management-filter-form {
+    display: grid;
+    grid-template-columns:
+        minmax(240px, 1.5fr)
+        minmax(170px, 0.7fr)
+        minmax(150px, 0.6fr)
+        auto;
+    align-items: end;
+    gap: 1rem;
+}
+
+.management-filter-search,
+.management-filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 0.45rem;
+}
+
+.management-filter-form label {
+    color: #4d5965;
+    font-size: 0.76rem;
+    font-weight: 700;
+}
+
+.management-filter-form input,
+.management-filter-form select {
+    width: 100%;
+    min-height: 43px;
+    padding: 0.65rem 0.8rem;
+    border: 1px solid #dbe1e6;
+    border-radius: 9px;
+    outline: none;
+    background: #ffffff;
+    color: #26313b;
+    font-size: 0.83rem;
+}
+
+.management-filter-form input:focus,
+.management-filter-form select:focus {
+    border-color: #1f6f5c;
+    box-shadow: 0 0 0 3px rgba(31, 111, 92, 0.1);
+}
+
+.management-filter-actions {
+    display: flex;
+    gap: 0.6rem;
+}
+
+.management-list-section {
+    overflow: hidden;
+    border: 1px solid #e1e6ea;
+    border-radius: 14px;
+    background: #ffffff;
+    box-shadow: 0 8px 28px rgba(26, 39, 52, 0.04);
+}
+
+.management-list-heading {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.25rem;
+    border-bottom: 1px solid #edf0f2;
+}
+
+.management-list-heading h3 {
+    margin-bottom: 0.2rem;
+    color: #26313b;
+    font-size: 1.05rem;
+    font-weight: 750;
+}
+
+.management-list-heading p {
+    margin: 0;
+    color: #8b959f;
+    font-size: 0.77rem;
+}
+
+.management-table-wrapper {
+    overflow-x: auto;
+}
+
+.management-table {
+    width: 100%;
+    min-width: 1000px;
+    border-collapse: collapse;
+}
+
+.management-table th {
+    padding: 0.85rem 1rem;
+    border-bottom: 1px solid #e6ebee;
+    background: #f8f9fa;
+    color: #697580;
+    font-size: 0.7rem;
+    font-weight: 750;
+    letter-spacing: 0.05em;
+    text-align: left;
+    text-transform: uppercase;
+    white-space: nowrap;
+}
+
+.management-table td {
+    padding: 1rem;
+    border-bottom: 1px solid #edf0f2;
+    color: #52606c;
+    font-size: 0.8rem;
+    vertical-align: middle;
+}
+
+.management-table tbody tr:last-child td {
+    border-bottom: 0;
+}
+
+.management-table tbody tr:hover {
+    background: #fafcfc;
+}
+
+.management-course-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.8rem;
+    min-width: 280px;
+}
+
+.management-course-image {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 54px;
+    height: 42px;
+    flex-shrink: 0;
+    overflow: hidden;
+    border-radius: 8px;
+    background: #e1f0ec;
+    color: #1f6f5c;
+    font-weight: 800;
+}
+
+.management-course-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.management-course-cell strong,
+.management-course-cell span {
+    display: block;
+}
+
+.management-course-cell strong {
+    margin-bottom: 0.2rem;
+    color: #28343f;
+    font-size: 0.83rem;
+}
+
+.management-course-cell span {
+    max-width: 310px;
+    color: #8a949e;
+    font-size: 0.72rem;
+    line-height: 1.45;
+}
+
+.management-status {
+    display: inline-flex;
+    align-items: center;
+    padding: 0.32rem 0.55rem;
+    border-radius: 999px;
+    font-size: 0.68rem;
+    font-weight: 750;
+}
+
+.management-status-published {
+    background: #e4f3ee;
+    color: #17614f;
+}
+
+.management-status-draft {
+    background: #f0f1f3;
+    color: #68737e;
+}
+
+.management-row-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+}
+
+.management-row-actions a {
+    color: #1f6f5c;
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-decoration: none;
+}
+
+.management-row-actions a:hover {
+    text-decoration: underline;
+}
+
+.management-empty-state-bordered {
+    margin: 1.25rem;
+    border: 1px dashed #d7dde2;
+    border-radius: 12px;
+}
+
+.management-empty-state-bordered a {
+    margin-top: 1rem;
+}
+
+@media (max-width: 1050px) {
+    .management-filter-form {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 700px) {
+    .management-page-heading {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .management-filter-form {
+        grid-template-columns: 1fr;
+    }
+
+    .management-filter-actions {
+        flex-direction: column;
+    }
+
+    .management-filter-actions a,
+    .management-filter-actions button,
+    .management-page-heading > a {
+        width: 100%;
+    }
+}

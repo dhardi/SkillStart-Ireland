@@ -9,7 +9,12 @@ urlpatterns = [
     path("", include("core.urls")),
     path("courses/", include("courses.urls")),
     path("accounts/", include("accounts.urls")),
+    path(
+        "management/",
+        include("admin_dashboard.urls"),
+    ),
 ]
+
 
 if settings.DEBUG:
     urlpatterns += static(
