@@ -36,18 +36,9 @@
             <div class="management-sidebar-header">
 
                 <a
-    href="{% url 'admin_dashboard:dashboard' %}"
-    class="
-        management-navigation-link
-        {% if request.resolver_match.url_name == 'dashboard' %}
-            active
-        {% endif %}
-    "
->
-    <span>
-        Dashboard
-    </span>
-</a>
+                    href="{% url 'admin_dashboard:dashboard' %}"
+                    class="management-brand"
+                >
                     <span class="management-brand-icon">
                         S
                     </span>
@@ -67,11 +58,14 @@
 
                 <a
                     href="{% url 'admin_dashboard:dashboard' %}"
-                    class="management-navigation-link active"
+                    class="
+                        management-navigation-link
+                        {% if request.resolver_match.url_name == 'dashboard' %}
+                            active
+                        {% endif %}
+                    "
                 >
-                    <span>
-                        Dashboard
-                    </span>
+                    Dashboard
                 </a>
 
                 <span class="management-navigation-title">
@@ -79,20 +73,25 @@
                 </span>
 
                 <a
-    href="{% url 'admin_dashboard:course_list' %}"
-    class="
-        management-navigation-link
-        {% if request.resolver_match.url_name == 'course_list' %}
-            active
-        {% endif %}
-    "
->
-    Courses
-</a>
+                    href="{% url 'admin_dashboard:course_list' %}"
+                    class="
+                        management-navigation-link
+                        {% if request.resolver_match.url_name == 'course_list' %}
+                            active
+                        {% endif %}
+                    "
+                >
+                    Courses
+                </a>
 
                 <a
-                    href="#"
-                    class="management-navigation-link"
+                    href="{% url 'admin_dashboard:lesson_list' %}"
+                    class="
+                        management-navigation-link
+                        {% if request.resolver_match.url_name == 'lesson_list' or request.resolver_match.url_name == 'lesson_create' or request.resolver_match.url_name == 'lesson_update' or request.resolver_match.url_name == 'lesson_delete' %}
+                            active
+                        {% endif %}
+                    "
                 >
                     Lessons
                 </a>
@@ -109,33 +108,27 @@
                 </span>
 
                 <a
-    href="{% url 'admin_dashboard:student_list' %}"
-    class="
-        management-navigation-link
-        {% if request.resolver_match.url_name == 'student_list' %}
-            active
-        {% endif %}
-    "
->
-    Students
-</a>
+                    href="{% url 'admin_dashboard:student_list' %}"
+                    class="
+                        management-navigation-link
+                        {% if request.resolver_match.url_name == 'student_list' or request.resolver_match.url_name == 'student_detail' %}
+                            active
+                        {% endif %}
+                    "
+                >
+                    Students
+                </a>
 
                 <a
-    href="{% url 'admin_dashboard:enrollment_list' %}"
-    class="
-        management-navigation-link
-        {% if request.resolver_match.url_name == 'enrollment_list' %}
-            active
-        {% endif %}
-    "
->
-    Enrollments
-</a>
-                <a
-                    href="#"
-                    class="management-navigation-link"
+                    href="{% url 'admin_dashboard:enrollment_list' %}"
+                    class="
+                        management-navigation-link
+                        {% if request.resolver_match.url_name == 'enrollment_list' or request.resolver_match.url_name == 'enrollment_create' %}
+                            active
+                        {% endif %}
+                    "
                 >
-                    Progress
+                    Enrollments
                 </a>
 
             </nav>
@@ -204,8 +197,24 @@
             </header>
 
             <div class="management-content">
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div
+                            class="alert alert-{{ message.tags|default:'info' }}"
+                            role="alert"
+                        >
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                {% block admin_content %}
+                {% endblock %}
+
                 {% block management_content %}
                 {% endblock %}
+
             </div>
 
         </main>

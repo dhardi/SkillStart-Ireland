@@ -1,0 +1,254 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block admin_title %}
+    Lessons
+{% endblock %}
+
+{% block admin_content %}
+
+<div class="management-page-header">
+    <div>
+        <p class="management-page-eyebrow">
+            Course management
+        </p>
+
+        <h1 class="management-page-title">
+            Lessons
+        </h1>
+
+        <p class="management-page-description">
+            Create, organize and manage the lessons available in each course.
+        </p>
+    </div>
+
+    <a
+        href="{% url 'admin_dashboard:lesson_create' %}"
+        class="management-primary-button"
+    >
+        Add lesson
+    </a>
+</div>
+
+<div class="management-card">
+
+    <form
+        method="get"
+        class="management-filter-form"
+    >
+        <div class="management-filter-group">
+            <label for="lesson-search">
+                Search
+            </label>
+
+            <input
+                id="lesson-search"
+                type="search"
+                name="search"
+                value="{{ search_query }}"
+                placeholder="Search lessons or courses"
+                class="management-form-control"
+            >
+        </div>
+
+        <div class="management-filter-group">
+            <label for="lesson-course">
+                Course
+            </label>
+
+            <select
+                id="lesson-course"
+                name="course"
+                class="management-form-control"
+            >
+                <option value="">
+                    All courses
+                </option>
+
+                {% for course in courses %}
+                    <option
+                        value="{{ course.slug }}"
+                        {% if selected_course == course.slug %}
+                            selected
+                        {% endif %}
+                    >
+                        {{ course.title }}
+                    </option>
+                {% endfor %}
+            </select>
+        </div>
+
+        <div class="management-filter-group">
+            <label for="lesson-status">
+                Status
+            </label>
+
+            <select
+                id="lesson-status"
+                name="status"
+                class="management-form-control"
+            >
+                <option value="">
+                    All statuses
+                </option>
+
+                <option
+                    value="published"
+                    {% if selected_status == "published" %}
+                        selected
+                    {% endif %}
+                >
+                    Published
+                </option>
+
+                <option
+                    value="draft"
+                    {% if selected_status == "draft" %}
+                        selected
+                    {% endif %}
+                >
+                    Draft
+                </option>
+            </select>
+        </div>
+
+        <div class="management-filter-actions">
+            <button
+                type="submit"
+                class="management-secondary-button"
+            >
+                Apply filters
+            </button>
+
+            <a
+                href="{% url 'admin_dashboard:lesson_list' %}"
+                class="management-text-button"
+            >
+                Clear
+            </a>
+        </div>
+    </form>
+
+</div>
+
+<div class="management-card">
+
+    <div class="management-card-header">
+        <div>
+            <h2>
+                Lesson list
+            </h2>
+
+            <p>
+                {{ filtered_lesson_count }}
+                lesson{{ filtered_lesson_count|pluralize }}
+                found
+            </p>
+        </div>
+    </div>
+
+    {% if lessons %}
+
+        <div class="management-table-wrapper">
+            <table class="management-table">
+                <thead>
+                    <tr>
+                        <th>Lesson</th>
+                        <th>Course</th>
+                        <th>Order</th>
+                        <th>Status</th>
+                        <th class="management-table-actions-heading">
+                            Actions
+                        </th>
+                    </tr>
+                </thead>
+
+                <tbody>
+                    {% for lesson in lessons %}
+                        <tr>
+                            <td>
+                                <div class="management-table-primary">
+                                    {{ lesson.title }}
+                                </div>
+
+                                <div class="management-table-secondary">
+                                    Lesson ID: {{ lesson.id }}
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="management-table-primary">
+                                    {{ lesson.course.title }}
+                                </div>
+
+                                <div class="management-table-secondary">
+                                    {% if lesson.course.category %}
+                                        {{ lesson.course.category.name }}
+                                    {% else %}
+                                        No category
+                                    {% endif %}
+                                </div>
+                            </td>
+
+                            <td>
+                                {{ lesson.order }}
+                            </td>
+
+                            <td>
+                                {% if lesson.is_published %}
+                                    <span class="management-status-badge published">
+                                        Published
+                                    </span>
+                                {% else %}
+                                    <span class="management-status-badge draft">
+                                        Draft
+                                    </span>
+                                {% endif %}
+                            </td>
+
+                            <td>
+                                <div class="management-table-actions">
+                                    <a
+                                        href="{% url 'admin_dashboard:lesson_update' lesson.id %}"
+                                        class="management-table-link"
+                                    >
+                                        Edit
+                                    </a>
+
+                                    <a
+                                        href="{% url 'admin_dashboard:lesson_delete' lesson.id %}"
+                                        class="management-table-link danger"
+                                    >
+                                        Delete
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+
+    {% else %}
+
+        <div class="management-empty-state">
+            <h3>
+                No lessons found
+            </h3>
+
+            <p>
+                Create a lesson or change the selected filters.
+            </p>
+
+            <a
+                href="{% url 'admin_dashboard:lesson_create' %}"
+                class="management-primary-button"
+            >
+                Create first lesson
+            </a>
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endblock %}

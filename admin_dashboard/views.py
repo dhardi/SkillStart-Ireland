@@ -1,7 +1,7 @@
 from django.contrib.admin.views.decorators import (
     staff_member_required,
 )
-from .forms import EnrollmentForm
+from .forms import EnrollmentForm, LessonForm
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
 from django.contrib import messages
@@ -490,5 +490,206 @@ def enrollment_create(request):
     return render(
         request,
         "admin_dashboard/enrollment_form.html",
+        context,
+    )
+
+@staff_member_required
+def lesson_list(request):
+    search_query = request.GET.get(
+        "search",
+        "",
+    ).strip()
+
+    selected_course = request.GET.get(
+        "course",
+        "",
+    ).strip()
+
+    selected_status = request.GET.get(
+        "status",
+        "",
+    ).strip()
+
+    lessons = (
+        Lesson.objects
+        .select_related(
+            "course",
+            "course__category",
+        )
+        .order_by(
+            "course__title",
+            "order",
+            "title",
+        )
+    )
+
+    if search_query:
+        lessons = lessons.filter(
+            Q(title__icontains=search_query)
+            | Q(content__icontains=search_query)
+            | Q(course__title__icontains=search_query)
+        )
+
+    if selected_course:
+        lessons = lessons.filter(
+            course__slug=selected_course,
+        )
+
+    if selected_status == "published":
+        lessons = lessons.filter(
+            is_published=True,
+        )
+
+    elif selected_status == "draft":
+        lessons = lessons.filter(
+            is_published=False,
+        )
+
+    courses = (
+        Course.objects
+        .select_related("category")
+        .order_by("title")
+    )
+
+    context = {
+        "lessons": lessons,
+        "courses": courses,
+        "search_query": search_query,
+        "selected_course": selected_course,
+        "selected_status": selected_status,
+        "filtered_lesson_count": lessons.count(),
+    }
+
+    return render(
+        request,
+        "admin_dashboard/lesson_list.html",
+        context,
+    )
+
+
+@staff_member_required
+def lesson_create(request):
+    if request.method == "POST":
+        form = LessonForm(
+            request.POST,
+            request.FILES,
+        )
+
+        if form.is_valid():
+            form.save()
+
+            messages.success(
+                request,
+                "Lesson created successfully.",
+            )
+
+            return redirect(
+                "admin_dashboard:lesson_list"
+            )
+    else:
+        form = LessonForm()
+
+    context = {
+        "form": form,
+        "page_heading": "Add Lesson",
+        "submit_text": "Create Lesson",
+    }
+
+    return render(
+        request,
+        "admin_dashboard/lesson_form.html",
+        context,
+    )
+
+
+@staff_member_required
+def lesson_update(request, lesson_id):
+    lesson = get_object_or_404(
+        Lesson.objects.select_related(
+            "course",
+            "course__category",
+        ),
+        id=lesson_id,
+    )
+
+    if request.method == "POST":
+        form = LessonForm(
+            request.POST,
+            request.FILES,
+            instance=lesson,
+        )
+
+        if form.is_valid():
+            lesson = form.save()
+
+            messages.success(
+                request,
+                (
+                    f'The lesson "{lesson.title}" '
+                    "has been updated successfully."
+                ),
+            )
+
+            return redirect(
+                "admin_dashboard:lesson_list",
+            )
+
+    else:
+        form = LessonForm(
+            instance=lesson,
+        )
+
+    context = {
+        "form": form,
+        "page_heading": "Edit lesson",
+        "page_description": (
+            "Update the lesson content, position "
+            "or publication status."
+        ),
+        "submit_text": "Save changes",
+        "lesson": lesson,
+    }
+
+    return render(
+        request,
+        "admin_dashboard/lesson_form.html",
+        context,
+    )
+
+
+@staff_member_required
+def lesson_delete(request, lesson_id):
+    lesson = get_object_or_404(
+        Lesson.objects.select_related(
+            "course",
+        ),
+        id=lesson_id,
+    )
+
+    if request.method == "POST":
+        lesson_title = lesson.title
+        course_title = lesson.course.title
+
+        lesson.delete()
+
+        messages.success(
+            request,
+            (
+                f'The lesson "{lesson_title}" from '
+                f'"{course_title}" has been deleted.'
+            ),
+        )
+
+        return redirect(
+            "admin_dashboard:lesson_list",
+        )
+
+    context = {
+        "lesson": lesson,
+    }
+
+    return render(
+        request,
+        "admin_dashboard/lesson_confirm_delete.html",
         context,
     )

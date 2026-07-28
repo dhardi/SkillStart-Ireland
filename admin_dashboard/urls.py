@@ -17,6 +17,29 @@ urlpatterns = [
         views.course_list,
         name="course_list",
     ),
+
+    # Lessons
+    path(
+        "lessons/",
+        views.lesson_list,
+        name="lesson_list",
+    ),
+    path(
+        "lessons/add/",
+        views.lesson_create,
+        name="lesson_create",
+    ),
+    path(
+        "lessons/<int:lesson_id>/edit/",
+        views.lesson_update,
+        name="lesson_update",
+    ),
+    path(
+        "lessons/<int:lesson_id>/delete/",
+        views.lesson_delete,
+        name="lesson_delete",
+    ),
+
     path(
         "students/",
         views.student_list,
@@ -33,8 +56,8 @@ urlpatterns = [
         name="enrollment_list",
     ),
     path(
-    "enrollments/add/",
-    views.enrollment_create,
-    name="enrollment_create",
-),
+        "enrollments/add/",
+        views.enrollment_create,
+        name="enrollment_create",
+    ),
 ]

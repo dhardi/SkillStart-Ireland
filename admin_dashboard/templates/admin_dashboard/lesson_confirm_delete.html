@@ -1,0 +1,67 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block admin_title %}
+    Delete lesson
+{% endblock %}
+
+{% block admin_content %}
+
+<div class="management-page-header">
+    <div>
+        <p class="management-page-eyebrow">
+            Lesson management
+        </p>
+
+        <h1 class="management-page-title">
+            Delete lesson
+        </h1>
+
+        <p class="management-page-description">
+            Confirm the permanent removal of this lesson.
+        </p>
+    </div>
+</div>
+
+<div class="management-card management-delete-card">
+
+    <div class="management-delete-warning">
+        <h2>
+            Are you sure?
+        </h2>
+
+        <p>
+            You are about to delete the lesson
+            <strong>{{ lesson.title }}</strong>
+            from the course
+            <strong>{{ lesson.course.title }}</strong>.
+        </p>
+
+        <p>
+            This action cannot be undone. Any progress connected
+            to this lesson may also be removed.
+        </p>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        <div class="management-form-actions">
+            <button
+                type="submit"
+                class="management-danger-button"
+            >
+                Delete lesson
+            </button>
+
+            <a
+                href="{% url 'admin_dashboard:lesson_list' %}"
+                class="management-secondary-button"
+            >
+                Cancel
+            </a>
+        </div>
+    </form>
+
+</div>
+
+{% endblock %}

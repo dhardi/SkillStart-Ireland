@@ -1,0 +1,271 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    {{ page_heading }} | SkillStart Ireland
+{% endblock %}
+
+{% block page_title %}
+    {{ page_heading }}
+{% endblock %}
+
+{% block management_content %}
+
+<section class="management-form-section">
+
+    <div class="management-page-heading">
+
+        <div>
+            <span class="management-page-eyebrow">
+                Lesson Management
+            </span>
+
+            <h2>
+                {{ page_heading }}
+            </h2>
+
+            <p>
+                {% if page_description %}
+                    {{ page_description }}
+                {% else %}
+                    Add the lesson information, learning content,
+                    image and optional YouTube video.
+                {% endif %}
+            </p>
+        </div>
+
+        <a
+            href="{% url 'admin_dashboard:lesson_list' %}"
+            class="management-secondary-button"
+        >
+            Back to lessons
+        </a>
+
+    </div>
+
+    <div class="management-form-card">
+
+        <form
+            method="post"
+            enctype="multipart/form-data"
+            class="management-main-form"
+            novalidate
+        >
+            {% csrf_token %}
+
+            {% if form.non_field_errors %}
+                <div class="management-form-alert">
+
+                    {% for error in form.non_field_errors %}
+                        <p>
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+            {% endif %}
+
+            <div class="management-form-grid">
+
+                <div class="management-form-group management-form-group-full">
+
+                    <label for="{{ form.course.id_for_label }}">
+                        {{ form.course.label }}
+                    </label>
+
+                    {{ form.course }}
+
+                    {% if form.course.help_text %}
+                        <p class="management-form-help">
+                            {{ form.course.help_text }}
+                        </p>
+                    {% endif %}
+
+                    {% for error in form.course.errors %}
+                        <p class="management-form-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+                <div class="management-form-group management-form-group-full">
+
+                    <label for="{{ form.title.id_for_label }}">
+                        {{ form.title.label }}
+                    </label>
+
+                    {{ form.title }}
+
+                    {% if form.title.help_text %}
+                        <p class="management-form-help">
+                            {{ form.title.help_text }}
+                        </p>
+                    {% endif %}
+
+                    {% for error in form.title.errors %}
+                        <p class="management-form-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+                <div class="management-form-group management-form-group-full">
+
+                    <label for="{{ form.content.id_for_label }}">
+                        {{ form.content.label }}
+                    </label>
+
+                    {{ form.content }}
+
+                    <p class="management-form-help">
+                        Add the written learning content for this lesson.
+                    </p>
+
+                    {% for error in form.content.errors %}
+                        <p class="management-form-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+                <div class="management-form-group management-form-group-full">
+
+                    <label for="{{ form.image.id_for_label }}">
+                        {{ form.image.label }}
+                    </label>
+
+                    {% if lesson and lesson.image %}
+                        <div class="management-current-image">
+
+                            <img
+                                src="{{ lesson.image.url }}"
+                                alt="{{ lesson.title }}"
+                            >
+
+                            <div>
+                                <strong>
+                                    Current lesson image
+                                </strong>
+
+                                <p>
+                                    Upload a new image only when you want
+                                    to replace the current one.
+                                </p>
+                            </div>
+
+                        </div>
+                    {% endif %}
+
+                    {{ form.image }}
+
+                    <p class="management-form-help">
+                        Upload an optional image in JPG, PNG or WebP format.
+                    </p>
+
+                    {% for error in form.image.errors %}
+                        <p class="management-form-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+                <div class="management-form-group management-form-group-full">
+
+                    <label for="{{ form.video_url.id_for_label }}">
+                        {{ form.video_url.label }}
+                    </label>
+
+                    {{ form.video_url }}
+
+                    <p class="management-form-help">
+                        Paste a YouTube watch, shortened, Shorts or embed URL.
+                    </p>
+
+                    {% for error in form.video_url.errors %}
+                        <p class="management-form-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+                <div class="management-form-group">
+
+                    <label for="{{ form.order.id_for_label }}">
+                        {{ form.order.label }}
+                    </label>
+
+                    {{ form.order }}
+
+                    <p class="management-form-help">
+                        Use 1 for the first lesson, 2 for the second,
+                        and continue in sequence.
+                    </p>
+
+                    {% for error in form.order.errors %}
+                        <p class="management-form-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+                <div class="management-form-group">
+
+                    <span class="management-form-label">
+                        Publication status
+                    </span>
+
+                    <label
+                        for="{{ form.is_published.id_for_label }}"
+                        class="management-checkbox-field"
+                    >
+                        {{ form.is_published }}
+
+                        <span>
+                            {{ form.is_published.label }}
+                        </span>
+                    </label>
+
+                    <p class="management-form-help">
+                        Published lessons can be displayed to students.
+                    </p>
+
+                    {% for error in form.is_published.errors %}
+                        <p class="management-form-error">
+                            {{ error }}
+                        </p>
+                    {% endfor %}
+
+                </div>
+
+            </div>
+
+            <div class="management-form-actions">
+
+                <a
+                    href="{% url 'admin_dashboard:lesson_list' %}"
+                    class="management-secondary-button"
+                >
+                    Cancel
+                </a>
+
+                <button
+                    type="submit"
+                    class="management-primary-button"
+                >
+                    {{ submit_text }}
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+</section>
+
+{% endblock %}
