@@ -1,0 +1,143 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Assessment Result | {{ course.title }}
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4 p-lg-5 text-center">
+
+                {% if attempt.is_passed %}
+
+                    <div class="mb-4">
+                        <span class="display-4">
+                            ✓
+                        </span>
+
+                        <h1 class="fw-bold mt-3">
+                            Congratulations!
+                        </h1>
+
+                        <p class="lead">
+                            You passed the final assessment.
+                        </p>
+                    </div>
+
+                {% else %}
+
+                    <div class="mb-4">
+                        <span class="display-4">
+                            ×
+                        </span>
+
+                        <h1 class="fw-bold mt-3">
+                            Assessment not passed
+                        </h1>
+
+                        <p class="lead">
+                            You can review the course and try again.
+                        </p>
+                    </div>
+
+                {% endif %}
+
+                <div class="row g-3 justify-content-center mb-4">
+
+                    <div class="col-12 col-md-3">
+                        <div class="border rounded p-3 h-100">
+                            <strong class="d-block">
+                                Score
+                            </strong>
+
+                            <span class="fs-4">
+                                {{ attempt.score_percentage }}%
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-3">
+                        <div class="border rounded p-3 h-100">
+                            <strong class="d-block">
+                                Correct answers
+                            </strong>
+
+                            <span class="fs-4">
+                                {{ attempt.correct_answers }}
+                                /
+                                {{ attempt.total_questions }}
+                            </span>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-3">
+                        <div class="border rounded p-3 h-100">
+                            <strong class="d-block">
+                                Required score
+                            </strong>
+
+                            <span class="fs-4">
+                                {{ assessment.passing_score }}%
+                            </span>
+                        </div>
+                    </div>
+
+                </div>
+
+                {% if attempt.is_passed %}
+
+                    <div class="alert alert-success">
+                        Course completed successfully.
+                        Your certificate will become available
+                        when the certificate system is activated.
+                    </div>
+
+                {% else %}
+
+                    <div class="alert alert-warning">
+                        You needed at least
+                        {{ attempt.required_correct_answers }}
+                        correct answers to pass.
+                    </div>
+
+                {% endif %}
+
+                <div
+                    class="d-flex flex-column flex-sm-row
+                           justify-content-center gap-3 mt-4"
+                >
+                    <a
+                        href="{% url 'courses:course_detail' course.slug %}"
+                        class="btn btn-outline-secondary"
+                    >
+                        Back to Course
+                    </a>
+
+                    {% if not attempt.is_passed %}
+                        <a
+                            href="{% url 'courses:assessment_detail' course.slug %}"
+                            class="btn btn-primary"
+                        >
+                            Try Again
+                        </a>
+                    {% else %}
+                        <a
+                            href="{% url 'accounts:dashboard' %}"
+                            class="btn btn-primary"
+                        >
+                            Go to Dashboard
+                        </a>
+                    {% endif %}
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

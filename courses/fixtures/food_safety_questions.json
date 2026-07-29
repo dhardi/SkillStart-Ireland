@@ -1,0 +1,567 @@
+{
+  "course_slug": "food-safety-fundamentals",
+  "assessment_title": "Food Safety Final Assessment",
+  "version": 1,
+  "questions": [
+    {
+      "order": 1,
+      "text": "Why is proper hand washing important for food handlers?",
+      "explanation": "Proper hand washing removes harmful microorganisms and reduces the risk of contaminating food.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "It removes harmful microorganisms from the hands.",
+          "is_correct": true
+        },
+        {
+          "order": 2,
+          "text": "It makes gloves unnecessary in every situation.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "It keeps food warmer during preparation.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "It replaces the need to clean work surfaces.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 2,
+      "text": "When should a food handler wash their hands?",
+      "explanation": "Hands should be washed before handling food and after activities that may contaminate them, such as handling raw food, using the toilet, touching waste, coughing or sneezing.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Only at the beginning of the working day.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Before handling food and after any activity that may contaminate the hands.",
+          "is_correct": true
+        },
+        {
+          "order": 3,
+          "text": "Only when the hands look dirty.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Only after handling cooked food.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 3,
+      "text": "What is cross-contamination?",
+      "explanation": "Cross-contamination is the transfer of harmful microorganisms or allergens from one food, person, utensil or surface to another.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "The transfer of harmful microorganisms or allergens from one source to another.",
+          "is_correct": true
+        },
+        {
+          "order": 2,
+          "text": "Cooking food at a high temperature.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "Cooling food in a refrigerator.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Checking a food delivery invoice.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 4,
+      "text": "Which practice best helps prevent cross-contamination?",
+      "explanation": "Raw food should be kept separate from ready-to-eat food, and separate clean equipment should be used where appropriate.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Use the same chopping board for raw chicken and salad without cleaning it.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Store raw meat above ready-to-eat food.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "Keep raw food separate from ready-to-eat food and use clean equipment.",
+          "is_correct": true
+        },
+        {
+          "order": 4,
+          "text": "Wash raw chicken in the sink before cooking.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 5,
+      "text": "Where should raw meat normally be stored in a refrigerator?",
+      "explanation": "Raw meat should be covered and stored below ready-to-eat food so that drips cannot contaminate other foods.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "On the top shelf above cooked food.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Covered, on a lower shelf below ready-to-eat food.",
+          "is_correct": true
+        },
+        {
+          "order": 3,
+          "text": "Inside an open container beside desserts.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "On the refrigerator door.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 6,
+      "text": "What is the recommended refrigerator temperature range for chilled food?",
+      "explanation": "Refrigerated food should generally be kept between 0°C and 5°C.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "0°C to 5°C.",
+          "is_correct": true
+        },
+        {
+          "order": 2,
+          "text": "8°C to 12°C.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "15°C to 20°C.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Above 25°C.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 7,
+      "text": "What core temperature should food normally reach when cooked thoroughly?",
+      "explanation": "Food should reach a core temperature of at least 75°C instantaneously, or an equivalent time-and-temperature combination.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "At least 45°C.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "At least 55°C.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "At least 75°C.",
+          "is_correct": true
+        },
+        {
+          "order": 4,
+          "text": "Exactly 10°C.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 8,
+      "text": "Where should the temperature of cooked food be checked?",
+      "explanation": "The temperature should be checked at the core or thickest part of the food.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Only on the surface.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "At the core or thickest part.",
+          "is_correct": true
+        },
+        {
+          "order": 3,
+          "text": "On the plate beside the food.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "At the refrigerator door.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 9,
+      "text": "What is the minimum temperature commonly used for hot holding?",
+      "explanation": "Hot-held food should generally be maintained at 63°C or above.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "5°C.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "20°C.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "40°C.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "63°C.",
+          "is_correct": true
+        }
+      ]
+    },
+    {
+      "order": 10,
+      "text": "What temperature should reheated food normally reach at its core?",
+      "explanation": "Reheated food should be piping hot and reach at least 70°C at the core.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "At least 70°C.",
+          "is_correct": true
+        },
+        {
+          "order": 2,
+          "text": "At least 30°C.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "Exactly 5°C.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Room temperature is sufficient.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 11,
+      "text": "How many times should previously cooked food normally be reheated?",
+      "explanation": "Food should normally be reheated only once to reduce food safety risks.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "As many times as required.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Only once.",
+          "is_correct": true
+        },
+        {
+          "order": 3,
+          "text": "At least three times.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "It should never be reheated under any circumstances.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 12,
+      "text": "What should a food handler do if they have vomiting or diarrhoea?",
+      "explanation": "A food handler with vomiting or diarrhoea should report it to their manager and must not handle food while they may pose a contamination risk.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Continue working but wear two pairs of gloves.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Only avoid handling raw meat.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "Report the illness and do not handle food.",
+          "is_correct": true
+        },
+        {
+          "order": 4,
+          "text": "Take a short break and return immediately.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 13,
+      "text": "What should be done with a cut on a food handler's hand?",
+      "explanation": "Cuts should be cleaned and completely covered with a suitable waterproof, highly visible dressing.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Leave it uncovered so it can dry.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Cover it with a suitable waterproof, highly visible dressing.",
+          "is_correct": true
+        },
+        {
+          "order": 3,
+          "text": "Cover it with a piece of paper towel.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Dip it in sanitiser before every task.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 14,
+      "text": "Which statement about disposable gloves is correct?",
+      "explanation": "Gloves do not replace hand washing and must be changed when contaminated or when moving between incompatible tasks.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Gloves replace the need to wash hands.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "One pair of gloves can be worn for an entire shift.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "Gloves must be washed and reused.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Gloves do not replace hand washing and must be changed when necessary.",
+          "is_correct": true
+        }
+      ]
+    },
+    {
+      "order": 15,
+      "text": "What is the safest way to defrost frozen food?",
+      "explanation": "Food should be defrosted under controlled conditions, such as in a refrigerator, so that it does not remain at unsafe temperatures.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "In a refrigerator or another approved controlled method.",
+          "is_correct": true
+        },
+        {
+          "order": 2,
+          "text": "On a worktop overnight.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "In direct sunlight.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Beside a hot oven.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 16,
+      "text": "What does HACCP help a food business do?",
+      "explanation": "HACCP helps a food business identify, evaluate and control hazards that may affect food safety.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Choose the cheapest food supplier.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Identify and control food safety hazards.",
+          "is_correct": true
+        },
+        {
+          "order": 3,
+          "text": "Design restaurant menus.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Calculate staff wages.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 17,
+      "text": "Which of the following is an example of a physical food hazard?",
+      "explanation": "A physical hazard is a foreign object in food, such as broken glass, metal fragments or stones.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Salmonella bacteria.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Cleaning chemical residue.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "A piece of broken glass.",
+          "is_correct": true
+        },
+        {
+          "order": 4,
+          "text": "Milk protein.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 18,
+      "text": "Which of the following is an example of a chemical food hazard?",
+      "explanation": "Cleaning chemicals, pesticides and other chemical residues can contaminate food and create a chemical hazard.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "A cleaning chemical contaminating food.",
+          "is_correct": true
+        },
+        {
+          "order": 2,
+          "text": "A strand of hair.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "A piece of plastic packaging.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "A broken bone in meat.",
+          "is_correct": false
+        }
+      ]
+    },
+    {
+      "order": 19,
+      "text": "How many specified food allergens must be declared under EU food information rules?",
+      "explanation": "There are 14 specified allergens that must be declared when used as ingredients.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "5.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "8.",
+          "is_correct": false
+        },
+        {
+          "order": 3,
+          "text": "10.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "14.",
+          "is_correct": true
+        }
+      ]
+    },
+    {
+      "order": 20,
+      "text": "What is the correct response when a customer asks about allergens in a dish?",
+      "explanation": "Staff should use accurate, up-to-date allergen information and should never guess.",
+      "is_published": true,
+      "answers": [
+        {
+          "order": 1,
+          "text": "Guess based on how the dish looks.",
+          "is_correct": false
+        },
+        {
+          "order": 2,
+          "text": "Provide accurate, up-to-date information and never guess.",
+          "is_correct": true
+        },
+        {
+          "order": 3,
+          "text": "Tell the customer that small amounts never matter.",
+          "is_correct": false
+        },
+        {
+          "order": 4,
+          "text": "Ask the customer to taste a small amount first.",
+          "is_correct": false
+        }
+      ]
+    }
+  ]
+}

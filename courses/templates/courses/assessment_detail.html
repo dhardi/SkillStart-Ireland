@@ -1,0 +1,173 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ assessment.title }} | {{ course.title }}
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="mb-4">
+            <a href="{% url 'courses:course_detail' course.slug %}">
+                ← Back to course
+            </a>
+        </div>
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4 p-lg-5">
+
+                <p class="text-muted mb-2">
+                    {{ course.title }}
+                </p>
+
+                <h1 class="fw-bold mb-3">
+                    {{ assessment.title }}
+                </h1>
+
+                <p class="mb-4">
+                    {{ assessment.instructions }}
+                </p>
+
+                <div class="row g-3 mb-4">
+
+                    <div class="col-12 col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <strong>
+                                Questions
+                            </strong>
+
+                            <p class="mb-0">
+                                {{ assessment.questions_per_attempt }}
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <strong>
+                                Passing score
+                            </strong>
+
+                            <p class="mb-0">
+                                {{ assessment.passing_score }}%
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="col-12 col-md-4">
+                        <div class="border rounded p-3 h-100">
+                            <strong>
+                                Correct answers required
+                            </strong>
+
+                            <p class="mb-0">
+                                {{ assessment.required_correct_answers }}
+                                of
+                                {{ assessment.questions_per_attempt }}
+                            </p>
+                        </div>
+                    </div>
+
+                </div>
+
+                <div class="mb-4">
+                    <p>
+                        Lessons completed:
+                        <strong>
+                            {{ completed_lessons }}
+                            /
+                            {{ total_lessons }}
+                        </strong>
+                    </p>
+
+                    <p>
+                        Completed attempts:
+                        <strong>
+                            {{ completed_attempts_count }}
+                        </strong>
+                    </p>
+
+                    <p>
+                        Maximum attempts:
+                        <strong>
+                            {% if assessment.maximum_attempts %}
+                                {{ assessment.maximum_attempts }}
+                            {% else %}
+                                Unlimited
+                            {% endif %}
+                        </strong>
+                    </p>
+
+                    {% if attempts_remaining is not None %}
+                        <p>
+                            Attempts remaining:
+                            <strong>
+                                {{ attempts_remaining }}
+                            </strong>
+                        </p>
+                    {% endif %}
+                </div>
+
+                {% if in_progress_attempt %}
+
+                    <a
+                        href="{% url 'courses:assessment_attempt' course.slug in_progress_attempt.id 1 %}"
+                        class="btn btn-primary"
+                    >
+                        Continue Assessment
+                    </a>
+
+                {% elif can_start %}
+
+                    <form
+                        method="post"
+                        action="{% url 'courses:start_assessment' course.slug %}"
+                    >
+                        {% csrf_token %}
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Start Assessment
+                        </button>
+                    </form>
+
+                {% elif maximum_attempts_reached %}
+
+                    <div class="alert alert-danger mb-0">
+                        You have reached the maximum number
+                        of attempts.
+                    </div>
+
+                {% elif not enrollment %}
+
+                    <div class="alert alert-warning mb-0">
+                        You must start the course before taking
+                        the assessment.
+                    </div>
+
+                {% elif not lessons_completed %}
+
+                    <div class="alert alert-warning mb-0">
+                        Complete all published lessons before
+                        starting the final assessment.
+                    </div>
+
+                {% else %}
+
+                    <div class="alert alert-warning mb-0">
+                        This assessment is not ready yet.
+                    </div>
+
+                {% endif %}
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

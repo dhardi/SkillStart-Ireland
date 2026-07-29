@@ -1,0 +1,145 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Question {{ position }} | {{ assessment.title }}
+{% endblock %}
+
+{% block content %}
+
+<section class="py-5">
+    <div class="container">
+
+        <div class="card shadow-sm">
+            <div class="card-body p-4 p-lg-5">
+
+                <div
+                    class="d-flex flex-column flex-md-row
+                           justify-content-between
+                           align-items-md-center gap-3 mb-3"
+                >
+                    <div>
+                        <p class="text-muted mb-1">
+                            {{ course.title }}
+                        </p>
+
+                        <h1 class="h3 fw-bold mb-0">
+                            {{ assessment.title }}
+                        </h1>
+                    </div>
+
+                    <div class="text-md-end">
+                        <strong>
+                            Question {{ position }}
+                            of {{ attempt.total_questions }}
+                        </strong>
+
+                        <p class="text-muted mb-0">
+                            {{ answered_count }} answered
+                        </p>
+                    </div>
+                </div>
+
+                <div
+                    class="progress mb-4"
+                    role="progressbar"
+                    aria-valuenow="{{ progress_percentage }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                >
+                    <div
+                        class="progress-bar"
+                        style="width: {{ progress_percentage }}%;"
+                    >
+                        {{ progress_percentage }}%
+                    </div>
+                </div>
+
+                {% if messages %}
+                    {% for message in messages %}
+                        <div
+                            class="alert alert-{{ message.tags|default:'info' }}"
+                        >
+                            {{ message }}
+                        </div>
+                    {% endfor %}
+                {% endif %}
+
+                <form method="post">
+                    {% csrf_token %}
+
+                    <div class="mb-4">
+                        <h2 class="h4">
+                            {{ question.text }}
+                        </h2>
+                    </div>
+
+                    <div class="d-grid gap-3">
+
+                        {% for option in answer_options %}
+
+                            <label
+                                class="border rounded p-3
+                                       d-flex gap-3
+                                       align-items-start"
+                            >
+                                <input
+                                    type="radio"
+                                    name="selected_option"
+                                    value="{{ option.id }}"
+                                    {% if existing_answer and existing_answer.selected_option_id == option.id %}
+                                        checked
+                                    {% endif %}
+                                >
+
+                                <span>
+                                    {{ option.text }}
+                                </span>
+                            </label>
+
+                        {% endfor %}
+
+                    </div>
+
+                    <div
+                        class="d-flex justify-content-between
+                               align-items-center mt-4"
+                    >
+                        <div>
+                            {% if previous_position %}
+                                <a
+                                    href="{% url 'courses:assessment_attempt' course.slug attempt.id previous_position %}"
+                                    class="btn btn-outline-secondary"
+                                >
+                                    Previous
+                                </a>
+                            {% endif %}
+                        </div>
+
+                        <div>
+                            {% if next_position %}
+                                <button
+                                    type="submit"
+                                    class="btn btn-primary"
+                                >
+                                    Save and Continue
+                                </button>
+                            {% else %}
+                                <button
+                                    type="submit"
+                                    class="btn btn-success"
+                                >
+                                    Finish Assessment
+                                </button>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                </form>
+
+            </div>
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
