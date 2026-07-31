@@ -90,11 +90,33 @@
 
                 {% if attempt.is_passed %}
 
-                    <div class="alert alert-success">
-                        Course completed successfully.
-                        Your certificate will become available
-                        when the certificate system is activated.
-                    </div>
+                    {% if certificate %}
+
+                        <div class="alert alert-success">
+                            <strong>
+                                Course completed successfully.
+                            </strong>
+
+                            <div class="mt-2">
+                                Your certificate has been issued.
+                            </div>
+
+                            <div class="mt-2">
+                                Certificate number:
+                                <strong>
+                                    {{ certificate.certificate_number }}
+                                </strong>
+                            </div>
+                        </div>
+
+                    {% else %}
+
+                        <div class="alert alert-warning">
+                            Course completed successfully, but the
+                            certificate could not be found.
+                        </div>
+
+                    {% endif %}
 
                 {% else %}
 
@@ -118,19 +140,34 @@
                     </a>
 
                     {% if not attempt.is_passed %}
+
                         <a
                             href="{% url 'courses:assessment_detail' course.slug %}"
                             class="btn btn-primary"
                         >
                             Try Again
                         </a>
+
                     {% else %}
+
+                        {% if certificate %}
+
+                            <a
+    href="{% url 'courses:certificate_detail' certificate.certificate_number %}"
+    class="btn btn-success"
+>
+    View Certificate
+</a>
+
+                        {% endif %}
+
                         <a
                             href="{% url 'accounts:dashboard' %}"
                             class="btn btn-primary"
                         >
                             Go to Dashboard
                         </a>
+
                     {% endif %}
                 </div>
 

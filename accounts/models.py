@@ -1,3 +1,4 @@
+import uuid
 from decimal import Decimal, ROUND_HALF_UP
 
 from django.conf import settings
@@ -317,6 +318,13 @@ class AssessmentAttempt(models.Model):
         if self.is_passed:
             self.enrollment.mark_as_completed()
 
+            Certificate.objects.get_or_create(
+                enrollment=self.enrollment,
+                defaults={
+                    "assessment_attempt": self,
+        },
+    )
+
     def save(self, *args, **kwargs):
         self.full_clean()
 
@@ -541,4 +549,109 @@ class StudentAnswer(models.Model):
             f"{self.attempt.enrollment.user.username} - "
             f"Question {self.attempt_question.position} - "
             f"{result}"
+        )
+
+class Certificate(models.Model):
+    enrollment = models.OneToOneField(
+        Enrollment,
+        on_delete=models.CASCADE,
+        related_name="certificate",
+    )
+
+    assessment_attempt = models.OneToOneField(
+        AssessmentAttempt,
+        on_delete=models.PROTECT,
+        related_name="certificate",
+    )
+
+    certificate_number = models.CharField(
+        max_length=40,
+        unique=True,
+        editable=False,
+    )
+
+    verification_code = models.UUIDField(
+        default=uuid.uuid4,
+        unique=True,
+        editable=False,
+    )
+
+    issued_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    class Meta:
+        ordering = [
+            "-issued_at",
+        ]
+
+    @property
+    def student(self):
+        return self.enrollment.user
+
+    @property
+    def course(self):
+        return self.enrollment.course
+
+    def clean(self):
+        super().clean()
+
+        if not (
+            self.enrollment_id
+            and self.assessment_attempt_id
+        ):
+            return
+
+        if (
+            self.assessment_attempt.enrollment_id
+            != self.enrollment_id
+        ):
+            raise ValidationError(
+                {
+                    "assessment_attempt": (
+                        "The selected assessment attempt does not "
+                        "belong to this enrollment."
+                    ),
+                },
+            )
+
+        if not self.assessment_attempt.is_completed:
+            raise ValidationError(
+                {
+                    "assessment_attempt": (
+                        "A certificate can only be created from "
+                        "a completed assessment attempt."
+                    ),
+                },
+            )
+
+        if not self.assessment_attempt.is_passed:
+            raise ValidationError(
+                {
+                    "assessment_attempt": (
+                        "A certificate can only be created from "
+                        "a passed assessment attempt."
+                    ),
+                },
+            )
+
+    def save(self, *args, **kwargs):
+        if not self.certificate_number:
+            self.certificate_number = (
+                f"SSI-{timezone.now():%Y}-"
+                f"{uuid.uuid4().hex[:10].upper()}"
+            )
+
+        self.full_clean()
+
+        return super().save(
+            *args,
+            **kwargs,
+        )
+
+    def __str__(self):
+        return (
+            f"{self.certificate_number} - "
+            f"{self.student.username} - "
+            f"{self.course.title}"
         )

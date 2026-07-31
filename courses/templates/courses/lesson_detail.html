@@ -212,20 +212,39 @@
 
                         {% else %}
 
-                            <a
-                                href="{% url 'courses:course_detail' course.slug %}"
-                                class="lesson-navigation-link lesson-navigation-link-next"
-                            >
-                                <span class="lesson-navigation-label">
-                                    Lessons completed
-                                </span>
+    {% if assessment_available %}
 
-                                <strong>
-                                    Return to course overview →
-                                </strong>
-                            </a>
+        <a
+            href="{% url 'courses:assessment_detail' course.slug %}"
+            class="lesson-navigation-link lesson-navigation-link-next lesson-assessment-link"
+        >
+            <span class="lesson-navigation-label">
+                Final step
+            </span>
 
-                        {% endif %}
+            <strong>
+                Start Assessment →
+            </strong>
+        </a>
+
+    {% else %}
+
+        <a
+            href="{% url 'courses:course_detail' course.slug %}"
+            class="lesson-navigation-link lesson-navigation-link-next"
+        >
+            <span class="lesson-navigation-label">
+                Lessons completed
+            </span>
+
+            <strong>
+                Return to course overview →
+            </strong>
+        </a>
+
+    {% endif %}
+
+{% endif %}
 
                     </div>
 

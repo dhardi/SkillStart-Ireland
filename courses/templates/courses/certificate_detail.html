@@ -1,0 +1,216 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Certificate | {{ course.title }}
+{% endblock %}
+
+{% block content %}
+
+<section class="certificate-page-section py-5">
+    <div class="container">
+
+        <div class="certificate-page-actions mb-4">
+
+    <a
+        href="{% url 'accounts:dashboard' %}"
+        class="btn btn-outline-secondary"
+    >
+        ← Back to Dashboard
+    </a>
+
+    <div class="certificate-orientation-controls">
+
+        <button
+            type="button"
+            class="btn btn-outline-primary certificate-orientation-button active"
+            data-certificate-orientation="landscape"
+        >
+            Landscape
+        </button>
+
+        <button
+            type="button"
+            class="btn btn-outline-primary certificate-orientation-button"
+            data-certificate-orientation="portrait"
+        >
+            Portrait
+        </button>
+
+        <button
+            type="button"
+            class="btn btn-primary"
+            id="print-certificate-button"
+        >
+            Print Certificate
+        </button>
+
+    </div>
+
+</div>
+
+<article
+    class="certificate-document certificate-landscape"
+    id="certificate-document"
+>
+            <div class="certificate-inner-border">
+
+                <header class="certificate-header">
+
+                    <div class="certificate-brand-mark">
+                        S
+                    </div>
+
+                    <p class="certificate-platform-name">
+                        SkillStart Ireland
+                    </p>
+
+                    <h1 class="certificate-title">
+                        Certificate of Completion
+                    </h1>
+
+                    <p class="certificate-introduction">
+                        This certificate is proudly presented to
+                    </p>
+
+                </header>
+
+                <main class="certificate-content">
+
+                    <h2 class="certificate-student-name">
+                        {% if student.get_full_name %}
+                            {{ student.get_full_name }}
+                        {% else %}
+                            {{ student.username }}
+                        {% endif %}
+                    </h2>
+
+                    <p class="certificate-description">
+                        for successfully completing the course
+                    </p>
+
+                    <h3 class="certificate-course-title">
+                        {{ course.title }}
+                    </h3>
+
+                    <p class="certificate-achievement">
+                        The learner successfully completed all required
+                        lessons and passed the final assessment with a
+                        score of
+                        <strong>
+                            {{ attempt.score_percentage }}%
+                        </strong>.
+                    </p>
+
+                    <div class="certificate-details">
+
+                        <div class="certificate-detail-item">
+                            <span>
+                                Date issued
+                            </span>
+
+                            <strong>
+                                {{ certificate.issued_at|date:"d F Y" }}
+                            </strong>
+                        </div>
+
+                        <div class="certificate-detail-item">
+                            <span>
+                                Final score
+                            </span>
+
+                            <strong>
+                                {{ attempt.score_percentage }}%
+                            </strong>
+                        </div>
+
+                        <div class="certificate-detail-item">
+                            <span>
+                                Certificate number
+                            </span>
+
+                            <strong>
+                                {{ certificate.certificate_number }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </main>
+
+                <footer class="certificate-footer">
+
+                    <div class="certificate-signature">
+
+                        <div class="certificate-signature-line"></div>
+
+                        <strong>
+                            SkillStart Ireland
+                        </strong>
+
+                        <span>
+                            Course provider
+                        </span>
+
+                    </div>
+
+                    <div class="certificate-verification">
+
+                        <span>
+                            Verification code
+                        </span>
+
+                        <strong>
+                            {{ certificate.verification_code }}
+                        </strong>
+
+                    </div>
+
+                </footer>
+
+            </div>
+
+        </article>
+
+    </div>
+</section>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        const certificateDocument = document.getElementById(
+            "certificate-document"
+        );
+
+        const orientationButtons = document.querySelectorAll(
+            "[data-certificate-orientation]"
+        );
+
+        const printButton = document.getElementById(
+            "print-certificate-button"
+        );
+
+        orientationButtons.forEach(function (button) {
+            button.addEventListener("click", function () {
+                const orientation = button.dataset.certificateOrientation;
+
+                certificateDocument.classList.remove(
+                    "certificate-landscape",
+                    "certificate-portrait"
+                );
+
+                certificateDocument.classList.add(
+                    `certificate-${orientation}`
+                );
+
+                orientationButtons.forEach(function (currentButton) {
+                    currentButton.classList.remove("active");
+                });
+
+                button.classList.add("active");
+            });
+        });
+
+        printButton.addEventListener("click", function () {
+            window.print();
+        });
+    });
+</script>
+{% endblock %}

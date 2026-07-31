@@ -17,6 +17,7 @@ from django.views.decorators.http import require_POST
 from accounts.models import (
     AssessmentAttempt,
     AttemptQuestion,
+    Certificate,
     Enrollment,
     LessonProgress,
     StudentAnswer,
@@ -296,6 +297,15 @@ def lesson_detail(
         else 0
     )
 
+    assessment_available = (
+        CourseAssessment.objects
+        .filter(
+            course=course,
+            is_published=True,
+        )
+        .exists()
+    )
+
     context = {
         "course": course,
         "lesson": lesson,
@@ -317,6 +327,7 @@ def lesson_detail(
             lesson.id
             in completed_lesson_ids
         ),
+        "assessment_available": assessment_available,
     }
 
     return render(
@@ -1034,6 +1045,12 @@ def assessment_result(
         is_completed=True,
     )
 
+    certificate = getattr(
+        attempt,
+        "certificate",
+        None,
+    )
+
     answers = (
         StudentAnswer.objects
         .filter(
@@ -1054,10 +1071,41 @@ def assessment_result(
         "assessment": attempt.assessment,
         "attempt": attempt,
         "answers": answers,
+        "certificate": certificate,
     }
 
     return render(
         request,
         "courses/assessment_result.html",
+        context,
+    )
+
+@login_required
+def certificate_detail(
+    request,
+    certificate_number,
+):
+    certificate = get_object_or_404(
+        Certificate.objects.select_related(
+            "enrollment",
+            "enrollment__user",
+            "enrollment__course",
+            "assessment_attempt",
+            "assessment_attempt__assessment",
+        ),
+        certificate_number=certificate_number,
+        enrollment__user=request.user,
+    )
+
+    context = {
+        "certificate": certificate,
+        "student": certificate.student,
+        "course": certificate.course,
+        "attempt": certificate.assessment_attempt,
+    }
+
+    return render(
+        request,
+        "courses/certificate_detail.html",
         context,
     )

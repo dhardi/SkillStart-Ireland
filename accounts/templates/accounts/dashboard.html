@@ -402,14 +402,25 @@
 
                                 <div class="dashboard-course-action">
 
-                                    <a
-                                        href="{% url 'courses:course_detail' enrollment.course.slug %}"
-                                        class="dashboard-secondary-button"
-                                    >
-                                        Review course
-                                    </a>
+    {% if enrollment.certificate %}
 
-                                </div>
+        <a
+            href="{% url 'courses:certificate_detail' enrollment.certificate.certificate_number %}"
+            class="dashboard-certificate-button"
+        >
+            View certificate
+        </a>
+
+    {% endif %}
+
+    <a
+        href="{% url 'courses:course_detail' enrollment.course.slug %}"
+        class="dashboard-secondary-button"
+    >
+        Review course
+    </a>
+
+</div>
 
                             </article>
 

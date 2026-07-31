@@ -1,7 +1,11 @@
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render
 
-from .models import Enrollment, LessonProgress
+from .models import (
+    Certificate,
+    Enrollment,
+    LessonProgress,
+)
 
 
 @login_required
@@ -35,6 +39,7 @@ def dashboard(request):
             .filter(
                 enrollment=enrollment,
                 completed=True,
+                lesson__course=enrollment.course,
                 lesson__is_published=True,
             )
             .values_list(
@@ -43,17 +48,24 @@ def dashboard(request):
             )
         )
 
-        total_lessons = len(published_lessons)
+        total_lessons = len(
+            published_lessons
+        )
+
         completed_lessons = len(
             completed_lesson_ids
         )
 
-        lessons_completed += completed_lessons
+        lessons_completed += (
+            completed_lessons
+        )
 
         if total_lessons > 0:
             progress_percentage = round(
-                completed_lessons
-                / total_lessons
+                (
+                    completed_lessons
+                    / total_lessons
+                )
                 * 100
             )
         else:
@@ -62,7 +74,10 @@ def dashboard(request):
         next_lesson = None
 
         for lesson in published_lessons:
-            if lesson.id not in completed_lesson_ids:
+            if (
+                lesson.id
+                not in completed_lesson_ids
+            ):
                 next_lesson = lesson
                 break
 
@@ -70,24 +85,43 @@ def dashboard(request):
             next_lesson is None
             and published_lessons
         ):
-            next_lesson = published_lessons[-1]
+            next_lesson = (
+                published_lessons[-1]
+            )
 
-        enrollment.total_lessons = total_lessons
+        enrollment.total_lessons = (
+            total_lessons
+        )
+
         enrollment.completed_lessons = (
             completed_lessons
         )
+
         enrollment.progress_percentage = (
             progress_percentage
         )
-        enrollment.resume_lesson = next_lesson
+
+        enrollment.resume_lesson = (
+            next_lesson
+        )
+
+        enrollment.certificate = (
+            Certificate.objects
+            .filter(
+                enrollment=enrollment,
+            )
+            .first()
+        )
 
         if enrollment.is_completed:
             courses_completed += 1
+
             completed_enrollments.append(
                 enrollment
             )
         else:
             courses_started += 1
+
             in_progress_enrollments.append(
                 enrollment
             )
@@ -107,16 +141,24 @@ def dashboard(request):
     )
 
     context = {
-        "courses_started": courses_started,
-        "courses_completed": courses_completed,
-        "lessons_completed": lessons_completed,
+        "courses_started": (
+            courses_started
+        ),
+        "courses_completed": (
+            courses_completed
+        ),
+        "lessons_completed": (
+            lessons_completed
+        ),
         "in_progress_enrollments": (
             in_progress_enrollments
         ),
         "completed_enrollments": (
             completed_enrollments
         ),
-        "recent_activity": recent_activity,
+        "recent_activity": (
+            recent_activity
+        ),
     }
 
     return render(
