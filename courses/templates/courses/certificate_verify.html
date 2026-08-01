@@ -1,0 +1,198 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Verify Certificate | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section class="certificate-verify-section py-5">
+    <div class="container">
+
+        <div class="certificate-verify-wrapper">
+
+            <header class="certificate-verify-header text-center">
+
+                <div class="certificate-verify-icon">
+                    ✓
+                </div>
+
+                <h1 class="fw-bold">
+                    Verify a Certificate
+                </h1>
+
+                <p>
+                    Enter the certificate number to confirm that
+                    it was issued by SkillStart Ireland.
+                </p>
+
+            </header>
+
+            <div class="certificate-verify-card">
+
+                <form
+    method="get"
+    action="{% url 'courses:certificate_verify' %}"
+    class="certificate-verify-form"
+>
+                    <label
+                        for="certificate-number"
+                        class="form-label fw-semibold"
+                    >
+                        Certificate number
+                    </label>
+
+                    <div class="certificate-verify-input-group">
+
+                        <input
+                            type="text"
+                            name="certificate_number"
+                            id="certificate-number"
+                            value="{{ searched_value }}"
+                            class="form-control"
+                            placeholder="Example: SSI-2026-2EAA8DD319"
+                            autocomplete="off"
+                            required
+                        >
+
+                        <button
+                            type="submit"
+                            class="btn btn-primary"
+                        >
+                            Verify Certificate
+                        </button>
+
+                    </div>
+
+                </form>
+
+                {% if search_performed %}
+
+                    {% if certificate %}
+
+                        <div class="certificate-valid-result">
+
+                            <div class="certificate-result-status">
+                                <span class="certificate-valid-icon">
+                                    ✓
+                                </span>
+
+                                <div>
+                                    <h2>
+                                        Valid certificate
+                                    </h2>
+
+                                    <p>
+                                        This certificate was issued
+                                        by SkillStart Ireland.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="certificate-result-details">
+
+                                <div class="certificate-result-item">
+                                    <span>
+                                        Student
+                                    </span>
+
+                                    <strong>
+                                        {% if certificate.student.get_full_name %}
+                                            {{ certificate.student.get_full_name }}
+                                        {% else %}
+                                            {{ certificate.student.username }}
+                                        {% endif %}
+                                    </strong>
+                                </div>
+
+                                <div class="certificate-result-item">
+                                    <span>
+                                        Course
+                                    </span>
+
+                                    <strong>
+                                        {{ certificate.course.title }}
+                                    </strong>
+                                </div>
+
+                                <div class="certificate-result-item">
+                                    <span>
+                                        Certificate number
+                                    </span>
+
+                                    <strong>
+                                        {{ certificate.certificate_number }}
+                                    </strong>
+                                </div>
+
+                                <div class="certificate-result-item">
+                                    <span>
+                                        Date issued
+                                    </span>
+
+                                    <strong>
+                                        {{ certificate.issued_at|date:"d F Y" }}
+                                    </strong>
+                                </div>
+
+                                <div class="certificate-result-item">
+                                    <span>
+                                        Final score
+                                    </span>
+
+                                    <strong>
+                                        {{ certificate.assessment_attempt.score_percentage }}%
+                                    </strong>
+                                </div>
+
+                                <div class="certificate-result-item">
+                                    <span>
+                                        Verification code
+                                    </span>
+
+                                    <strong>
+                                        {{ certificate.verification_code }}
+                                    </strong>
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="certificate-invalid-result">
+
+                            <span class="certificate-invalid-icon">
+                                ×
+                            </span>
+
+                            <div>
+                                <h2>
+                                    Certificate not found
+                                </h2>
+
+                                <p>
+                                    We could not find a certificate
+                                    matching
+                                    <strong>
+                                        {{ searched_value }}
+                                    </strong>.
+                                    Check the number and try again.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                {% endif %}
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

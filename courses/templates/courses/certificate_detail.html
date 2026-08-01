@@ -11,47 +11,55 @@
 
         <div class="certificate-page-actions mb-4">
 
-    <a
-        href="{% url 'accounts:dashboard' %}"
-        class="btn btn-outline-secondary"
-    >
-        ← Back to Dashboard
-    </a>
+            <a
+                href="{% url 'accounts:dashboard' %}"
+                class="btn btn-outline-secondary"
+            >
+                ← Back to Dashboard
+            </a>
 
-    <div class="certificate-orientation-controls">
+            <div class="certificate-orientation-controls">
 
-        <button
-            type="button"
-            class="btn btn-outline-primary certificate-orientation-button active"
-            data-certificate-orientation="landscape"
-        >
-            Landscape
-        </button>
-
-        <button
-            type="button"
-            class="btn btn-outline-primary certificate-orientation-button"
-            data-certificate-orientation="portrait"
-        >
-            Portrait
-        </button>
-
-        <button
-            type="button"
-            class="btn btn-primary"
-            id="print-certificate-button"
-        >
-            Print Certificate
-        </button>
-
-    </div>
-
-</div>
-
-<article
-    class="certificate-document certificate-landscape"
-    id="certificate-document"
+                <a
+    href="{% url 'courses:certificate_pdf' certificate.certificate_number %}"
+    class="btn btn-success"
 >
+    Download Certificate
+</a>
+
+                <button
+                    type="button"
+                    class="btn btn-outline-primary certificate-orientation-button active"
+                    data-certificate-orientation="landscape"
+                >
+                    Landscape
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-outline-primary certificate-orientation-button"
+                    data-certificate-orientation="portrait"
+                >
+                    Portrait
+                </button>
+
+                <button
+                    type="button"
+                    class="btn btn-primary"
+                    id="print-certificate-button"
+                >
+                    Print Certificate
+                </button>
+
+            </div>
+
+        </div>
+
+        <article
+            class="certificate-document certificate-landscape"
+            id="certificate-document"
+        >
+
             <div class="certificate-inner-border">
 
                 <header class="certificate-header">
@@ -96,6 +104,7 @@
                         The learner successfully completed all required
                         lessons and passed the final assessment with a
                         score of
+
                         <strong>
                             {{ attempt.score_percentage }}%
                         </strong>.
@@ -155,13 +164,33 @@
 
                     <div class="certificate-verification">
 
-                        <span>
-                            Verification code
-                        </span>
+                        <div class="certificate-qr-code">
+                            <img
+                                src="data:image/png;base64,{{ qr_code_base64 }}"
+                                alt="QR code for certificate verification"
+                            >
+                        </div>
 
-                        <strong>
-                            {{ certificate.verification_code }}
-                        </strong>
+                        <div class="certificate-verification-content">
+
+                            <span>
+                                Scan to verify
+                            </span>
+
+                            <strong>
+                                {{ certificate.verification_code }}
+                            </strong>
+
+                            <a
+                                href="{% url 'courses:certificate_verify_code' certificate.verification_code %}"
+                                class="certificate-verification-link"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                Verify this certificate
+                            </a>
+
+                        </div>
 
                     </div>
 
@@ -173,6 +202,7 @@
 
     </div>
 </section>
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
         const certificateDocument = document.getElementById(
@@ -187,9 +217,15 @@
             "print-certificate-button"
         );
 
+        if (!certificateDocument || !printButton) {
+            return;
+        }
+
         orientationButtons.forEach(function (button) {
             button.addEventListener("click", function () {
-                const orientation = button.dataset.certificateOrientation;
+                const orientation = (
+                    button.dataset.certificateOrientation
+                );
 
                 certificateDocument.classList.remove(
                     "certificate-landscape",
@@ -213,4 +249,5 @@
         });
     });
 </script>
+
 {% endblock %}

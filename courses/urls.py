@@ -56,9 +56,28 @@ urlpatterns = [
     ),
     views.assessment_result,
     name="assessment_result",
+    ),
+
+ path(
+    "certificates/verify/",
+    views.certificate_verify,
+    name="certificate_verify",
 ),
 
-    path(
+path(
+    "certificates/verify/code/"
+    "<uuid:verification_code>/",
+    views.certificate_verify_code,
+    name="certificate_verify_code",
+),
+
+path(
+    "certificates/<str:certificate_number>/pdf/",
+    views.certificate_pdf,
+    name="certificate_pdf",
+),
+
+path(
     "certificates/<str:certificate_number>/",
     views.certificate_detail,
     name="certificate_detail",

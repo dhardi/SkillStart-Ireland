@@ -1,10 +1,16 @@
 import random
+import base64
+from io import BytesIO
+import qrcode
 
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.db.models import Count, Max, Q
-from django.http import JsonResponse
+from django.http import (
+    FileResponse,
+    JsonResponse,
+)
 from django.core.exceptions import ValidationError
 from django.shortcuts import (
     get_object_or_404,
@@ -12,6 +18,7 @@ from django.shortcuts import (
     render,
 )
 from django.utils import timezone
+from django.urls import reverse
 from django.views.decorators.http import require_POST
 
 from accounts.models import (
@@ -28,6 +35,10 @@ from .models import (
     Course,
     CourseAssessment,
     Lesson,
+)
+
+from .certificate_pdf import (
+    build_certificate_pdf,
 )
 
 
@@ -1097,15 +1108,183 @@ def certificate_detail(
         enrollment__user=request.user,
     )
 
+    verification_url = request.build_absolute_uri(
+        reverse(
+            "courses:certificate_verify_code",
+            kwargs={
+                "verification_code": (
+                    certificate.verification_code
+                ),
+            },
+        )
+    )
+
+    qr_code = qrcode.QRCode(
+        version=None,
+        error_correction=(
+            qrcode.constants.ERROR_CORRECT_M
+        ),
+        box_size=8,
+        border=2,
+    )
+
+    qr_code.add_data(
+        verification_url
+    )
+
+    qr_code.make(
+        fit=True
+    )
+
+    qr_image = qr_code.make_image(
+        fill_color="black",
+        back_color="white",
+    )
+
+    qr_buffer = BytesIO()
+
+    qr_image.save(
+        qr_buffer,
+        format="PNG",
+    )
+
+    qr_code_base64 = base64.b64encode(
+        qr_buffer.getvalue()
+    ).decode("utf-8")
+
     context = {
         "certificate": certificate,
         "student": certificate.student,
         "course": certificate.course,
         "attempt": certificate.assessment_attempt,
+        "verification_url": verification_url,
+        "qr_code_base64": qr_code_base64,
     }
 
     return render(
         request,
         "courses/certificate_detail.html",
         context,
+    )
+
+
+def certificate_verify(request):
+    searched_value = request.GET.get(
+        "certificate_number",
+        "",
+    ).strip()
+
+    certificate = None
+
+    search_performed = bool(
+        searched_value
+    )
+
+    if search_performed:
+        certificate = (
+            Certificate.objects
+            .select_related(
+                "enrollment",
+                "enrollment__user",
+                "enrollment__course",
+                "assessment_attempt",
+                "assessment_attempt__assessment",
+            )
+            .filter(
+                certificate_number__iexact=(
+                    searched_value
+                ),
+            )
+            .first()
+        )
+
+    context = {
+        "certificate": certificate,
+        "searched_value": searched_value,
+        "search_performed": search_performed,
+    }
+
+    return render(
+        request,
+        "courses/certificate_verify.html",
+        context,
+    )
+
+def certificate_verify_code(
+    request,
+    verification_code,
+):
+    certificate = (
+        Certificate.objects
+        .select_related(
+            "enrollment",
+            "enrollment__user",
+            "enrollment__course",
+            "assessment_attempt",
+            "assessment_attempt__assessment",
+        )
+        .filter(
+            verification_code=verification_code,
+        )
+        .first()
+    )
+
+    context = {
+        "certificate": certificate,
+        "searched_value": (
+            certificate.certificate_number
+            if certificate
+            else str(verification_code)
+        ),
+        "search_performed": True,
+    }
+
+    return render(
+        request,
+        "courses/certificate_verify.html",
+        context,
+    )
+
+@login_required
+def certificate_pdf(
+    request,
+    certificate_number,
+):
+    certificate = get_object_or_404(
+        Certificate.objects.select_related(
+            "enrollment",
+            "enrollment__user",
+            "enrollment__course",
+            "assessment_attempt",
+            "assessment_attempt__assessment",
+        ),
+        certificate_number=certificate_number,
+        enrollment__user=request.user,
+    )
+
+    verification_url = request.build_absolute_uri(
+        reverse(
+            "courses:certificate_verify_code",
+            kwargs={
+                "verification_code": (
+                    certificate.verification_code
+                ),
+            },
+        )
+    )
+
+    pdf_buffer = build_certificate_pdf(
+        certificate=certificate,
+        verification_url=verification_url,
+    )
+
+    filename = (
+        f"{certificate.certificate_number}.pdf"
+    )
+
+    return FileResponse(
+        pdf_buffer,
+        as_attachment=True,
+        filename=filename,
+        content_type="application/pdf",
     )

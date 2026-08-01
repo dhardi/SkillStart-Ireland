@@ -41,6 +41,19 @@
                 </li>
 
                 <li class="nav-item">
+    <a
+        href="{% url 'courses:certificate_verify' %}"
+        class="nav-link
+            {% if request.resolver_match.url_name == 'certificate_verify' %}
+                active
+            {% endif %}
+        "
+    >
+        Verify Certificate
+    </a>
+</li>
+
+                <li class="nav-item">
                     <a
                         class="nav-link site-navbar-link {% if request.resolver_match.app_name == 'courses' %}active{% endif %}"
                         href="{% url 'courses:course_list' %}"

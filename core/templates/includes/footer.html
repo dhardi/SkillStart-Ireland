@@ -2,6 +2,7 @@
     <div class="container">
 
         <div class="footer-main">
+
             <div class="row g-5">
 
                 <div class="col-12 col-lg-4">
@@ -9,11 +10,15 @@
                         class="footer-brand"
                         href="{% url 'home' %}"
                     >
-                        <span class="footer-brand-logo">S</span>
+                        <span class="footer-brand-logo">
+                            S
+                        </span>
 
                         <span class="footer-brand-text">
                             SkillStart
-                            <small>Ireland</small>
+                            <small>
+                                Ireland
+                            </small>
                         </span>
                     </a>
 
@@ -43,6 +48,12 @@
                         <li>
                             <a href="{% url 'courses:course_list' %}">
                                 Courses
+                            </a>
+                        </li>
+
+                        <li>
+                            <a href="{% url 'courses:certificate_verify' %}">
+                                Verify Certificate
                             </a>
                         </li>
 
@@ -80,8 +91,66 @@
                     </ul>
                 </div>
 
-                <div class="col-12 col-md-4 col-lg-4">
-                    <div class="footer-feature">
+                <div class="col-12 col-md-8 col-lg-4">
+                    <div class="footer-certificate-verification">
+
+                        <h2 class="footer-title">
+                            Verify a Certificate
+                        </h2>
+
+                        <p class="footer-verification-description">
+                            Check the authenticity of a SkillStart Ireland
+                            certificate.
+                        </p>
+
+                        <form
+                            method="get"
+                            action="{% url 'courses:certificate_verify' %}"
+                            class="footer-verification-form"
+                        >
+                            <label
+                                for="footer-certificate-number"
+                                class="visually-hidden"
+                            >
+                                Certificate number
+                            </label>
+
+                            <input
+                                type="text"
+                                name="certificate_number"
+                                id="footer-certificate-number"
+                                class="footer-verification-input"
+                                placeholder="SSI-2026-XXXXXXXXXX"
+                                autocomplete="off"
+                                required
+                            >
+
+                            <button
+                                type="submit"
+                                class="footer-verification-button"
+                            >
+                                Verify
+                            </button>
+                        </form>
+
+                        <a
+                            href="{% url 'courses:certificate_verify' %}"
+                            class="footer-verification-link"
+                        >
+                            Open verification page →
+                        </a>
+
+                    </div>
+                </div>
+
+            </div>
+
+            <div class="footer-feature-row">
+
+                <div class="footer-feature footer-feature-horizontal">
+
+                    <div class="footer-feature-content">
+
                         <span class="footer-feature-label">
                             Built for Ireland
                         </span>
@@ -91,21 +160,28 @@
                         </h2>
 
                         <p>
-                            Explore training for warehouse work, hospitality,
-                            kitchen environments and workplace safety.
+                            Explore practical training for warehouse work,
+                            hospitality, kitchen environments and workplace
+                            safety.
                         </p>
 
-                        <a
-                            class="footer-course-button"
-                            href="{% url 'courses:course_list' %}"
-                        >
-                            Browse courses
-                            <span aria-hidden="true">→</span>
-                        </a>
                     </div>
+
+                    <a
+                        class="footer-course-button"
+                        href="{% url 'courses:course_list' %}"
+                    >
+                        Browse courses
+
+                        <span aria-hidden="true">
+                            →
+                        </span>
+                    </a>
+
                 </div>
 
             </div>
+
         </div>
 
         <div class="footer-bottom">
