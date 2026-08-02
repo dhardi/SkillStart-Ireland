@@ -129,7 +129,8 @@ def course_detail(request, slug):
         )
     )
 
-    course_button_text = "Start learning"
+    is_enrolled = False
+    course_button_text = "Start course"
     course_button_lesson = None
 
     if lessons:
@@ -146,6 +147,8 @@ def course_detail(request, slug):
         )
 
         if enrollment:
+            is_enrolled = True
+
             completed_lesson_ids = set(
                 LessonProgress.objects
                 .filter(
@@ -198,6 +201,7 @@ def course_detail(request, slug):
     context = {
         "course": course,
         "lessons": lessons,
+        "is_enrolled": is_enrolled,
         "course_button_text": course_button_text,
         "course_button_lesson": course_button_lesson,
         "assessment_available": assessment_available,
@@ -210,6 +214,86 @@ def course_detail(request, slug):
     )
 
 
+@login_required
+@require_POST
+def enroll_course(
+    request,
+    course_slug,
+):
+    """
+    Enrol the logged-in student in a published course.
+
+    If the student is already enrolled, the existing
+    enrollment is preserved.
+
+    After enrollment, redirect the student to the first
+    published lesson.
+    """
+
+    course = get_object_or_404(
+        Course,
+        slug=course_slug,
+        is_published=True,
+    )
+
+    first_lesson = (
+        course.lessons
+        .filter(
+            is_published=True,
+        )
+        .order_by(
+            "order",
+            "id",
+        )
+        .first()
+    )
+
+    if first_lesson is None:
+        messages.error(
+            request,
+            (
+                "This course does not have any "
+                "published lessons yet."
+            ),
+        )
+
+        return redirect(
+            "courses:course_detail",
+            slug=course.slug,
+        )
+
+    enrollment, created = (
+        Enrollment.objects.get_or_create(
+            user=request.user,
+            course=course,
+        )
+    )
+
+    if created:
+        messages.success(
+            request,
+            (
+                f"You are now enrolled in "
+                f"{course.title}."
+            ),
+        )
+    else:
+        messages.info(
+            request,
+            (
+                f"You are already enrolled in "
+                f"{course.title}."
+            ),
+        )
+
+    return redirect(
+        "courses:lesson_detail",
+        course_slug=course.slug,
+        lesson_id=first_lesson.id,
+    )
+
+
+@login_required
 def lesson_detail(
     request,
     course_slug,
@@ -222,6 +306,29 @@ def lesson_detail(
         slug=course_slug,
         is_published=True,
     )
+
+    enrollment = (
+        Enrollment.objects
+        .filter(
+            user=request.user,
+            course=course,
+        )
+        .first()
+    )
+
+    if enrollment is None:
+        messages.warning(
+            request,
+            (
+                "You must enrol in this course before "
+                "accessing its lessons."
+            ),
+        )
+
+        return redirect(
+            "courses:course_detail",
+            slug=course.slug,
+        )
 
     lesson = get_object_or_404(
         Lesson,
@@ -261,32 +368,19 @@ def lesson_detail(
             current_position + 1
         ]
 
-    completed_lesson_ids = []
-
-    if request.user.is_authenticated:
-        enrollment = (
-            Enrollment.objects
-            .filter(
-                user=request.user,
-                course=course,
-            )
-            .first()
+    completed_lesson_ids = list(
+        LessonProgress.objects
+        .filter(
+            enrollment=enrollment,
+            completed=True,
+            lesson__course=course,
+            lesson__is_published=True,
         )
-
-        if enrollment:
-            completed_lesson_ids = list(
-                LessonProgress.objects
-                .filter(
-                    enrollment=enrollment,
-                    completed=True,
-                    lesson__course=course,
-                    lesson__is_published=True,
-                )
-                .values_list(
-                    "lesson_id",
-                    flat=True,
-                )
-            )
+        .values_list(
+            "lesson_id",
+            flat=True,
+        )
+    )
 
     completed_count = len(
         completed_lesson_ids,
@@ -368,14 +462,28 @@ def mark_lesson_completed(
         is_published=True,
     )
 
-    enrollment, enrollment_created = (
-        Enrollment.objects.get_or_create(
+    enrollment = (
+        Enrollment.objects
+        .filter(
             user=request.user,
             course=course,
         )
+        .first()
     )
 
-    lesson_progress, progress_created = (
+    if enrollment is None:
+        return JsonResponse(
+            {
+                "success": False,
+                "error": (
+                    "You must enrol in this course before "
+                    "completing a lesson."
+                ),
+            },
+            status=403,
+        )
+
+    lesson_progress, _ = (
         LessonProgress.objects.get_or_create(
             enrollment=enrollment,
             lesson=lesson,
@@ -471,6 +579,20 @@ def assessment_detail(
         .first()
     )
 
+    if enrollment is None:
+        messages.warning(
+            request,
+            (
+                "You must enrol in this course before "
+                "accessing its assessment."
+            ),
+        )
+
+        return redirect(
+            "courses:course_detail",
+            slug=course.slug,
+        )
+
     total_lessons = (
         course.lessons
         .filter(
@@ -479,19 +601,16 @@ def assessment_detail(
         .count()
     )
 
-    completed_lessons = 0
-
-    if enrollment:
-        completed_lessons = (
-            LessonProgress.objects
-            .filter(
-                enrollment=enrollment,
-                completed=True,
-                lesson__course=course,
-                lesson__is_published=True,
-            )
-            .count()
+    completed_lessons = (
+        LessonProgress.objects
+        .filter(
+            enrollment=enrollment,
+            completed=True,
+            lesson__course=course,
+            lesson__is_published=True,
         )
+        .count()
+    )
 
     lessons_completed = (
         total_lessons > 0
@@ -508,8 +627,6 @@ def assessment_detail(
         .order_by(
             "-attempt_number",
         )
-        if enrollment
-        else AssessmentAttempt.objects.none()
     )
 
     completed_attempts_count = (
@@ -546,8 +663,7 @@ def assessment_detail(
     )
 
     can_start = (
-        enrollment is not None
-        and lessons_completed
+        lessons_completed
         and assessment.is_ready
         and not maximum_attempts_reached
     )
@@ -598,11 +714,29 @@ def start_assessment(
         is_published=True,
     )
 
-    enrollment = get_object_or_404(
-        Enrollment.objects.select_for_update(),
-        user=request.user,
-        course=course,
+    enrollment = (
+        Enrollment.objects
+        .select_for_update()
+        .filter(
+            user=request.user,
+            course=course,
+        )
+        .first()
     )
+
+    if enrollment is None:
+        messages.warning(
+            request,
+            (
+                "You must enrol in this course before "
+                "starting its assessment."
+            ),
+        )
+
+        return redirect(
+            "courses:course_detail",
+            slug=course.slug,
+        )
 
     in_progress_attempt = (
         AssessmentAttempt.objects

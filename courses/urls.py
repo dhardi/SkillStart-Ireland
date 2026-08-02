@@ -18,6 +18,11 @@ urlpatterns = [
         name="course_detail",
     ),
     path(
+        "<slug:course_slug>/enroll/",
+        views.enroll_course,
+        name="enroll_course",
+    ),
+    path(
         "<slug:course_slug>/lessons/<int:lesson_id>/",
         views.lesson_detail,
         name="lesson_detail",
@@ -50,37 +55,34 @@ urlpatterns = [
         name="assessment_attempt",
     ),
     path(
-    (
-        "<slug:course_slug>/assessment/"
-        "attempt/<int:attempt_id>/result/"
+        (
+            "<slug:course_slug>/assessment/"
+            "attempt/<int:attempt_id>/result/"
+        ),
+        views.assessment_result,
+        name="assessment_result",
     ),
-    views.assessment_result,
-    name="assessment_result",
+    path(
+        "certificates/verify/",
+        views.certificate_verify,
+        name="certificate_verify",
     ),
-
- path(
-    "certificates/verify/",
-    views.certificate_verify,
-    name="certificate_verify",
-),
-
-path(
-    "certificates/verify/code/"
-    "<uuid:verification_code>/",
-    views.certificate_verify_code,
-    name="certificate_verify_code",
-),
-
-path(
-    "certificates/<str:certificate_number>/pdf/",
-    views.certificate_pdf,
-    name="certificate_pdf",
-),
-
-path(
-    "certificates/<str:certificate_number>/",
-    views.certificate_detail,
-    name="certificate_detail",
-),
-
+    path(
+        (
+            "certificates/verify/code/"
+            "<uuid:verification_code>/"
+        ),
+        views.certificate_verify_code,
+        name="certificate_verify_code",
+    ),
+    path(
+        "certificates/<str:certificate_number>/pdf/",
+        views.certificate_pdf,
+        name="certificate_pdf",
+    ),
+    path(
+        "certificates/<str:certificate_number>/",
+        views.certificate_detail,
+        name="certificate_detail",
+    ),
 ]
