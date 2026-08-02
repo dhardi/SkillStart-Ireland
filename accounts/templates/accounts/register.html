@@ -1,0 +1,496 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block title %}
+    Create Account | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section class="login-page register-page">
+
+    <div class="container">
+
+        <div class="login-layout register-layout">
+
+            <div class="login-presentation register-presentation">
+
+                <a
+                    href="{% url 'home' %}"
+                    class="login-brand"
+                >
+                    <span class="login-brand-icon">
+                        S
+                    </span>
+
+                    <span>
+                        SkillStart Ireland
+                    </span>
+                </a>
+
+                <div class="login-presentation-content">
+
+                    <span class="login-presentation-label">
+                        Start your learning journey
+                    </span>
+
+                    <h1>
+                        Build practical skills for work in Ireland.
+                    </h1>
+
+                    <p>
+                        Create your free student account, access practical
+                        workplace courses and track your progress.
+                    </p>
+
+                    <div class="login-benefits">
+
+                        <div class="login-benefit-item">
+
+                            <span class="login-benefit-icon">
+                                ✓
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Practical learning
+                                </strong>
+
+                                <p>
+                                    Study workplace-focused content designed
+                                    for real situations in Ireland.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="login-benefit-item">
+
+                            <span class="login-benefit-icon">
+                                ✓
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Track your progress
+                                </strong>
+
+                                <p>
+                                    Continue from your next lesson and monitor
+                                    every completed course.
+                                </p>
+                            </div>
+
+                        </div>
+
+                        <div class="login-benefit-item">
+
+                            <span class="login-benefit-icon">
+                                ✓
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Earn certificates
+                                </strong>
+
+                                <p>
+                                    Pass the final assessment and receive a
+                                    verifiable course certificate.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    </div>
+
+                </div>
+
+                <p class="login-presentation-footer">
+                    Practical learning for a better start in Ireland.
+                </p>
+
+            </div>
+
+            <div class="login-form-column register-form-column">
+
+                <div class="login-card register-card">
+
+                    <div class="login-card-header">
+
+                        <span class="login-card-label">
+                            Student registration
+                        </span>
+
+                        <h2>
+                            Create your account
+                        </h2>
+
+                        <p>
+                            Enter your information below to start
+                            learning with SkillStart Ireland.
+                        </p>
+
+                    </div>
+
+                    {% if form.non_field_errors %}
+
+                        <div
+                            class="login-alert"
+                            role="alert"
+                        >
+                            <span
+                                class="login-alert-icon"
+                                aria-hidden="true"
+                            >
+                                !
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Registration failed
+                                </strong>
+
+                                {% for error in form.non_field_errors %}
+                                    <p>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+
+                    {% elif form.errors %}
+
+                        <div
+                            class="login-alert"
+                            role="alert"
+                        >
+                            <span
+                                class="login-alert-icon"
+                                aria-hidden="true"
+                            >
+                                !
+                            </span>
+
+                            <div>
+                                <strong>
+                                    Check your information
+                                </strong>
+
+                                <p>
+                                    Please correct the highlighted fields
+                                    and submit the form again.
+                                </p>
+                            </div>
+
+                        </div>
+
+                    {% endif %}
+
+                    <form
+                        method="post"
+                        class="login-form register-form"
+                        novalidate
+                    >
+                        {% csrf_token %}
+
+                        <div class="register-name-grid">
+
+                            <div class="login-form-group">
+
+                                <label for="{{ form.first_name.id_for_label }}">
+                                    First name
+                                </label>
+
+                                <div class="login-input-wrapper">
+
+                                    <span
+                                        class="login-input-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ◉
+                                    </span>
+
+                                    {{ form.first_name }}
+
+                                </div>
+
+                                {% if form.first_name.errors %}
+
+                                    <div class="login-field-error">
+                                        {{ form.first_name.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                            <div class="login-form-group">
+
+                                <label for="{{ form.last_name.id_for_label }}">
+                                    Last name
+                                </label>
+
+                                <div class="login-input-wrapper">
+
+                                    <span
+                                        class="login-input-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ◉
+                                    </span>
+
+                                    {{ form.last_name }}
+
+                                </div>
+
+                                {% if form.last_name.errors %}
+
+                                    <div class="login-field-error">
+                                        {{ form.last_name.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        <div class="login-form-group">
+
+                            <label for="{{ form.username.id_for_label }}">
+                                Username
+                            </label>
+
+                            <div class="login-input-wrapper">
+
+                                <span
+                                    class="login-input-icon"
+                                    aria-hidden="true"
+                                >
+                                    @
+                                </span>
+
+                                {{ form.username }}
+
+                            </div>
+
+                            {% if form.username.errors %}
+
+                                <div class="login-field-error">
+                                    {{ form.username.errors|striptags }}
+                                </div>
+
+                            {% endif %}
+
+                            <p class="register-field-help">
+                                Use letters, numbers and the characters
+                                @, ., +, - or _.
+                            </p>
+
+                        </div>
+
+                        <div class="login-form-group">
+
+                            <label for="{{ form.email.id_for_label }}">
+                                Email address
+                            </label>
+
+                            <div class="login-input-wrapper">
+
+                                <span
+                                    class="login-input-icon"
+                                    aria-hidden="true"
+                                >
+                                    ✉
+                                </span>
+
+                                {{ form.email }}
+
+                            </div>
+
+                            {% if form.email.errors %}
+
+                                <div class="login-field-error">
+                                    {{ form.email.errors|striptags }}
+                                </div>
+
+                            {% endif %}
+
+                        </div>
+
+                        <div class="register-password-grid">
+
+                            <div class="login-form-group">
+
+                                <div class="login-password-heading">
+
+                                    <label for="{{ form.password1.id_for_label }}">
+                                        Password
+                                    </label>
+
+                                    <button
+                                        type="button"
+                                        class="
+                                            login-password-toggle
+                                            register-password-toggle
+                                        "
+                                        data-password-target="{{ form.password1.id_for_label }}"
+                                        aria-controls="{{ form.password1.id_for_label }}"
+                                        aria-pressed="false"
+                                    >
+                                        Show
+                                    </button>
+
+                                </div>
+
+                                <div class="login-input-wrapper">
+
+                                    <span
+                                        class="login-input-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ●
+                                    </span>
+
+                                    {{ form.password1 }}
+
+                                </div>
+
+                                {% if form.password1.errors %}
+
+                                    <div class="login-field-error">
+                                        {{ form.password1.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                            <div class="login-form-group">
+
+                                <div class="login-password-heading">
+
+                                    <label for="{{ form.password2.id_for_label }}">
+                                        Confirm password
+                                    </label>
+
+                                    <button
+                                        type="button"
+                                        class="
+                                            login-password-toggle
+                                            register-password-toggle
+                                        "
+                                        data-password-target="{{ form.password2.id_for_label }}"
+                                        aria-controls="{{ form.password2.id_for_label }}"
+                                        aria-pressed="false"
+                                    >
+                                        Show
+                                    </button>
+
+                                </div>
+
+                                <div class="login-input-wrapper">
+
+                                    <span
+                                        class="login-input-icon"
+                                        aria-hidden="true"
+                                    >
+                                        ●
+                                    </span>
+
+                                    {{ form.password2 }}
+
+                                </div>
+
+                                {% if form.password2.errors %}
+
+                                    <div class="login-field-error">
+                                        {{ form.password2.errors|striptags }}
+                                    </div>
+
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        <div class="register-password-guidance">
+
+                            <strong>
+                                Your password should:
+                            </strong>
+
+                            <ul>
+                                <li>
+                                    Contain at least 8 characters.
+                                </li>
+
+                                <li>
+                                    Not be too similar to your personal details.
+                                </li>
+
+                                <li>
+                                    Not be a commonly used password.
+                                </li>
+
+                                <li>
+                                    Not contain only numbers.
+                                </li>
+                            </ul>
+
+                        </div>
+
+                        <button
+                            type="submit"
+                            class="login-submit-button"
+                        >
+                            <span>
+                                Create account
+                            </span>
+
+                            <span aria-hidden="true">
+                                →
+                            </span>
+                        </button>
+
+                    </form>
+
+                    <div class="login-card-footer register-card-footer">
+
+                        <p>
+                            Already have an account?
+                        </p>
+
+                        <a href="{% url 'accounts:login' %}">
+                            Sign in to your account
+                        </a>
+
+                    </div>
+
+                    <div class="login-security-message">
+
+                        <span aria-hidden="true">
+                            🔒
+                        </span>
+
+                        <span>
+                            Your account information is securely protected.
+                        </span>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</section>
+
+<script src="{% static 'core/js/register.js' %}"></script>
+
+{% endblock %}

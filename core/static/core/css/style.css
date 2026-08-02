@@ -8812,3 +8812,698 @@ body {
     }
 }
 
+/* =========================================================
+   DASHBOARD — MY CERTIFICATES
+========================================================= */
+
+.dashboard-certificates-section {
+    margin-top: 2rem;
+    padding: 2rem;
+    border: 1px solid #e7ebf1;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 16px 40px rgba(22, 34, 51, 0.06);
+}
+
+.dashboard-certificates-section .dashboard-content-header {
+    align-items: flex-start;
+    gap: 1.5rem;
+}
+
+.dashboard-certificate-list {
+    gap: 1.15rem;
+}
+
+.dashboard-certificate-card {
+    grid-template-columns: 150px minmax(0, 1fr) 170px;
+    padding: 1.2rem;
+    border-color: rgba(31, 111, 92, 0.18);
+    background:
+        linear-gradient(
+            135deg,
+            rgba(31, 111, 92, 0.035),
+            rgba(255, 255, 255, 0) 42%
+        ),
+        #ffffff;
+}
+
+.dashboard-certificate-card:hover {
+    border-color: rgba(31, 111, 92, 0.4);
+    box-shadow: 0 16px 34px rgba(22, 34, 51, 0.09);
+}
+
+.dashboard-certificate-card .dashboard-course-image {
+    width: 150px;
+    height: 145px;
+}
+
+.dashboard-certificate-card .dashboard-course-placeholder {
+    color: #1f6f5c;
+    font-size: 3rem;
+    background:
+        linear-gradient(
+            145deg,
+            rgba(31, 111, 92, 0.14),
+            rgba(31, 111, 92, 0.04)
+        );
+}
+
+.dashboard-certificate-details {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 0.8rem;
+    margin-top: 1.1rem;
+    padding-top: 1rem;
+    border-top: 1px solid #edf0f3;
+}
+
+.dashboard-certificate-detail {
+    min-width: 0;
+    padding: 0.8rem;
+    border: 1px solid #e7ebf1;
+    border-radius: 11px;
+    background: #f8faf9;
+}
+
+.dashboard-certificate-detail span {
+    display: block;
+    margin-bottom: 0.3rem;
+    color: #7a8491;
+    font-size: 0.72rem;
+    font-weight: 650;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+}
+
+.dashboard-certificate-detail strong {
+    display: block;
+    overflow-wrap: anywhere;
+    color: #17212b;
+    font-size: 0.88rem;
+    font-weight: 750;
+    line-height: 1.4;
+}
+
+.dashboard-certificate-actions {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: center;
+    gap: 0.7rem;
+    width: 170px;
+}
+
+.dashboard-certificate-actions a {
+    width: 100%;
+    min-width: 0;
+    min-height: 44px;
+    padding: 0.7rem 0.85rem;
+    font-size: 0.84rem;
+    text-align: center;
+}
+
+.dashboard-certificates-section .dashboard-certificate-button {
+    border-color: #17212b;
+    background: #17212b;
+    color: #ffffff;
+}
+
+.dashboard-certificates-section .dashboard-certificate-button:hover {
+    border-color: #273747;
+    background: #273747;
+    color: #ffffff;
+}
+
+.dashboard-certificates-section .dashboard-primary-button {
+    background: #1f6f5c;
+}
+
+.dashboard-certificates-section .dashboard-primary-button:hover {
+    background: #185847;
+}
+
+.dashboard-certificates-section .dashboard-secondary-button {
+    background: transparent;
+    color: #1f6f5c;
+}
+
+.dashboard-certificates-section .dashboard-secondary-button:hover {
+    background: #1f6f5c;
+    color: #ffffff;
+}
+
+
+/* =========================================================
+   DASHBOARD CERTIFICATES — TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .dashboard-certificate-card {
+        grid-template-columns: 150px minmax(0, 1fr);
+    }
+
+    .dashboard-certificate-card .dashboard-course-image {
+        width: 150px;
+        height: 145px;
+    }
+
+    .dashboard-certificate-actions {
+        grid-column: 1 / -1;
+        flex-direction: row;
+        width: 100%;
+    }
+
+    .dashboard-certificate-actions a {
+        flex: 1;
+    }
+}
+
+
+/* =========================================================
+   DASHBOARD CERTIFICATES — MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .dashboard-certificates-section {
+        padding: 1.25rem;
+    }
+
+    .dashboard-certificates-section .dashboard-content-header {
+        flex-direction: row;
+    }
+
+    .dashboard-certificate-card {
+        display: flex;
+        align-items: stretch;
+        flex-direction: column;
+        padding: 1rem;
+    }
+
+    .dashboard-certificate-card .dashboard-course-image {
+        width: 100%;
+        height: 155px;
+    }
+
+    .dashboard-certificate-details {
+        grid-template-columns: 1fr;
+    }
+
+    .dashboard-certificate-actions {
+        flex-direction: column;
+        width: 100%;
+    }
+
+    .dashboard-certificate-actions a {
+        width: 100%;
+    }
+}
+
+
+/* =========================================================
+   DASHBOARD CERTIFICATES — SMALL MOBILE
+========================================================= */
+
+@media (max-width: 419px) {
+
+    .dashboard-certificates-section {
+        padding: 1rem;
+        border-radius: 18px;
+    }
+
+    .dashboard-certificates-section .dashboard-content-header {
+        gap: 0.75rem;
+    }
+
+    .dashboard-certificates-section
+    .dashboard-content-header h2 {
+        font-size: 1.45rem;
+    }
+
+    .dashboard-certificate-card .dashboard-course-image {
+        height: 135px;
+    }
+
+    .dashboard-certificate-detail {
+        padding: 0.7rem;
+    }
+}
+
+/* =========================================================
+   STUDENT REGISTRATION PAGE
+========================================================= */
+
+.register-page {
+    align-items: flex-start;
+}
+
+.register-layout {
+    grid-template-columns:
+        minmax(0, 0.9fr)
+        minmax(560px, 1.1fr);
+    min-height: 850px;
+}
+
+.register-presentation {
+    min-height: 850px;
+}
+
+.register-form-column {
+    align-items: flex-start;
+    padding: 3rem;
+}
+
+.register-card {
+    width: 100%;
+    max-width: 620px;
+}
+
+.register-form {
+    gap: 1.2rem;
+}
+
+.register-name-grid,
+.register-password-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.register-name-grid .login-form-group,
+.register-password-grid .login-form-group {
+    min-width: 0;
+}
+
+.register-field-help {
+    margin: 0.45rem 0 0;
+    color: #89929e;
+    font-size: 0.76rem;
+    line-height: 1.5;
+}
+
+.register-password-guidance {
+    padding: 1rem 1.1rem;
+    border: 1px solid rgba(31, 111, 92, 0.16);
+    border-radius: 12px;
+    background: rgba(31, 111, 92, 0.055);
+}
+
+.register-password-guidance strong {
+    display: block;
+    margin-bottom: 0.55rem;
+    color: #29333d;
+    font-size: 0.84rem;
+}
+
+.register-password-guidance ul {
+    margin: 0;
+    padding-left: 1.15rem;
+    color: #65717d;
+    font-size: 0.78rem;
+    line-height: 1.7;
+}
+
+.register-password-guidance li + li {
+    margin-top: 0.15rem;
+}
+
+.login-card-footer a,
+.register-card-footer a {
+    color: #1f6f5c;
+    font-size: 0.84rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.login-card-footer a:hover,
+.register-card-footer a:hover {
+    color: #185847;
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   STUDENT REGISTRATION — TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .register-layout {
+        grid-template-columns: 1fr;
+        max-width: 720px;
+        min-height: auto;
+    }
+
+    .register-presentation {
+        min-height: auto;
+    }
+
+    .register-form-column {
+        align-items: center;
+        padding: 2.5rem;
+    }
+}
+
+
+/* =========================================================
+   STUDENT REGISTRATION — MOBILE
+========================================================= */
+
+@media (max-width: 767px) {
+
+    .register-name-grid,
+    .register-password-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .register-form-column {
+        padding: 2rem 1.5rem;
+    }
+
+    .register-card {
+        max-width: none;
+    }
+}
+
+
+/* =========================================================
+   STUDENT REGISTRATION — SMALL MOBILE
+========================================================= */
+
+@media (max-width: 575px) {
+
+    .register-page {
+        padding-top: 1.5rem;
+    }
+
+    .register-form-column {
+        padding: 2rem 1.15rem;
+    }
+
+    .register-card .login-card-header {
+        margin-bottom: 1.5rem;
+    }
+
+    .register-card .login-card-header h2 {
+        font-size: 1.75rem;
+    }
+
+    .register-password-guidance {
+        padding: 0.9rem;
+    }
+}
+
+/* =========================================================
+   PASSWORD RECOVERY
+========================================================= */
+
+.login-recovery-row {
+    display: flex;
+    justify-content: flex-end;
+    margin-top: -0.35rem;
+}
+
+.login-recovery-link {
+    color: #1f6f5c;
+    font-size: 0.82rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.login-recovery-link:hover {
+    color: #185847;
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   PASSWORD RESET REQUEST
+========================================================= */
+
+.password-reset-page {
+    min-height: calc(100vh - 80px);
+}
+
+.password-reset-layout {
+    min-height: 720px;
+}
+
+.password-reset-presentation {
+    min-height: 720px;
+}
+
+.password-reset-form-column {
+    align-items: center;
+}
+
+.password-reset-card {
+    width: 100%;
+    max-width: 520px;
+}
+
+.password-reset-form {
+    gap: 1.25rem;
+}
+
+.password-reset-form input[type="email"],
+.password-confirm-form input[type="password"],
+.password-confirm-form input[type="text"] {
+    width: 100%;
+    min-height: 52px;
+    padding: 0.85rem 1rem 0.85rem 3rem;
+    border: 1px solid #dfe4e8;
+    border-radius: 11px;
+    background: #ffffff;
+    color: #17212b;
+    font-size: 0.95rem;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.password-reset-form input[type="email"]:focus,
+.password-confirm-form input[type="password"]:focus,
+.password-confirm-form input[type="text"]:focus {
+    border-color: #1f6f5c;
+    box-shadow: 0 0 0 4px rgba(31, 111, 92, 0.1);
+}
+
+
+/* =========================================================
+   PASSWORD RESET MESSAGE PAGES
+========================================================= */
+
+.password-message-layout {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 680px;
+    padding: 3rem 0;
+}
+
+.password-message-card {
+    width: 100%;
+    max-width: 580px;
+    padding: 2.75rem;
+    border: 1px solid #e5e9ed;
+    border-radius: 22px;
+    background: #ffffff;
+    box-shadow: 0 22px 55px rgba(22, 34, 51, 0.09);
+    text-align: center;
+}
+
+.password-message-brand {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.7rem;
+    margin-bottom: 2rem;
+    color: #17212b;
+    font-size: 1rem;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.password-message-brand:hover {
+    color: #1f6f5c;
+}
+
+.password-message-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 76px;
+    height: 76px;
+    margin: 0 auto 1.35rem;
+    border: 1px solid rgba(31, 111, 92, 0.18);
+    border-radius: 50%;
+    background: rgba(31, 111, 92, 0.08);
+    color: #1f6f5c;
+    font-size: 2rem;
+    font-weight: 800;
+}
+
+.password-success-icon {
+    background: rgba(31, 111, 92, 0.1);
+    color: #1f6f5c;
+}
+
+.password-error-icon {
+    border-color: rgba(184, 56, 56, 0.2);
+    background: rgba(184, 56, 56, 0.08);
+    color: #b83838;
+}
+
+.password-message-card h1 {
+    margin: 0.65rem 0 1rem;
+    color: #17212b;
+    font-size: clamp(1.8rem, 4vw, 2.35rem);
+    font-weight: 800;
+    line-height: 1.2;
+}
+
+.password-message-card > p {
+    max-width: 470px;
+    margin: 0 auto;
+    color: #68737e;
+    font-size: 0.96rem;
+    line-height: 1.75;
+}
+
+.password-message-notice {
+    margin-top: 1.75rem;
+    padding: 1.15rem 1.25rem;
+    border: 1px solid rgba(31, 111, 92, 0.15);
+    border-radius: 13px;
+    background: rgba(31, 111, 92, 0.05);
+    text-align: left;
+}
+
+.password-message-notice strong {
+    display: block;
+    margin-bottom: 0.4rem;
+    color: #27333d;
+    font-size: 0.9rem;
+}
+
+.password-message-notice p {
+    margin: 0;
+    color: #68737e;
+    font-size: 0.84rem;
+    line-height: 1.65;
+}
+
+.password-message-actions {
+    display: flex;
+    align-items: stretch;
+    flex-direction: column;
+    gap: 0.9rem;
+    margin-top: 1.75rem;
+}
+
+.password-message-actions .login-submit-button {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    text-decoration: none;
+}
+
+.password-secondary-link {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    color: #1f6f5c;
+    font-size: 0.87rem;
+    font-weight: 750;
+    text-decoration: none;
+}
+
+.password-secondary-link:hover {
+    color: #185847;
+    text-decoration: underline;
+}
+
+
+/* =========================================================
+   CREATE NEW PASSWORD
+========================================================= */
+
+.password-confirm-card {
+    max-width: 610px;
+    text-align: left;
+}
+
+.password-confirm-card .password-message-brand {
+    display: flex;
+    justify-content: center;
+}
+
+.password-confirm-card .password-message-icon,
+.password-confirm-card > .login-card-label,
+.password-confirm-card > h1,
+.password-confirm-card > p {
+    text-align: center;
+}
+
+.password-confirm-form {
+    gap: 1.2rem;
+    margin-top: 1.75rem;
+}
+
+
+/* =========================================================
+   PASSWORD RECOVERY — TABLET
+========================================================= */
+
+@media (max-width: 991px) {
+
+    .password-reset-layout {
+        grid-template-columns: 1fr;
+        max-width: 720px;
+        min-height: auto;
+    }
+
+    .password-reset-presentation {
+        min-height: auto;
+    }
+
+    .password-reset-form-column {
+        padding: 2.5rem;
+    }
+}
+
+
+/* =========================================================
+   PASSWORD RECOVERY — MOBILE
+========================================================= */
+
+@media (max-width: 575px) {
+
+    .password-message-layout {
+        min-height: auto;
+        padding: 1.5rem 0;
+    }
+
+    .password-message-card {
+        padding: 2rem 1.25rem;
+        border-radius: 18px;
+    }
+
+    .password-message-icon {
+        width: 66px;
+        height: 66px;
+        font-size: 1.7rem;
+    }
+
+    .password-reset-form-column {
+        padding: 2rem 1.15rem;
+    }
+
+    .login-recovery-row {
+        justify-content: center;
+    }
+}
+

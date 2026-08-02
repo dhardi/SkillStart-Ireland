@@ -1,5 +1,8 @@
+from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import render
+from django.shortcuts import redirect, render
+
+from .forms import StudentRegistrationForm
 
 from .models import (
     Certificate,
@@ -8,8 +11,57 @@ from .models import (
 )
 
 
+def register(request):
+    """
+    Create a new student account and sign the student in automatically.
+    """
+
+    if request.user.is_authenticated:
+        return redirect("accounts:dashboard")
+
+    if request.method == "POST":
+        form = StudentRegistrationForm(request.POST)
+
+        if form.is_valid():
+            user = form.save()
+
+            login(
+                request,
+                user,
+            )
+
+            return redirect(
+                "accounts:dashboard"
+            )
+
+    else:
+        form = StudentRegistrationForm()
+
+    context = {
+        "form": form,
+    }
+
+    return render(
+        request,
+        "accounts/register.html",
+        context,
+    )
+
+
+
 @login_required
 def dashboard(request):
+    """
+    Display the logged-in student's dashboard.
+
+    The dashboard contains:
+    - Courses in progress
+    - Completed courses
+    - Lesson progress
+    - Recent activity
+    - Certificates earned by the student
+    """
+
     enrollments = list(
         Enrollment.objects
         .filter(user=request.user)
@@ -19,6 +71,28 @@ def dashboard(request):
         )
         .order_by("-started_at")
     )
+
+    # Load all certificates belonging to the logged-in student.
+    certificates = list(
+        Certificate.objects
+        .filter(
+            enrollment__user=request.user,
+        )
+        .select_related(
+            "enrollment",
+            "enrollment__course",
+            "assessment_attempt",
+            "assessment_attempt__assessment",
+        )
+        .order_by("-issued_at")
+    )
+
+    # Connect each certificate to its enrollment without
+    # performing a new query for every course.
+    certificates_by_enrollment_id = {
+        certificate.enrollment_id: certificate
+        for certificate in certificates
+    }
 
     courses_started = 0
     courses_completed = 0
@@ -48,22 +122,15 @@ def dashboard(request):
             )
         )
 
-        total_lessons = len(
-            published_lessons
-        )
+        total_lessons = len(published_lessons)
+        completed_lessons_count = len(completed_lesson_ids)
 
-        completed_lessons = len(
-            completed_lesson_ids
-        )
-
-        lessons_completed += (
-            completed_lessons
-        )
+        lessons_completed += completed_lessons_count
 
         if total_lessons > 0:
             progress_percentage = round(
                 (
-                    completed_lessons
+                    completed_lessons_count
                     / total_lessons
                 )
                 * 100
@@ -71,61 +138,41 @@ def dashboard(request):
         else:
             progress_percentage = 0
 
-        next_lesson = None
+        resume_lesson = None
 
         for lesson in published_lessons:
-            if (
-                lesson.id
-                not in completed_lesson_ids
-            ):
-                next_lesson = lesson
+            if lesson.id not in completed_lesson_ids:
+                resume_lesson = lesson
                 break
 
-        if (
-            next_lesson is None
-            and published_lessons
-        ):
-            next_lesson = (
-                published_lessons[-1]
-            )
+        # If all lessons are complete, use the last lesson
+        # so the course can still be reviewed.
+        if resume_lesson is None and published_lessons:
+            resume_lesson = published_lessons[-1]
 
-        enrollment.total_lessons = (
-            total_lessons
-        )
-
-        enrollment.completed_lessons = (
-            completed_lessons
-        )
-
-        enrollment.progress_percentage = (
-            progress_percentage
-        )
-
-        enrollment.resume_lesson = (
-            next_lesson
-        )
+        # These attribute names must match dashboard.html.
+        enrollment.total_lessons = total_lessons
+        enrollment.completed_lessons = completed_lessons_count
+        enrollment.progress_percentage = progress_percentage
+        enrollment.resume_lesson = resume_lesson
 
         enrollment.certificate = (
-            Certificate.objects
-            .filter(
-                enrollment=enrollment,
+            certificates_by_enrollment_id.get(
+                enrollment.id
             )
-            .first()
         )
 
         if enrollment.is_completed:
             courses_completed += 1
-
-            completed_enrollments.append(
-                enrollment
-            )
+            completed_enrollments.append(enrollment)
         else:
             courses_started += 1
+            in_progress_enrollments.append(enrollment)
 
-            in_progress_enrollments.append(
-                enrollment
-            )
-
+    # Keep recent_activity as LessonProgress objects.
+    # dashboard.html accesses:
+    # progress.lesson.course.slug
+    # progress.lesson.id
     recent_activity = (
         LessonProgress.objects
         .filter(
@@ -141,24 +188,14 @@ def dashboard(request):
     )
 
     context = {
-        "courses_started": (
-            courses_started
-        ),
-        "courses_completed": (
-            courses_completed
-        ),
-        "lessons_completed": (
-            lessons_completed
-        ),
-        "in_progress_enrollments": (
-            in_progress_enrollments
-        ),
-        "completed_enrollments": (
-            completed_enrollments
-        ),
-        "recent_activity": (
-            recent_activity
-        ),
+        "courses_started": courses_started,
+        "courses_completed": courses_completed,
+        "lessons_completed": lessons_completed,
+        "in_progress_enrollments": in_progress_enrollments,
+        "completed_enrollments": completed_enrollments,
+        "recent_activity": recent_activity,
+        "certificates": certificates,
+        "certificate_count": len(certificates),
     }
 
     return render(

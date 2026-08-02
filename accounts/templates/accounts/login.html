@@ -259,6 +259,17 @@
 
                         </div>
 
+                        <div class="login-recovery-row">
+
+                            <a
+                                href="{% url 'accounts:password_reset' %}"
+                                class="login-recovery-link"
+                            >
+                                Forgot your password?
+                            </a>
+
+                        </div>
+
                         {% if next %}
                             <input
                                 type="hidden"
@@ -288,9 +299,9 @@
                             Do not have an account yet?
                         </p>
 
-                        <span>
-                            Registration will be available soon.
-                        </span>
+                        <a href="{% url 'accounts:register' %}">
+                            Create your free account
+                        </a>
 
                     </div>
 

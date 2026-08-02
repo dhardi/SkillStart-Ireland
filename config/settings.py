@@ -133,3 +133,16 @@ LOGIN_URL = "accounts:login"
 LOGIN_REDIRECT_URL = "accounts:dashboard"
 
 LOGOUT_REDIRECT_URL = "home"
+
+
+# =========================================================
+# EMAIL — LOCAL DEVELOPMENT
+# =========================================================
+
+EMAIL_BACKEND = (
+    "django.core.mail.backends.console.EmailBackend"
+)
+
+DEFAULT_FROM_EMAIL = (
+    "SkillStart Ireland <no-reply@skillstart.ie>"
+)

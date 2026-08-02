@@ -402,31 +402,216 @@
 
                                 <div class="dashboard-course-action">
 
-    {% if enrollment.certificate %}
+                                    {% if enrollment.certificate %}
 
-        <a
-            href="{% url 'courses:certificate_detail' enrollment.certificate.certificate_number %}"
-            class="dashboard-certificate-button"
-        >
-            View certificate
-        </a>
+                                        <a
+                                            href="{% url 'courses:certificate_detail' enrollment.certificate.certificate_number %}"
+                                            class="dashboard-certificate-button"
+                                        >
+                                            View certificate
+                                        </a>
 
-    {% endif %}
+                                    {% endif %}
 
-    <a
-        href="{% url 'courses:course_detail' enrollment.course.slug %}"
-        class="dashboard-secondary-button"
-    >
-        Review course
-    </a>
+                                    <a
+                                        href="{% url 'courses:course_detail' enrollment.course.slug %}"
+                                        class="dashboard-secondary-button"
+                                    >
+                                        Review course
+                                    </a>
 
-</div>
+                                </div>
 
                             </article>
 
                         {% endfor %}
 
                     </div>
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+        <section class="dashboard-certificates-section">
+
+            <div class="dashboard-content-header">
+
+                <div>
+                    <span class="dashboard-label">
+                        My certificates
+                    </span>
+
+                    <h2>
+                        Certificates earned
+                    </h2>
+
+                    <p>
+                        View, download or verify the certificates
+                        you have earned after completing your courses.
+                    </p>
+                </div>
+
+                <span class="dashboard-section-count">
+                    {{ certificate_count }}
+                </span>
+
+            </div>
+
+            {% if certificates %}
+
+                <div class="dashboard-course-list dashboard-certificate-list">
+
+                    {% for certificate in certificates %}
+
+                        <article
+                            class="
+                                dashboard-course-item
+                                dashboard-certificate-card
+                            "
+                        >
+
+                            <div class="dashboard-course-image">
+
+                                <div class="dashboard-course-placeholder">
+                                    <span aria-hidden="true">
+                                        🏅
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <div class="dashboard-course-content">
+
+                                <div class="dashboard-course-topline">
+
+                                    <span
+                                        class="
+                                            dashboard-course-status
+                                            dashboard-course-status-completed
+                                        "
+                                    >
+                                        Certificate earned
+                                    </span>
+
+                                    {% if certificate.enrollment.course.category %}
+
+                                        <span class="dashboard-course-category">
+                                            {{ certificate.enrollment.course.category.name }}
+                                        </span>
+
+                                    {% endif %}
+
+                                </div>
+
+                                <h3>
+                                    {{ certificate.enrollment.course.title }}
+                                </h3>
+
+                                <div class="dashboard-certificate-details">
+
+                                    <div class="dashboard-certificate-detail">
+
+                                        <span>
+                                            Issued
+                                        </span>
+
+                                        <strong>
+                                            {{ certificate.issued_at|date:"d M Y" }}
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="dashboard-certificate-detail">
+
+                                        <span>
+                                            Final score
+                                        </span>
+
+                                        <strong>
+                                            {{ certificate.assessment_attempt.score_percentage|floatformat:0 }}%
+                                        </strong>
+
+                                    </div>
+
+                                    <div class="dashboard-certificate-detail">
+
+                                        <span>
+                                            Certificate number
+                                        </span>
+
+                                        <strong>
+                                            {{ certificate.certificate_number }}
+                                        </strong>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                            <div
+                                class="
+                                    dashboard-course-action
+                                    dashboard-certificate-actions
+                                "
+                            >
+
+                                <a
+                                    href="{% url 'courses:certificate_detail' certificate.certificate_number %}"
+                                    class="dashboard-certificate-button"
+                                >
+                                    View certificate
+                                </a>
+
+                                <a
+                                    href="{% url 'courses:certificate_pdf' certificate.certificate_number %}"
+                                    class="dashboard-primary-button"
+                                >
+                                    Download PDF
+                                </a>
+
+                                <a
+                                    href="{% url 'courses:certificate_verify_code' certificate.verification_code %}"
+                                    class="dashboard-secondary-button"
+                                    target="_blank"
+                                    rel="noopener noreferrer"
+                                >
+                                    Verify
+                                </a>
+
+                            </div>
+
+                        </article>
+
+                    {% endfor %}
+
+                </div>
+
+            {% else %}
+
+                <div class="dashboard-empty-state">
+
+                    <div class="dashboard-empty-icon">
+                        🏅
+                    </div>
+
+                    <h3>
+                        No certificates yet
+                    </h3>
+
+                    <p>
+                        Complete all course lessons and pass the
+                        final assessment to earn your first certificate.
+                    </p>
+
+                    <a
+                        href="{% url 'courses:course_list' %}"
+                        class="dashboard-primary-button"
+                    >
+                        Explore courses
+                    </a>
 
                 </div>
 
