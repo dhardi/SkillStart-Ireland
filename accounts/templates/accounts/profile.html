@@ -1,0 +1,601 @@
+{% extends "base.html" %}
+
+{% block title %}
+    My Profile | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section class="student-profile-section">
+    <div class="container">
+
+        <header class="student-profile-header">
+
+            <div>
+                <span class="student-profile-label">
+                    Student area
+                </span>
+
+                <h1>
+                    My Profile
+                </h1>
+
+                <p>
+                    Keep your personal information and account
+                    details up to date.
+                </p>
+            </div>
+
+            <a
+                href="{% url 'accounts:dashboard' %}"
+                class="student-profile-back-button"
+            >
+                <span aria-hidden="true">←</span>
+                Back to dashboard
+            </a>
+
+        </header>
+
+        {% if messages %}
+            <div class="student-profile-messages">
+
+                {% for message in messages %}
+                    <div
+                        class="
+                            student-profile-message
+                            {% if message.tags %}
+                                student-profile-message-{{ message.tags }}
+                            {% endif %}
+                        "
+                        role="alert"
+                    >
+                        <span
+                            class="student-profile-message-icon"
+                            aria-hidden="true"
+                        >
+                            ✓
+                        </span>
+
+                        <span>
+                            {{ message }}
+                        </span>
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endif %}
+
+        <div class="row g-4">
+
+            <div class="col-12 col-lg-4">
+
+                <aside class="student-profile-sidebar">
+
+                    <div class="student-profile-summary">
+
+                        <div class="student-profile-avatar">
+
+                            {% if student_profile.profile_photo %}
+                                <img
+                                    src="{{ student_profile.profile_photo.url }}"
+                                    alt="Profile photo of {{ student_profile.display_name }}"
+                                >
+                            {% else %}
+                                <span aria-hidden="true">
+                                    {% if request.user.first_name %}
+                                        {{ request.user.first_name|first|upper }}
+                                    {% else %}
+                                        {{ request.user.username|first|upper }}
+                                    {% endif %}
+                                </span>
+                            {% endif %}
+
+                        </div>
+
+                        <h2>
+                            {% if request.user.get_full_name %}
+                                {{ request.user.get_full_name }}
+                            {% else %}
+                                {{ request.user.username }}
+                            {% endif %}
+                        </h2>
+
+                        <p>
+                            {{ request.user.email }}
+                        </p>
+
+                        <span class="student-profile-account-badge">
+                            Student account
+                        </span>
+
+                    </div>
+
+                    <div class="student-profile-account-details">
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Username
+                            </span>
+
+                            <strong>
+                                {{ request.user.username }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Member since
+                            </span>
+
+                            <strong>
+                                {{ request.user.date_joined|date:"d M Y" }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Last login
+                            </span>
+
+                            <strong>
+                                {% if request.user.last_login %}
+                                    {{ request.user.last_login|date:"d M Y, H:i" }}
+                                {% else %}
+                                    First session
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                    <div class="student-profile-security">
+
+                        <div class="student-profile-security-icon">
+                            🔒
+                        </div>
+
+                        <div>
+                            <h3>
+                                Account security
+                            </h3>
+
+                            <p>
+                                Keep your password private and use a
+                                secure password for your account.
+                            </p>
+
+                            <a
+                                href="{% url 'accounts:password_reset' %}"
+                                class="student-profile-security-link"
+                            >
+                                Reset password
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+            <div class="col-12 col-lg-8">
+
+                <div class="student-profile-statistics">
+
+                    <article class="student-profile-stat-card">
+                        <span class="student-profile-stat-icon">
+                            📚
+                        </span>
+
+                        <div>
+                            <strong>
+                                {{ courses_enrolled }}
+                            </strong>
+
+                            <span>
+                                Courses enrolled
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="student-profile-stat-card">
+                        <span class="student-profile-stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+                            <strong>
+                                {{ lessons_completed }}
+                            </strong>
+
+                            <span>
+                                Lessons completed
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="student-profile-stat-card">
+                        <span class="student-profile-stat-icon">
+                            ★
+                        </span>
+
+                        <div>
+                            <strong>
+                                {{ courses_completed }}
+                            </strong>
+
+                            <span>
+                                Courses completed
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="student-profile-stat-card">
+                        <span class="student-profile-stat-icon">
+                            🏅
+                        </span>
+
+                        <div>
+                            <strong>
+                                {{ certificate_count }}
+                            </strong>
+
+                            <span>
+                                Certificates earned
+                            </span>
+                        </div>
+                    </article>
+
+                </div>
+
+                <div class="student-profile-form-card">
+
+                    <div class="student-profile-form-header">
+
+                        <div>
+                            <span class="student-profile-label">
+                                Personal information
+                            </span>
+
+                            <h2>
+                                Edit your profile
+                            </h2>
+
+                            <p>
+                                Update your contact information,
+                                preferred language and profile photo.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <form
+                        method="post"
+                        enctype="multipart/form-data"
+                        class="student-profile-form"
+                        novalidate
+                    >
+                        {% csrf_token %}
+
+                        {% if user_form.non_field_errors %}
+                            <div class="student-profile-form-errors">
+                                {% for error in user_form.non_field_errors %}
+                                    <p>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        {% if profile_form.non_field_errors %}
+                            <div class="student-profile-form-errors">
+                                {% for error in profile_form.non_field_errors %}
+                                    <p>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="student-profile-form-section">
+
+                            <div class="student-profile-form-section-header">
+                                <span class="student-profile-form-section-number">
+                                    01
+                                </span>
+
+                                <div>
+                                    <h3>
+                                        Basic information
+                                    </h3>
+
+                                    <p>
+                                        Information displayed on your
+                                        SkillStart Ireland account.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+
+                                <div class="col-12 col-md-6">
+
+                                    <div class="student-profile-form-group">
+
+                                        <label for="{{ user_form.first_name.id_for_label }}">
+                                            {{ user_form.first_name.label }}
+                                        </label>
+
+                                        {{ user_form.first_name }}
+
+                                        {% if user_form.first_name.errors %}
+                                            <div class="student-profile-field-errors">
+                                                {% for error in user_form.first_name.errors %}
+                                                    <span>
+                                                        {{ error }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12 col-md-6">
+
+                                    <div class="student-profile-form-group">
+
+                                        <label for="{{ user_form.last_name.id_for_label }}">
+                                            {{ user_form.last_name.label }}
+                                        </label>
+
+                                        {{ user_form.last_name }}
+
+                                        {% if user_form.last_name.errors %}
+                                            <div class="student-profile-field-errors">
+                                                {% for error in user_form.last_name.errors %}
+                                                    <span>
+                                                        {{ error }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12">
+
+                                    <div class="student-profile-form-group">
+
+                                        <label for="{{ user_form.email.id_for_label }}">
+                                            {{ user_form.email.label }}
+                                        </label>
+
+                                        {{ user_form.email }}
+
+                                        <small>
+                                            This email is used for account
+                                            communication and password recovery.
+                                        </small>
+
+                                        {% if user_form.email.errors %}
+                                            <div class="student-profile-field-errors">
+                                                {% for error in user_form.email.errors %}
+                                                    <span>
+                                                        {{ error }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12">
+
+                                    <div class="student-profile-form-group">
+
+                                        <label for="student-profile-username">
+                                            Username
+                                        </label>
+
+                                        <input
+                                            type="text"
+                                            id="student-profile-username"
+                                            class="profile-form-control student-profile-readonly-field"
+                                            value="{{ request.user.username }}"
+                                            readonly
+                                            aria-readonly="true"
+                                        >
+
+                                        <small>
+                                            Your username cannot be changed
+                                            from this page.
+                                        </small>
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-profile-form-section">
+
+                            <div class="student-profile-form-section-header">
+                                <span class="student-profile-form-section-number">
+                                    02
+                                </span>
+
+                                <div>
+                                    <h3>
+                                        Contact and preferences
+                                    </h3>
+
+                                    <p>
+                                        Add your phone number and choose
+                                        your preferred language.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="row g-4">
+
+                                <div class="col-12 col-md-6">
+
+                                    <div class="student-profile-form-group">
+
+                                        <label for="{{ profile_form.phone_number.id_for_label }}">
+                                            {{ profile_form.phone_number.label }}
+                                        </label>
+
+                                        {{ profile_form.phone_number }}
+
+                                        {% if profile_form.phone_number.errors %}
+                                            <div class="student-profile-field-errors">
+                                                {% for error in profile_form.phone_number.errors %}
+                                                    <span>
+                                                        {{ error }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                                <div class="col-12 col-md-6">
+
+                                    <div class="student-profile-form-group">
+
+                                        <label for="{{ profile_form.preferred_language.id_for_label }}">
+                                            {{ profile_form.preferred_language.label }}
+                                        </label>
+
+                                        {{ profile_form.preferred_language }}
+
+                                        {% if profile_form.preferred_language.errors %}
+                                            <div class="student-profile-field-errors">
+                                                {% for error in profile_form.preferred_language.errors %}
+                                                    <span>
+                                                        {{ error }}
+                                                    </span>
+                                                {% endfor %}
+                                            </div>
+                                        {% endif %}
+
+                                    </div>
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-profile-form-section">
+
+                            <div class="student-profile-form-section-header">
+                                <span class="student-profile-form-section-number">
+                                    03
+                                </span>
+
+                                <div>
+                                    <h3>
+                                        Profile photo
+                                    </h3>
+
+                                    <p>
+                                        Upload a clear photo in JPG,
+                                        PNG or WebP format.
+                                    </p>
+                                </div>
+                            </div>
+
+                            <div class="student-profile-photo-field">
+
+                                <div class="student-profile-photo-preview">
+
+                                    {% if student_profile.profile_photo %}
+                                        <img
+                                            src="{{ student_profile.profile_photo.url }}"
+                                            alt="Current profile photo"
+                                        >
+                                    {% else %}
+                                        <span aria-hidden="true">
+                                            {% if request.user.first_name %}
+                                                {{ request.user.first_name|first|upper }}
+                                            {% else %}
+                                                {{ request.user.username|first|upper }}
+                                            {% endif %}
+                                        </span>
+                                    {% endif %}
+
+                                </div>
+
+                                <div class="student-profile-photo-input">
+
+                                    <label for="{{ profile_form.profile_photo.id_for_label }}">
+                                        {{ profile_form.profile_photo.label }}
+                                    </label>
+
+                                    {{ profile_form.profile_photo }}
+
+                                    <small>
+                                        Recommended: square image with a
+                                        maximum size of 5 MB.
+                                    </small>
+
+                                    {% if profile_form.profile_photo.errors %}
+                                        <div class="student-profile-field-errors">
+                                            {% for error in profile_form.profile_photo.errors %}
+                                                <span>
+                                                    {{ error }}
+                                                </span>
+                                            {% endfor %}
+                                        </div>
+                                    {% endif %}
+
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-profile-form-actions">
+
+                            <a
+                                href="{% url 'accounts:dashboard' %}"
+                                class="student-profile-cancel-button"
+                            >
+                                Cancel
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="student-profile-save-button"
+                            >
+                                Save changes
+                                <span aria-hidden="true">→</span>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </div>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

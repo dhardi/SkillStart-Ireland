@@ -64,14 +64,35 @@
 
                 {% if request.user.is_authenticated %}
 
-                    <li class="nav-item">
-                        <a
-                            class="nav-link site-navbar-link {% if request.resolver_match.app_name == 'accounts' %}active{% endif %}"
-                            href="{% url 'accounts:dashboard' %}"
-                        >
-                            Dashboard
-                        </a>
-                    </li>
+    <li class="nav-item">
+        <a
+            class="
+                nav-link
+                site-navbar-link
+                {% if request.resolver_match.url_name == 'dashboard' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'accounts:dashboard' %}"
+        >
+            Dashboard
+        </a>
+    </li>
+
+    <li class="nav-item">
+        <a
+            class="
+                nav-link
+                site-navbar-link
+                {% if request.resolver_match.url_name == 'profile' %}
+                    active
+                {% endif %}
+            "
+            href="{% url 'accounts:profile' %}"
+        >
+            My Profile
+        </a>
+    </li>
 
                     <li class="nav-item ms-lg-2">
                         <form

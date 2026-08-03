@@ -30,13 +30,24 @@
                 </p>
             </div>
 
-            <a
-                href="{% url 'courses:course_list' %}"
-                class="dashboard-header-button"
-            >
-                Browse courses
-                <span aria-hidden="true">→</span>
-            </a>
+            <div class="dashboard-header-actions">
+
+    <a
+        href="{% url 'accounts:profile' %}"
+        class="dashboard-profile-button"
+    >
+        My Profile
+    </a>
+
+    <a
+        href="{% url 'courses:course_list' %}"
+        class="dashboard-header-button"
+    >
+        Browse courses
+        <span aria-hidden="true">→</span>
+    </a>
+
+</div>
         </header>
 
         <div class="row g-4 dashboard-statistics">

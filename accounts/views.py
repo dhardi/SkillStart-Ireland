@@ -1,13 +1,19 @@
+from django.contrib import messages
 from django.contrib.auth import login
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import redirect, render
 
-from .forms import StudentRegistrationForm
+from .forms import (
+    StudentProfileForm,
+    StudentRegistrationForm,
+    UserProfileForm,
+)
 
 from .models import (
     Certificate,
     Enrollment,
     LessonProgress,
+    StudentProfile,
 )
 
 
@@ -47,7 +53,102 @@ def register(request):
         context,
     )
 
+@login_required
+def profile(request):
+    """
+    Display and update the logged-in student's profile.
+    """
 
+    student_profile, created = (
+        StudentProfile.objects.get_or_create(
+            user=request.user,
+        )
+    )
+
+    if request.method == "POST":
+        user_form = UserProfileForm(
+            request.POST,
+            instance=request.user,
+        )
+
+        profile_form = StudentProfileForm(
+            request.POST,
+            request.FILES,
+            instance=student_profile,
+        )
+
+        if (
+            user_form.is_valid()
+            and profile_form.is_valid()
+        ):
+            user_form.save()
+            profile_form.save()
+
+            messages.success(
+                request,
+                "Your profile has been updated successfully.",
+            )
+
+            return redirect(
+                "accounts:profile"
+            )
+
+    else:
+        user_form = UserProfileForm(
+            instance=request.user,
+        )
+
+        profile_form = StudentProfileForm(
+            instance=student_profile,
+        )
+
+    courses_enrolled = (
+        Enrollment.objects
+        .filter(user=request.user)
+        .count()
+    )
+
+    courses_completed = (
+        Enrollment.objects
+        .filter(
+            user=request.user,
+            is_completed=True,
+        )
+        .count()
+    )
+
+    lessons_completed = (
+        LessonProgress.objects
+        .filter(
+            enrollment__user=request.user,
+            completed=True,
+        )
+        .count()
+    )
+
+    certificate_count = (
+        Certificate.objects
+        .filter(
+            enrollment__user=request.user,
+        )
+        .count()
+    )
+
+    context = {
+        "student_profile": student_profile,
+        "user_form": user_form,
+        "profile_form": profile_form,
+        "courses_enrolled": courses_enrolled,
+        "courses_completed": courses_completed,
+        "lessons_completed": lessons_completed,
+        "certificate_count": certificate_count,
+    }
+
+    return render(
+        request,
+        "accounts/profile.html",
+        context,
+    )
 
 @login_required
 def dashboard(request):

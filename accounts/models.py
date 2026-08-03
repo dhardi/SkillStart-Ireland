@@ -14,6 +14,65 @@ from courses.models import (
     Question,
 )
 
+class StudentProfile(models.Model):
+    LANGUAGE_CHOICES = [
+        ("en", "English"),
+        ("pt", "Portuguese"),
+        ("it", "Italian"),
+        ("es", "Spanish"),
+        ("other", "Other"),
+    ]
+
+    user = models.OneToOneField(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="student_profile",
+    )
+
+    profile_photo = models.ImageField(
+        upload_to="student_profiles/",
+        blank=True,
+        null=True,
+    )
+
+    phone_number = models.CharField(
+        max_length=30,
+        blank=True,
+    )
+
+    preferred_language = models.CharField(
+        max_length=20,
+        choices=LANGUAGE_CHOICES,
+        default="en",
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = [
+            "user__first_name",
+            "user__last_name",
+            "user__username",
+        ]
+
+    @property
+    def display_name(self):
+        full_name = self.user.get_full_name().strip()
+
+        if full_name:
+            return full_name
+
+        return self.user.username
+
+    def __str__(self):
+        return f"{self.display_name} - Student profile"
+
 
 class Enrollment(models.Model):
     user = models.ForeignKey(
