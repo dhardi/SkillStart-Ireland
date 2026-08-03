@@ -1,0 +1,355 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ student.get_full_name|default:student.username }}
+    | {{ school.name }}
+{% endblock %}
+
+{% block content %}
+
+<section class="school-dashboard-section">
+    <div class="container">
+
+        <header class="school-dashboard-header">
+
+            <div>
+                <span class="school-dashboard-label">
+                    Student details
+                </span>
+
+                <h1>
+                    {% if student.get_full_name %}
+                        {{ student.get_full_name }}
+                    {% else %}
+                        {{ student.username }}
+                    {% endif %}
+                </h1>
+
+                <p>
+                    View the student's courses, progress,
+                    assessments and certificates.
+                </p>
+            </div>
+
+            <div class="dashboard-header-actions">
+
+                <a
+                    href="{% url 'schools:enrollment_create' %}"
+                    class="student-profile-save-button"
+                >
+                    Enroll in another course
+                    <span aria-hidden="true">+</span>
+                </a>
+
+                <a
+                    href="{% url 'schools:student_list' %}"
+                    class="student-profile-back-button"
+                >
+                    <span aria-hidden="true">←</span>
+                    Back to students
+                </a>
+
+            </div>
+
+        </header>
+
+        <div class="row g-4">
+
+            <div class="col-12 col-lg-4">
+
+                <aside class="student-profile-sidebar">
+
+                    <div class="student-profile-summary">
+
+                        {% if student.student_profile.profile_photo %}
+                            <div class="student-profile-avatar">
+                                <img
+                                    src="{{ student.student_profile.profile_photo.url }}"
+                                    alt="Profile photo"
+                                >
+                            </div>
+                        {% else %}
+                            <div class="student-profile-avatar">
+                                <span aria-hidden="true">
+                                    {% if student.first_name %}
+                                        {{ student.first_name|first|upper }}
+                                    {% else %}
+                                        {{ student.username|first|upper }}
+                                    {% endif %}
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        <h2>
+                            {% if student.get_full_name %}
+                                {{ student.get_full_name }}
+                            {% else %}
+                                {{ student.username }}
+                            {% endif %}
+                        </h2>
+
+                        <p>
+                            {{ student.email|default:"No email available" }}
+                        </p>
+
+                        <span class="student-profile-account-badge">
+                            School student
+                        </span>
+
+                    </div>
+
+                    <div class="student-profile-account-details">
+
+                        <div class="student-profile-account-detail">
+                            <span>Username</span>
+
+                            <strong>
+                                {{ student.username }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>Member since</span>
+
+                            <strong>
+                                {{ student.date_joined|date:"d M Y" }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>Courses</span>
+
+                            <strong>
+                                {{ enrollment_count }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>Overall progress</span>
+
+                            <strong>
+                                {{ overall_progress }}%
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+            <div class="col-12 col-lg-8">
+
+                <div class="student-profile-statistics">
+
+                    <article class="student-profile-stat-card">
+                        <span class="student-profile-stat-icon">
+                            📚
+                        </span>
+
+                        <div>
+                            <strong>
+                                {{ enrollment_count }}
+                            </strong>
+
+                            <span>
+                                Courses enrolled
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="student-profile-stat-card">
+                        <span class="student-profile-stat-icon">
+                            ✓
+                        </span>
+
+                        <div>
+                            <strong>
+                                {{ completed_lessons }}
+                            </strong>
+
+                            <span>
+                                Lessons completed
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="student-profile-stat-card">
+                        <span class="student-profile-stat-icon">
+                            ★
+                        </span>
+
+                        <div>
+                            <strong>
+                                {{ completed_courses }}
+                            </strong>
+
+                            <span>
+                                Courses completed
+                            </span>
+                        </div>
+                    </article>
+
+                    <article class="student-profile-stat-card">
+                        <span class="student-profile-stat-icon">
+                            🏅
+                        </span>
+
+                        <div>
+                            <strong>
+                                {{ certificate_count }}
+                            </strong>
+
+                            <span>
+                                Certificates earned
+                            </span>
+                        </div>
+                    </article>
+
+                </div>
+
+                <section class="school-dashboard-card">
+
+                    <div class="school-dashboard-card-header">
+
+                        <div>
+                            <span class="school-dashboard-label">
+                                Training activity
+                            </span>
+
+                            <h2>
+                                Enrolled courses
+                            </h2>
+                        </div>
+
+                    </div>
+
+                    {% if enrollment_rows %}
+
+                        <div class="school-dashboard-table-wrapper">
+
+                            <table class="school-dashboard-table">
+
+                                <thead>
+                                    <tr>
+                                        <th>Course</th>
+                                        <th>Lessons</th>
+                                        <th>Progress</th>
+                                        <th>Assessment</th>
+                                        <th>Certificate</th>
+                                    </tr>
+                                </thead>
+
+                                <tbody>
+
+                                    {% for row in enrollment_rows %}
+
+                                        <tr>
+                                            <td>
+                                                <strong>
+                                                    {{ row.enrollment.course.title }}
+                                                </strong>
+
+                                                <br>
+
+                                                <small>
+                                                    {{ row.enrollment.course.category.name }}
+                                                </small>
+                                            </td>
+
+                                            <td>
+                                                {{ row.completed_lesson_count }}
+                                                /
+                                                {{ row.published_lesson_count }}
+                                            </td>
+
+                                            <td>
+                                                <div style="min-width: 145px;">
+
+                                                    <div
+                                                        class="school-dashboard-progress"
+                                                        style="height: 8px;"
+                                                    >
+                                                        <div
+                                                            class="school-dashboard-progress-fill"
+                                                            style="width: {{ row.progress_percentage }}%;"
+                                                        ></div>
+                                                    </div>
+
+                                                    <small>
+                                                        {{ row.progress_percentage }}%
+                                                    </small>
+
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                {% if row.latest_attempt %}
+
+                                                    {% if row.latest_attempt.is_passed %}
+                                                        Passed
+                                                    {% else %}
+                                                        Not passed
+                                                    {% endif %}
+
+                                                    <br>
+
+                                                    <small>
+                                                        {{ row.latest_attempt.score_percentage }}%
+                                                    </small>
+
+                                                {% else %}
+                                                    Not completed
+                                                {% endif %}
+                                            </td>
+
+                                            <td>
+                                                {% if row.certificate %}
+                                                    <strong>
+                                                        Issued
+                                                    </strong>
+
+                                                    <br>
+
+                                                    <small>
+                                                        {{ row.certificate.certificate_number }}
+                                                    </small>
+                                                {% else %}
+                                                    Not available
+                                                {% endif %}
+                                            </td>
+                                        </tr>
+
+                                    {% endfor %}
+
+                                </tbody>
+
+                            </table>
+
+                        </div>
+
+                    {% else %}
+
+                        <div class="school-dashboard-empty">
+                            <h3>
+                                No courses found
+                            </h3>
+
+                            <p>
+                                This student does not have any
+                                enrolments connected to this school.
+                            </p>
+                        </div>
+
+                    {% endif %}
+
+                </section>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,354 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ school.name }} | School Portal
+{% endblock %}
+
+{% block content %}
+
+<section class="school-dashboard-section">
+    <div class="container">
+
+        <header class="school-dashboard-header">
+
+            <div class="school-dashboard-school">
+
+                {% if school.logo %}
+                    <img
+                        src="{{ school.logo.url }}"
+                        alt="{{ school.name }} logo"
+                        class="school-dashboard-logo"
+                    >
+                {% endif %}
+
+                <div>
+                    <span class="school-dashboard-label">
+                        School portal
+                    </span>
+
+                    <h1>
+                        {{ school.name }}
+                    </h1>
+
+                    <p>
+                        Manage students, enrolments, progress
+                        and certificates.
+                    </p>
+                </div>
+
+            </div>
+
+            <div class="school-dashboard-plan">
+                <span>
+                    Current plan
+                </span>
+
+                <strong>
+                    {{ school.get_plan_display }}
+                </strong>
+            </div>
+
+        </header>
+
+        {% if messages %}
+            <div class="school-dashboard-messages">
+
+                {% for message in messages %}
+                    <div
+                        class="
+                            school-dashboard-message
+                            {% if message.tags %}
+                                school-dashboard-message-{{ message.tags }}
+                            {% endif %}
+                        "
+                        role="alert"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endif %}
+
+        <nav
+            class="school-portal-navigation"
+            aria-label="School portal navigation"
+        >
+
+            <a
+                href="{% url 'schools:student_list' %}"
+                class="dashboard-profile-button"
+            >
+                View students
+            </a>
+
+            <a
+                href="{% url 'schools:enrollment_create' %}"
+                class="dashboard-profile-button"
+            >
+                Enroll student
+            </a>
+
+            <a
+                href="{% url 'schools:certificate_list' %}"
+                class="dashboard-profile-button"
+            >
+                Certificates
+            </a>
+
+        </nav>
+
+        <div class="school-dashboard-statistics">
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    Students
+                </span>
+
+                <strong>
+                    {{ total_students }}
+                </strong>
+
+                <small>
+                    Limit: {{ school.student_limit }}
+                </small>
+            </article>
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    Total enrolments
+                </span>
+
+                <strong>
+                    {{ total_enrollments }}
+                </strong>
+
+                <small>
+                    All school enrolments
+                </small>
+            </article>
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    In progress
+                </span>
+
+                <strong>
+                    {{ active_enrollments }}
+                </strong>
+
+                <small>
+                    Active course enrolments
+                </small>
+            </article>
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    Completed
+                </span>
+
+                <strong>
+                    {{ completed_courses }}
+                </strong>
+
+                <small>
+                    Completed courses
+                </small>
+            </article>
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    Certificates
+                </span>
+
+                <strong>
+                    {{ certificate_count }}
+                </strong>
+
+                <small>
+                    Certificates issued
+                </small>
+            </article>
+
+        </div>
+
+        <div class="school-dashboard-content">
+
+            <section class="school-dashboard-card">
+
+                <div class="school-dashboard-card-header">
+
+                    <div>
+                        <span class="school-dashboard-label">
+                            Capacity
+                        </span>
+
+                        <h2>
+                            Student usage
+                        </h2>
+                    </div>
+
+                    <strong>
+                        {{ total_students }}
+                        /
+                        {{ school.student_limit }}
+                    </strong>
+
+                </div>
+
+                <div
+                    class="school-dashboard-progress"
+                    role="progressbar"
+                    aria-label="Student capacity usage"
+                    aria-valuenow="{{ student_capacity_percentage }}"
+                    aria-valuemin="0"
+                    aria-valuemax="100"
+                >
+                    <div
+                        class="school-dashboard-progress-fill"
+                        style="width: {{ student_capacity_percentage }}%;"
+                    ></div>
+                </div>
+
+                <p>
+                    {{ student_capacity_percentage }}% of the
+                    student allowance is currently being used.
+                </p>
+
+            </section>
+
+            <section class="school-dashboard-card">
+
+                <div class="school-dashboard-card-header">
+
+                    <div>
+                        <span class="school-dashboard-label">
+                            Latest activity
+                        </span>
+
+                        <h2>
+                            Recent enrolments
+                        </h2>
+                    </div>
+
+                    <a
+                        href="{% url 'schools:student_list' %}"
+                        class="school-student-name-link"
+                    >
+                        View all
+                    </a>
+
+                </div>
+
+                {% if recent_enrollments %}
+
+                    <div class="school-dashboard-table-wrapper">
+
+                        <table class="school-dashboard-table">
+
+                            <thead>
+                                <tr>
+                                    <th>
+                                        Student
+                                    </th>
+
+                                    <th>
+                                        Course
+                                    </th>
+
+                                    <th>
+                                        Status
+                                    </th>
+
+                                    <th>
+                                        Started
+                                    </th>
+                                </tr>
+                            </thead>
+
+                            <tbody>
+
+                                {% for enrollment in recent_enrollments %}
+                                    <tr>
+
+                                        <td>
+                                            <a
+                                                href="{% url 'schools:student_detail' enrollment.user.id %}"
+                                                class="school-student-name-link"
+                                            >
+                                                {% if enrollment.user.get_full_name %}
+                                                    {{ enrollment.user.get_full_name }}
+                                                {% else %}
+                                                    {{ enrollment.user.username }}
+                                                {% endif %}
+                                            </a>
+
+                                            <br>
+
+                                            <small>
+                                                {{ enrollment.user.email|default:"No email" }}
+                                            </small>
+                                        </td>
+
+                                        <td>
+                                            {{ enrollment.course.title }}
+                                        </td>
+
+                                        <td>
+                                            {% if enrollment.is_completed %}
+                                                <span class="school-enrollment-status school-enrollment-status-completed">
+                                                    Completed
+                                                </span>
+                                            {% else %}
+                                                <span class="school-enrollment-status school-enrollment-status-progress">
+                                                    In progress
+                                                </span>
+                                            {% endif %}
+                                        </td>
+
+                                        <td>
+                                            {{ enrollment.started_at|date:"d M Y" }}
+                                        </td>
+
+                                    </tr>
+                                {% endfor %}
+
+                            </tbody>
+
+                        </table>
+
+                    </div>
+
+                {% else %}
+
+                    <div class="school-dashboard-empty">
+
+                        <h3>
+                            No school enrolments yet
+                        </h3>
+
+                        <p>
+                            Students enrolled through this school
+                            will appear here.
+                        </p>
+
+                        <a
+                            href="{% url 'schools:enrollment_create' %}"
+                            class="student-profile-save-button"
+                        >
+                            Enroll your first student
+                            <span aria-hidden="true">→</span>
+                        </a>
+
+                    </div>
+
+                {% endif %}
+
+            </section>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

@@ -1,0 +1,251 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Certificates | {{ school.name }}
+{% endblock %}
+
+{% block content %}
+
+<section class="school-dashboard-section">
+    <div class="container">
+
+        <header class="school-dashboard-header">
+
+            <div>
+                <span class="school-dashboard-label">
+                    School portal
+                </span>
+
+                <h1>
+                    Certificates
+                </h1>
+
+                <p>
+                    View, verify and download certificates issued
+                    to students enrolled through {{ school.name }}.
+                </p>
+            </div>
+
+            <div class="dashboard-header-actions">
+
+                <a
+                    href="{% url 'schools:student_list' %}"
+                    class="dashboard-profile-button"
+                >
+                    Students
+                </a>
+
+                <a
+                    href="{% url 'schools:dashboard' %}"
+                    class="student-profile-back-button"
+                >
+                    <span aria-hidden="true">←</span>
+                    School dashboard
+                </a>
+
+            </div>
+
+        </header>
+
+        <section class="school-dashboard-card">
+
+            <div class="school-dashboard-card-header">
+
+                <div>
+                    <span class="school-dashboard-label">
+                        Certificate management
+                    </span>
+
+                    <h2>
+                        {{ certificate_count }}
+                        certificate{{ certificate_count|pluralize }}
+                    </h2>
+                </div>
+
+            </div>
+
+            <form
+                method="get"
+                class="school-certificate-search"
+            >
+                <div class="school-certificate-search-field">
+
+                    <label
+                        for="school-certificate-search"
+                        class="visually-hidden"
+                    >
+                        Search certificates
+                    </label>
+
+                    <input
+                        type="search"
+                        id="school-certificate-search"
+                        name="q"
+                        value="{{ search_query }}"
+                        class="profile-form-control"
+                        placeholder="Search student, course or certificate number"
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="student-profile-save-button"
+                >
+                    Search
+                </button>
+
+                {% if search_query %}
+                    <a
+                        href="{% url 'schools:certificate_list' %}"
+                        class="student-profile-cancel-button"
+                    >
+                        Clear
+                    </a>
+                {% endif %}
+
+            </form>
+
+            {% if certificates %}
+
+                <div class="school-dashboard-table-wrapper">
+
+                    <table class="school-dashboard-table">
+
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Certificate</th>
+                                <th>Result</th>
+                                <th>Issued</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for certificate in certificates %}
+
+                                <tr>
+                                    <td>
+                                        <a
+                                            href="{% url 'schools:student_detail' certificate.enrollment.user.id %}"
+                                            class="school-student-name-link"
+                                        >
+                                            {% if certificate.enrollment.user.get_full_name %}
+                                                {{ certificate.enrollment.user.get_full_name }}
+                                            {% else %}
+                                                {{ certificate.enrollment.user.username }}
+                                            {% endif %}
+                                        </a>
+
+                                        <br>
+
+                                        <small>
+                                            {{ certificate.enrollment.user.email }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            {{ certificate.enrollment.course.title }}
+                                        </strong>
+                                    </td>
+
+                                    <td>
+                                        <strong>
+                                            {{ certificate.certificate_number }}
+                                        </strong>
+
+                                        <br>
+
+                                        <small>
+                                            Code:
+                                            {{ certificate.verification_code }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        {{ certificate.assessment_attempt.score_percentage }}%
+
+                                        <br>
+
+                                        <small>
+                                            Passed
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        {{ certificate.issued_at|date:"d M Y" }}
+                                    </td>
+
+                                    <td>
+                                        <div class="school-certificate-actions">
+
+                                            <a
+                                                href="{% url 'courses:certificate_verify_code' certificate.verification_code %}"
+                                                class="school-certificate-action"
+                                                target="_blank"
+                                                rel="noopener"
+                                            >
+                                                Verify
+                                            </a>
+
+                                            <a
+                                                href="{% url 'schools:certificate_pdf' certificate.certificate_number %}"
+                                                class="school-certificate-download"
+                                            >
+                                                Download PDF
+                                            </a>
+
+                                        </div>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="school-dashboard-empty">
+
+                    {% if search_query %}
+
+                        <h3>
+                            No certificates found
+                        </h3>
+
+                        <p>
+                            No certificate matched
+                            “{{ search_query }}”.
+                        </p>
+
+                    {% else %}
+
+                        <h3>
+                            No certificates issued yet
+                        </h3>
+
+                        <p>
+                            Certificates will appear here after students
+                            complete their courses and pass the final assessment.
+                        </p>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</section>
+
+{% endblock %}

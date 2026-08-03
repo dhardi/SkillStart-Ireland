@@ -87,6 +87,14 @@ class Enrollment(models.Model):
         related_name="enrollments",
     )
 
+    school = models.ForeignKey(
+        "schools.School",
+        on_delete=models.PROTECT,
+        related_name="enrollments",
+        blank=True,
+        null=True,
+    )
+
     started_at = models.DateTimeField(
         auto_now_add=True,
     )

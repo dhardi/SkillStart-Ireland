@@ -1,0 +1,269 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Students | {{ school.name }}
+{% endblock %}
+
+{% block content %}
+
+<section class="school-dashboard-section">
+    <div class="container">
+
+        <header class="school-dashboard-header">
+
+            <div>
+                <span class="school-dashboard-label">
+                    School portal
+                </span>
+
+                <h1>
+                    Students
+                </h1>
+
+                <p>
+                    View students enrolled through
+                    {{ school.name }} and monitor their progress.
+                </p>
+            </div>
+
+            <div class="dashboard-header-actions">
+
+                <a
+                    href="{% url 'schools:enrollment_create' %}"
+                    class="student-profile-save-button"
+                >
+                    Enroll student
+                    <span aria-hidden="true">+</span>
+                </a>
+
+                <a
+                    href="{% url 'schools:dashboard' %}"
+                    class="student-profile-back-button"
+                >
+                    <span aria-hidden="true">←</span>
+                    School dashboard
+                </a>
+
+            </div>
+
+        </header>
+
+        {% if messages %}
+            <div class="school-dashboard-messages">
+
+                {% for message in messages %}
+                    <div
+                        class="
+                            school-dashboard-message
+                            {% if message.tags %}
+                                school-dashboard-message-{{ message.tags }}
+                            {% endif %}
+                        "
+                        role="alert"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+
+            </div>
+        {% endif %}
+
+        <section class="school-dashboard-card">
+
+            <div class="school-dashboard-card-header">
+
+                <div>
+                    <span class="school-dashboard-label">
+                        Student management
+                    </span>
+
+                    <h2>
+                        {{ student_count }}
+                        student{{ student_count|pluralize }}
+                    </h2>
+                </div>
+
+            </div>
+
+            <form
+                method="get"
+                class="student-profile-form-actions"
+                style="
+                    justify-content: flex-start;
+                    padding: 0 0 1.5rem;
+                "
+            >
+                <div
+                    style="
+                        flex: 1;
+                        max-width: 520px;
+                    "
+                >
+
+                    <label
+                        for="school-student-search"
+                        class="visually-hidden"
+                    >
+                        Search students
+                    </label>
+
+                    <input
+                        type="search"
+                        id="school-student-search"
+                        name="q"
+                        value="{{ search_query }}"
+                        class="profile-form-control"
+                        placeholder="Search by name, username or email"
+                    >
+
+                </div>
+
+                <button
+                    type="submit"
+                    class="student-profile-save-button"
+                >
+                    Search
+                </button>
+
+                {% if search_query %}
+                    <a
+                        href="{% url 'schools:student_list' %}"
+                        class="student-profile-cancel-button"
+                    >
+                        Clear
+                    </a>
+                {% endif %}
+
+            </form>
+
+            {% if student_rows %}
+
+                <div class="school-dashboard-table-wrapper">
+
+                    <table class="school-dashboard-table">
+
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Email</th>
+                                <th>Courses</th>
+                                <th>Completed</th>
+                                <th>Progress</th>
+                                <th>Certificates</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for student in student_rows %}
+
+                                <tr>
+                                    <td>
+                                        <a
+    href="{% url 'schools:student_detail' student.user.id %}"
+    class="school-student-name-link"
+>
+    {{ student.display_name }}
+</a>
+
+                                        <br>
+
+                                        <small>
+                                            @{{ student.user.username }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        {{ student.user.email|default:"—" }}
+                                    </td>
+
+                                    <td>
+                                        {{ student.enrollment_count }}
+                                    </td>
+
+                                    <td>
+                                        {{ student.completed_course_count }}
+                                    </td>
+
+                                    <td>
+                                        <div
+                                            style="
+                                                min-width: 150px;
+                                                max-width: 190px;
+                                            "
+                                        >
+                                            <div
+                                                class="school-dashboard-progress"
+                                                style="height: 8px;"
+                                            >
+                                                <div
+                                                    class="school-dashboard-progress-fill"
+                                                    style="width: {{ student.progress_percentage }}%;"
+                                                ></div>
+                                            </div>
+
+                                            <small>
+                                                {{ student.progress_percentage }}%
+                                            </small>
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        {{ student.certificate_count }}
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="school-dashboard-empty">
+
+                    {% if search_query %}
+
+                        <h3>
+                            No students found
+                        </h3>
+
+                        <p>
+                            No students matched
+                            “{{ search_query }}”.
+                        </p>
+
+                    {% else %}
+
+                        <h3>
+                            No school students yet
+                        </h3>
+
+                        <p>
+                            Students will appear here after an
+                            enrollment is connected to this school.
+                        </p>
+
+                        <a
+                            href="{% url 'schools:enrollment_create' %}"
+                            class="student-profile-save-button"
+                        >
+                            Enroll your first student
+                            <span aria-hidden="true">→</span>
+                        </a>
+
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</section>
+
+{% endblock %}

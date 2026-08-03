@@ -15,12 +15,15 @@ class EnrollmentAdmin(admin.ModelAdmin):
     list_display = (
         "user",
         "course",
+        "school",
+        "enrollment_type",
         "started_at",
         "is_completed",
         "completed_at",
     )
 
     list_filter = (
+        "school",
         "is_completed",
         "started_at",
         "course",
@@ -28,8 +31,11 @@ class EnrollmentAdmin(admin.ModelAdmin):
 
     search_fields = (
         "user__username",
+        "user__first_name",
+        "user__last_name",
         "user__email",
         "course__title",
+        "school__name",
     )
 
     readonly_fields = (
@@ -40,11 +46,28 @@ class EnrollmentAdmin(admin.ModelAdmin):
     autocomplete_fields = (
         "user",
         "course",
+        "school",
+    )
+
+    list_select_related = (
+        "user",
+        "course",
+        "school",
     )
 
     ordering = (
         "-started_at",
     )
+
+    @admin.display(
+        description="Enrollment type",
+        ordering="school__name",
+    )
+    def enrollment_type(self, obj):
+        if obj.school:
+            return "School"
+
+        return "Individual"
 
 
 @admin.register(LessonProgress)

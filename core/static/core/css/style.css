@@ -10464,3 +10464,593 @@ input[type="checkbox"] {
     }
 }
 
+/* =========================================================
+   SCHOOL PORTAL — DASHBOARD
+========================================================= */
+
+.school-dashboard-section {
+    min-height: calc(100vh - 160px);
+    padding: 4rem 0 5rem;
+    background:
+        linear-gradient(
+            180deg,
+            #f4f7f6 0%,
+            #f8fafc 100%
+        );
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — HEADER
+========================================================= */
+
+.school-dashboard-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 2rem;
+    margin-bottom: 1.5rem;
+    padding: 2rem;
+    background: #ffffff;
+    border: 1px solid #e3e9e7;
+    border-radius: 22px;
+    box-shadow: 0 16px 40px rgba(22, 34, 51, 0.07);
+}
+
+.school-dashboard-school {
+    display: flex;
+    align-items: center;
+    gap: 1.25rem;
+    min-width: 0;
+}
+
+.school-dashboard-logo {
+    display: block;
+    flex: 0 0 82px;
+    width: 82px;
+    height: 82px;
+    padding: 0.5rem;
+    object-fit: contain;
+    background: #ffffff;
+    border: 1px solid #dfe6e3;
+    border-radius: 18px;
+    box-shadow: 0 8px 22px rgba(22, 34, 51, 0.07);
+}
+
+.school-dashboard-label {
+    display: inline-block;
+    margin-bottom: 0.55rem;
+    color: #1f6f5c;
+    font-size: 0.75rem;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+}
+
+.school-dashboard-header h1 {
+    margin-bottom: 0.5rem;
+    color: #17212b;
+    font-size: clamp(2rem, 4vw, 3rem);
+    font-weight: 800;
+    line-height: 1.15;
+}
+
+.school-dashboard-header p {
+    max-width: 660px;
+    margin: 0;
+    color: #6e7a86;
+    font-size: 0.92rem;
+    line-height: 1.7;
+}
+
+.school-dashboard-plan {
+    display: flex;
+    flex: 0 0 auto;
+    flex-direction: column;
+    gap: 0.25rem;
+    min-width: 150px;
+    padding: 1rem 1.25rem;
+    text-align: right;
+    background: rgba(31, 111, 92, 0.08);
+    border: 1px solid rgba(31, 111, 92, 0.14);
+    border-radius: 14px;
+}
+
+.school-dashboard-plan span {
+    color: #748078;
+    font-size: 0.72rem;
+    font-weight: 700;
+    text-transform: uppercase;
+}
+
+.school-dashboard-plan strong {
+    color: #1f6f5c;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — MESSAGES
+========================================================= */
+
+.school-dashboard-messages {
+    margin-bottom: 1.5rem;
+}
+
+.school-dashboard-message {
+    padding: 1rem 1.2rem;
+    color: #185847;
+    font-size: 0.88rem;
+    font-weight: 700;
+    background: #edf8f3;
+    border: 1px solid rgba(31, 111, 92, 0.2);
+    border-radius: 13px;
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — STATISTICS
+========================================================= */
+
+.school-dashboard-statistics {
+    display: grid;
+    grid-template-columns:
+        repeat(5, minmax(0, 1fr));
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+.school-dashboard-stat-card {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+    min-height: 145px;
+    padding: 1.25rem;
+    background: #ffffff;
+    border: 1px solid #e4eae7;
+    border-radius: 17px;
+    box-shadow: 0 10px 28px rgba(22, 34, 51, 0.05);
+    transition:
+        transform 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease;
+}
+
+.school-dashboard-stat-card:hover {
+    border-color: rgba(31, 111, 92, 0.28);
+    box-shadow: 0 14px 32px rgba(22, 34, 51, 0.08);
+    transform: translateY(-2px);
+}
+
+.school-dashboard-stat-card > span {
+    margin-bottom: 0.8rem;
+    color: #74808b;
+    font-size: 0.76rem;
+    font-weight: 750;
+    text-transform: uppercase;
+}
+
+.school-dashboard-stat-card strong {
+    margin-bottom: 0.7rem;
+    color: #17212b;
+    font-size: 2rem;
+    font-weight: 800;
+    line-height: 1;
+}
+
+.school-dashboard-stat-card small {
+    margin-top: auto;
+    color: #8a949e;
+    font-size: 0.72rem;
+    line-height: 1.45;
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — CONTENT
+========================================================= */
+
+.school-dashboard-content {
+    display: grid;
+    grid-template-columns:
+        minmax(0, 0.8fr)
+        minmax(0, 1.7fr);
+    gap: 1.5rem;
+}
+
+.school-dashboard-card {
+    min-width: 0;
+    padding: 1.75rem;
+    background: #ffffff;
+    border: 1px solid #e4eae7;
+    border-radius: 20px;
+    box-shadow: 0 14px 34px rgba(22, 34, 51, 0.06);
+}
+
+.school-dashboard-card-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 1rem;
+    margin-bottom: 1.3rem;
+}
+
+.school-dashboard-card-header h2 {
+    margin: 0;
+    color: #202b35;
+    font-size: 1.25rem;
+    font-weight: 800;
+}
+
+.school-dashboard-card-header > strong {
+    flex: 0 0 auto;
+    color: #1f6f5c;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.school-dashboard-card > p {
+    margin: 0.8rem 0 0;
+    color: #7a8691;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — CAPACITY
+========================================================= */
+
+.school-dashboard-progress {
+    width: 100%;
+    height: 12px;
+    overflow: hidden;
+    background: #e7eeeb;
+    border-radius: 999px;
+}
+
+.school-dashboard-progress-fill {
+    height: 100%;
+    background:
+        linear-gradient(
+            90deg,
+            #1f6f5c,
+            #2f8a73
+        );
+    border-radius: inherit;
+    transition: width 0.4s ease;
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — TABLE
+========================================================= */
+
+.school-dashboard-table-wrapper {
+    width: 100%;
+    overflow-x: auto;
+}
+
+.school-dashboard-table {
+    width: 100%;
+    min-width: 640px;
+    border-collapse: collapse;
+}
+
+.school-dashboard-table th {
+    padding: 0.8rem 0.9rem;
+    color: #7c8791;
+    font-size: 0.7rem;
+    font-weight: 800;
+    text-align: left;
+    letter-spacing: 0.05em;
+    text-transform: uppercase;
+    background: #f6f8f7;
+    border-bottom: 1px solid #e3e9e6;
+}
+
+.school-dashboard-table th:first-child {
+    border-radius: 10px 0 0 0;
+}
+
+.school-dashboard-table th:last-child {
+    border-radius: 0 10px 0 0;
+}
+
+.school-dashboard-table td {
+    padding: 1rem 0.9rem;
+    color: #3e4953;
+    font-size: 0.82rem;
+    border-bottom: 1px solid #edf1ef;
+}
+
+.school-dashboard-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.school-dashboard-table tbody tr {
+    transition: background 0.2s ease;
+}
+
+.school-dashboard-table tbody tr:hover {
+    background: rgba(31, 111, 92, 0.035);
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — EMPTY STATE
+========================================================= */
+
+.school-dashboard-empty {
+    padding: 2.5rem 1.5rem;
+    text-align: center;
+    background: #f8faf9;
+    border: 1px dashed #cfd9d5;
+    border-radius: 14px;
+}
+
+.school-dashboard-empty h3 {
+    margin-bottom: 0.5rem;
+    color: #35414b;
+    font-size: 1rem;
+    font-weight: 800;
+}
+
+.school-dashboard-empty p {
+    max-width: 450px;
+    margin: 0 auto;
+    color: #818c96;
+    font-size: 0.8rem;
+    line-height: 1.6;
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — TABLET
+========================================================= */
+
+@media (max-width: 1199.98px) {
+
+    .school-dashboard-statistics {
+        grid-template-columns:
+            repeat(3, minmax(0, 1fr));
+    }
+
+    .school-dashboard-content {
+        grid-template-columns: 1fr;
+    }
+}
+
+
+@media (max-width: 991.98px) {
+
+    .school-dashboard-section {
+        padding: 3rem 0 4rem;
+    }
+
+    .school-dashboard-header {
+        align-items: flex-start;
+        flex-direction: column;
+    }
+
+    .school-dashboard-plan {
+        width: 100%;
+        text-align: left;
+    }
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — MOBILE
+========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .school-dashboard-section {
+        padding: 2rem 0 3rem;
+    }
+
+    .school-dashboard-header {
+        padding: 1.5rem;
+        border-radius: 18px;
+    }
+
+    .school-dashboard-school {
+        align-items: flex-start;
+    }
+
+    .school-dashboard-logo {
+        flex-basis: 64px;
+        width: 64px;
+        height: 64px;
+        border-radius: 14px;
+    }
+
+    .school-dashboard-header h1 {
+        font-size: 2rem;
+    }
+
+    .school-dashboard-statistics {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+
+    .school-dashboard-card {
+        padding: 1.4rem;
+        border-radius: 17px;
+    }
+}
+
+
+/* =========================================================
+   SCHOOL PORTAL — SMALL MOBILE
+========================================================= */
+
+@media (max-width: 575.98px) {
+
+    .school-dashboard-school {
+        flex-direction: column;
+    }
+
+    .school-dashboard-statistics {
+        grid-template-columns: 1fr;
+    }
+
+    .school-dashboard-stat-card {
+        min-height: 125px;
+    }
+
+    .school-dashboard-card-header {
+        flex-direction: column;
+    }
+}
+
+.school-student-name-link {
+    color: #1f6f5c;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.school-student-name-link:hover {
+    color: #174f42;
+    text-decoration: underline;
+}
+
+/* =========================================================
+   SCHOOL PORTAL — CERTIFICATES
+========================================================= */
+
+.school-certificate-search {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding-bottom: 1.5rem;
+}
+
+.school-certificate-search-field {
+    flex: 1;
+    max-width: 560px;
+}
+
+.school-certificate-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.55rem;
+    min-width: 190px;
+}
+
+.school-certificate-action,
+.school-certificate-download {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 38px;
+    padding: 0.55rem 0.75rem;
+    font-size: 0.74rem;
+    font-weight: 750;
+    text-decoration: none;
+    border-radius: 9px;
+    transition:
+        color 0.2s ease,
+        background 0.2s ease,
+        border-color 0.2s ease,
+        transform 0.2s ease;
+}
+
+.school-certificate-action {
+    color: #1f6f5c;
+    background: #ffffff;
+    border: 1px solid rgba(31, 111, 92, 0.35);
+}
+
+.school-certificate-action:hover {
+    color: #ffffff;
+    background: #1f6f5c;
+    border-color: #1f6f5c;
+}
+
+.school-certificate-download {
+    color: #ffffff;
+    background: #17212b;
+    border: 1px solid #17212b;
+}
+
+.school-certificate-download:hover {
+    color: #ffffff;
+    background: #1f6f5c;
+    border-color: #1f6f5c;
+    transform: translateY(-1px);
+}
+
+@media (max-width: 767.98px) {
+
+    .school-certificate-search {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .school-certificate-search-field {
+        width: 100%;
+        max-width: none;
+    }
+
+    .school-certificate-search
+    .student-profile-save-button,
+    .school-certificate-search
+    .student-profile-cancel-button {
+        width: 100%;
+    }
+}
+
+.school-portal-navigation {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background: #ffffff;
+    border: 1px solid #e4eae7;
+    border-radius: 16px;
+    box-shadow: 0 10px 28px rgba(22, 34, 51, 0.05);
+}
+
+@media (max-width: 767.98px) {
+
+    .school-portal-navigation {
+        align-items: stretch;
+        flex-direction: column;
+    }
+
+    .school-portal-navigation
+    .dashboard-profile-button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   SCHOOL PORTAL — ENROLMENT STATUS
+========================================================= */
+
+.school-enrollment-status {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.65rem;
+    font-size: 0.7rem;
+    font-weight: 750;
+    border-radius: 999px;
+}
+
+.school-enrollment-status-progress {
+    color: #8a6300;
+    background: #fff7db;
+    border: 1px solid #f0d98c;
+}
+
+.school-enrollment-status-completed {
+    color: #185847;
+    background: #edf8f3;
+    border: 1px solid rgba(31, 111, 92, 0.2);
+}
+

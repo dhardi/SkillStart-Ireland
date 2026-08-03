@@ -1,0 +1,296 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Enroll Student | {{ school.name }}
+{% endblock %}
+
+{% block content %}
+
+<section class="school-dashboard-section">
+    <div class="container">
+
+        <header class="school-dashboard-header">
+
+            <div>
+                <span class="school-dashboard-label">
+                    School portal
+                </span>
+
+                <h1>
+                    Enroll student
+                </h1>
+
+                <p>
+                    Add an existing SkillStart Ireland student
+                    to one of the available courses.
+                </p>
+            </div>
+
+            <a
+                href="{% url 'schools:student_list' %}"
+                class="student-profile-back-button"
+            >
+                <span aria-hidden="true">←</span>
+                Back to students
+            </a>
+
+        </header>
+
+        <div class="row g-4">
+
+            <div class="col-12 col-lg-8">
+
+                <section class="student-profile-form-card">
+
+                    <div class="student-profile-form-header">
+
+                        <div>
+                            <span class="student-profile-label">
+                                New enrolment
+                            </span>
+
+                            <h2>
+                                Student and course
+                            </h2>
+
+                            <p>
+                                Enter the exact email address used
+                                by the student when creating their account.
+                            </p>
+                        </div>
+
+                    </div>
+
+                    <form
+                        method="post"
+                        class="student-profile-form"
+                        novalidate
+                    >
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="student-profile-form-errors">
+
+                                {% for error in form.non_field_errors %}
+                                    <p>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+
+                            </div>
+                        {% endif %}
+
+                        <div class="student-profile-form-section">
+
+                            <div class="student-profile-form-section-header">
+
+                                <span class="student-profile-form-section-number">
+                                    01
+                                </span>
+
+                                <div>
+                                    <h3>
+                                        Student account
+                                    </h3>
+
+                                    <p>
+                                        The student must already have an
+                                        active SkillStart Ireland account.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="student-profile-form-group">
+
+                                <label for="{{ form.student_email.id_for_label }}">
+                                    {{ form.student_email.label }}
+                                </label>
+
+                                {{ form.student_email }}
+
+                                {% if form.student_email.help_text %}
+                                    <small>
+                                        {{ form.student_email.help_text }}
+                                    </small>
+                                {% endif %}
+
+                                {% if form.student_email.errors %}
+                                    <div class="student-profile-field-errors">
+
+                                        {% for error in form.student_email.errors %}
+                                            <span>
+                                                {{ error }}
+                                            </span>
+                                        {% endfor %}
+
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-profile-form-section">
+
+                            <div class="student-profile-form-section-header">
+
+                                <span class="student-profile-form-section-number">
+                                    02
+                                </span>
+
+                                <div>
+                                    <h3>
+                                        Select course
+                                    </h3>
+
+                                    <p>
+                                        Only published courses are
+                                        available for enrolment.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="student-profile-form-group">
+
+                                <label for="{{ form.course.id_for_label }}">
+                                    {{ form.course.label }}
+                                </label>
+
+                                {{ form.course }}
+
+                                {% if form.course.errors %}
+                                    <div class="student-profile-field-errors">
+
+                                        {% for error in form.course.errors %}
+                                            <span>
+                                                {{ error }}
+                                            </span>
+                                        {% endfor %}
+
+                                    </div>
+                                {% endif %}
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-profile-form-actions">
+
+                            <a
+                                href="{% url 'schools:student_list' %}"
+                                class="student-profile-cancel-button"
+                            >
+                                Cancel
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="student-profile-save-button"
+                            >
+                                Enroll student
+                                <span aria-hidden="true">→</span>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+            <div class="col-12 col-lg-4">
+
+                <aside class="student-profile-sidebar">
+
+                    <div class="student-profile-summary">
+
+                        {% if school.logo %}
+                            <div class="student-profile-avatar">
+                                <img
+                                    src="{{ school.logo.url }}"
+                                    alt="{{ school.name }} logo"
+                                >
+                            </div>
+                        {% else %}
+                            <div class="student-profile-avatar">
+                                <span aria-hidden="true">
+                                    {{ school.name|first|upper }}
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        <h2>
+                            {{ school.name }}
+                        </h2>
+
+                        <p>
+                            {{ school.get_plan_display }} plan
+                        </p>
+
+                        <span class="student-profile-account-badge">
+                            School account
+                        </span>
+
+                    </div>
+
+                    <div class="student-profile-account-details">
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Current students
+                            </span>
+
+                            <strong>
+                                {{ current_student_count }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Student limit
+                            </span>
+
+                            <strong>
+                                {{ school.student_limit }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Available places
+                            </span>
+
+                            <strong>
+                                {{ available_student_places }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Subscription
+                            </span>
+
+                            <strong>
+                                {% if school.subscription_active %}
+                                    Active
+                                {% else %}
+                                    Inactive
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
