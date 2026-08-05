@@ -29,12 +29,31 @@
             <div class="dashboard-header-actions">
 
                 <a
-                    href="{% url 'schools:enrollment_create' %}"
-                    class="student-profile-save-button"
-                >
-                    Enroll student
-                    <span aria-hidden="true">+</span>
-                </a>
+    href="{% url 'schools:student_create' %}"
+    class="student-profile-save-button"
+>
+    Add new student
+    <span aria-hidden="true">+</span>
+</a>
+
+<div class="dashboard-header-actions">
+
+    <a
+        href="{% url 'schools:student_create' %}"
+        class="student-profile-save-button"
+    >
+        Add new student
+        <span aria-hidden="true">+</span>
+    </a>
+
+    <a
+        href="{% url 'schools:enrollment_create' %}"
+        class="student-profile-cancel-button"
+    >
+        Enrol existing student
+    </a>
+
+</div>
 
                 <a
                     href="{% url 'schools:dashboard' %}"
@@ -248,12 +267,12 @@
                         </p>
 
                         <a
-                            href="{% url 'schools:enrollment_create' %}"
-                            class="student-profile-save-button"
-                        >
-                            Enroll your first student
-                            <span aria-hidden="true">→</span>
-                        </a>
+    href="{% url 'schools:student_create' %}"
+    class="student-profile-save-button"
+>
+    Add your first student
+    <span aria-hidden="true">→</span>
+</a>
 
                     {% endif %}
 

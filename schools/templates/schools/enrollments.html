@@ -1,0 +1,481 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Enrolments | {{ school.name }}
+{% endblock %}
+
+{% block content %}
+
+<section class="school-dashboard-section">
+    <div class="container">
+
+        <header class="school-dashboard-header">
+
+            <div>
+                <span class="school-dashboard-label">
+                    School portal
+                </span>
+
+                <h1>
+                    Enrolments
+                </h1>
+
+                <p>
+                    Manage course enrolments, monitor student
+                    progress and review assessment results.
+                </p>
+            </div>
+
+            <div class="dashboard-header-actions">
+
+                <a
+                    href="{% url 'schools:enrollment_create' %}"
+                    class="student-profile-save-button"
+                >
+                    Add enrolment
+                    <span aria-hidden="true">+</span>
+                </a>
+
+                <a
+                    href="{% url 'schools:dashboard' %}"
+                    class="student-profile-back-button"
+                >
+                    <span aria-hidden="true">←</span>
+                    School dashboard
+                </a>
+
+            </div>
+
+        </header>
+
+        {% if messages %}
+            <div class="school-dashboard-messages">
+                {% for message in messages %}
+                    <div
+                        class="
+                            school-dashboard-message
+                            {% if message.tags %}
+                                school-dashboard-message-{{ message.tags }}
+                            {% endif %}
+                        "
+                        role="alert"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="school-dashboard-statistics">
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    Total enrolments
+                </span>
+
+                <strong>
+                    {{ total_enrollments }}
+                </strong>
+
+                <small>
+                    All enrolments connected to this school
+                </small>
+            </article>
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    In progress
+                </span>
+
+                <strong>
+                    {{ active_enrollments }}
+                </strong>
+
+                <small>
+                    Courses currently being completed
+                </small>
+            </article>
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    Completed
+                </span>
+
+                <strong>
+                    {{ completed_enrollments }}
+                </strong>
+
+                <small>
+                    Successfully completed courses
+                </small>
+            </article>
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    Certificates
+                </span>
+
+                <strong>
+                    {{ certificate_count }}
+                </strong>
+
+                <small>
+                    Certificates issued to students
+                </small>
+            </article>
+
+            <article class="school-dashboard-stat-card">
+                <span>
+                    Displayed
+                </span>
+
+                <strong>
+                    {{ displayed_count }}
+                </strong>
+
+                <small>
+                    Results matching the current filters
+                </small>
+            </article>
+
+        </div>
+
+        <section class="school-dashboard-card">
+
+            <div class="school-dashboard-card-header">
+
+                <div>
+                    <span class="school-dashboard-label">
+                        Enrolment management
+                    </span>
+
+                    <h2>
+                        School enrolments
+                    </h2>
+                </div>
+
+                <strong>
+                    {{ displayed_count }}
+                </strong>
+
+            </div>
+
+            <form
+                method="get"
+                class="school-enrollment-filters"
+            >
+
+                <div class="school-enrollment-filter-field">
+                    <label for="school-enrollment-search">
+                        Search
+                    </label>
+
+                    <input
+                        type="search"
+                        id="school-enrollment-search"
+                        name="q"
+                        value="{{ search_query }}"
+                        class="profile-form-control"
+                        placeholder="Student, email or course"
+                    >
+                </div>
+
+                <div class="school-enrollment-filter-field">
+                    <label for="school-enrollment-course">
+                        Course
+                    </label>
+
+                    <select
+                        id="school-enrollment-course"
+                        name="course"
+                        class="profile-form-control"
+                    >
+                        <option value="">
+                            All courses
+                        </option>
+
+                        {% for course in available_courses %}
+                            <option
+                                value="{{ course.id }}"
+                                {% if selected_course_id == course.id %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ course.title }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="school-enrollment-filter-field">
+                    <label for="school-enrollment-status">
+                        Status
+                    </label>
+
+                    <select
+                        id="school-enrollment-status"
+                        name="status"
+                        class="profile-form-control"
+                    >
+                        <option
+                            value=""
+                            {% if not status_filter %}
+                                selected
+                            {% endif %}
+                        >
+                            All statuses
+                        </option>
+
+                        <option
+                            value="in_progress"
+                            {% if status_filter == "in_progress" %}
+                                selected
+                            {% endif %}
+                        >
+                            In progress
+                        </option>
+
+                        <option
+                            value="completed"
+                            {% if status_filter == "completed" %}
+                                selected
+                            {% endif %}
+                        >
+                            Completed
+                        </option>
+                    </select>
+                </div>
+
+                <button
+                    type="submit"
+                    class="student-profile-save-button"
+                >
+                    Apply filters
+                </button>
+
+                {% if search_query or selected_course_id or status_filter %}
+                    <a
+                        href="{% url 'schools:enrollment_list' %}"
+                        class="student-profile-cancel-button"
+                    >
+                        Clear
+                    </a>
+                {% endif %}
+
+            </form>
+
+            {% if enrollment_rows %}
+
+                <div class="school-dashboard-table-wrapper">
+
+                    <table
+                        class="
+                            school-dashboard-table
+                            school-enrollment-table
+                        "
+                    >
+                        <thead>
+                            <tr>
+                                <th>Student</th>
+                                <th>Course</th>
+                                <th>Enrolled</th>
+                                <th>Progress</th>
+                                <th>Assessment</th>
+                                <th>Status</th>
+                                <th>Certificate</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for row in enrollment_rows %}
+
+                                <tr>
+                                    <td>
+                                        <a
+                                            href="{% url 'schools:student_detail' row.enrollment.user.id %}"
+                                            class="school-student-name-link"
+                                        >
+                                            {{ row.display_name }}
+                                        </a>
+
+                                        <small class="school-enrollment-secondary">
+                                            {{ row.enrollment.user.email|default:"No email" }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong class="school-enrollment-course-title">
+                                            {{ row.enrollment.course.title }}
+                                        </strong>
+
+                                        <small class="school-enrollment-secondary">
+                                            {{ row.enrollment.course.category.name }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        {{ row.enrollment.started_at|date:"d M Y" }}
+                                    </td>
+
+                                    <td>
+                                        <div class="school-enrollment-progress-cell">
+
+                                            <div class="school-dashboard-progress">
+                                                <div
+                                                    class="school-dashboard-progress-fill"
+                                                    style="width: {{ row.progress_percentage }}%;"
+                                                ></div>
+                                            </div>
+
+                                            <small>
+                                                {{ row.progress_percentage }}%
+                                                ·
+                                                {{ row.completed_lesson_count }}/{{ row.published_lesson_count }}
+                                                lessons
+                                            </small>
+
+                                        </div>
+                                    </td>
+
+                                    <td>
+                                        {% if row.latest_attempt %}
+
+                                            {% if row.latest_attempt.is_passed %}
+                                                <span
+                                                    class="
+                                                        school-enrollment-assessment
+                                                        school-enrollment-assessment-passed
+                                                    "
+                                                >
+                                                    Passed
+                                                    {{ row.latest_attempt.score_percentage|floatformat:0 }}%
+                                                </span>
+                                            {% else %}
+                                                <span
+                                                    class="
+                                                        school-enrollment-assessment
+                                                        school-enrollment-assessment-failed
+                                                    "
+                                                >
+                                                    Not passed
+                                                    {{ row.latest_attempt.score_percentage|floatformat:0 }}%
+                                                </span>
+                                            {% endif %}
+
+                                        {% else %}
+                                            <span
+                                                class="
+                                                    school-enrollment-assessment
+                                                    school-enrollment-assessment-pending
+                                                "
+                                            >
+                                                Not attempted
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if row.enrollment.is_completed %}
+                                            <span
+                                                class="
+                                                    school-enrollment-status
+                                                    school-enrollment-status-completed
+                                                "
+                                            >
+                                                Completed
+                                            </span>
+                                        {% else %}
+                                            <span
+                                                class="
+                                                    school-enrollment-status
+                                                    school-enrollment-status-progress
+                                                "
+                                            >
+                                                In progress
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {% if row.certificate %}
+                                            <a
+                                                href="{% url 'schools:certificate_pdf' row.certificate.certificate_number %}"
+                                                class="school-certificate-download"
+                                            >
+                                                Download PDF
+                                            </a>
+                                        {% else %}
+                                            <span class="school-enrollment-secondary">
+                                                Not issued
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        <a
+                                            href="{% url 'schools:student_detail' row.enrollment.user.id %}"
+                                            class="school-certificate-action"
+                                        >
+                                            View student
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="school-dashboard-empty">
+
+                    {% if search_query or selected_course_id or status_filter %}
+                        <h3>
+                            No enrolments found
+                        </h3>
+
+                        <p>
+                            No enrolments matched the selected
+                            search terms and filters.
+                        </p>
+
+                        <a
+                            href="{% url 'schools:enrollment_list' %}"
+                            class="student-profile-cancel-button"
+                        >
+                            Clear filters
+                        </a>
+                    {% else %}
+                        <h3>
+                            No school enrolments yet
+                        </h3>
+
+                        <p>
+                            Enrolments will appear here after a
+                            student is connected to a course.
+                        </p>
+
+                        <a
+                            href="{% url 'schools:enrollment_create' %}"
+                            class="student-profile-save-button"
+                        >
+                            Add first enrolment
+                            <span aria-hidden="true">→</span>
+                        </a>
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</section>
+
+{% endblock %}

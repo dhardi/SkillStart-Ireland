@@ -1,10 +1,13 @@
+import logging
 from django.http import FileResponse
 from django.urls import reverse
 
 from courses.certificate_pdf import build_certificate_pdf
+from courses.models import Course
+
 from django.contrib import messages
 from django.contrib.auth import get_user_model
-from django.db.models import Count, Q
+from django.db.models import Count, Prefetch, Q
 from django.shortcuts import (
     get_object_or_404,
     redirect,
@@ -12,12 +15,21 @@ from django.shortcuts import (
 )
 
 from accounts.models import (
+    AssessmentAttempt,
     Certificate,
     Enrollment,
 )
 
 from .decorators import school_administrator_required
-from .forms import SchoolEnrollmentForm
+from .forms import (
+    SchoolEnrollmentForm,
+    SchoolStudentCreateForm,
+)
+
+from .services import send_student_invitation
+
+
+logger = logging.getLogger(__name__)
 
 
 User = get_user_model()
@@ -276,6 +288,253 @@ def student_list(request):
         context,
     )
 
+
+@school_administrator_required
+def enrollment_list(request):
+    """
+    Display all enrolments connected to the logged-in
+    administrator's school.
+    """
+
+    school = request.school
+
+    search_query = request.GET.get(
+        "q",
+        "",
+    ).strip()
+
+    course_value = request.GET.get(
+        "course",
+        "",
+    ).strip()
+
+    status_filter = request.GET.get(
+        "status",
+        "",
+    ).strip()
+
+    selected_course_id = None
+
+    school_enrollments = Enrollment.objects.filter(
+        school=school,
+    )
+
+    total_enrollments = school_enrollments.count()
+
+    active_enrollments = (
+        school_enrollments
+        .filter(is_completed=False)
+        .count()
+    )
+
+    completed_enrollments = (
+        school_enrollments
+        .filter(is_completed=True)
+        .count()
+    )
+
+    certificate_count = (
+        Certificate.objects
+        .filter(enrollment__school=school)
+        .count()
+    )
+
+    filtered_enrollments = school_enrollments
+
+    if search_query:
+        filtered_enrollments = filtered_enrollments.filter(
+            Q(
+                user__first_name__icontains=search_query
+            )
+            | Q(
+                user__last_name__icontains=search_query
+            )
+            | Q(
+                user__username__icontains=search_query
+            )
+            | Q(
+                user__email__icontains=search_query
+            )
+            | Q(
+                course__title__icontains=search_query
+            )
+            | Q(
+                course__category__name__icontains=search_query
+            )
+        )
+
+    if course_value:
+        try:
+            selected_course_id = int(course_value)
+        except (TypeError, ValueError):
+            selected_course_id = None
+        else:
+            filtered_enrollments = (
+                filtered_enrollments
+                .filter(course_id=selected_course_id)
+            )
+
+    allowed_statuses = {
+        "",
+        "in_progress",
+        "completed",
+    }
+
+    if status_filter not in allowed_statuses:
+        status_filter = ""
+
+    if status_filter == "in_progress":
+        filtered_enrollments = (
+            filtered_enrollments
+            .filter(is_completed=False)
+        )
+
+    elif status_filter == "completed":
+        filtered_enrollments = (
+            filtered_enrollments
+            .filter(is_completed=True)
+        )
+
+    completed_attempts = (
+        AssessmentAttempt.objects
+        .filter(is_completed=True)
+        .select_related("assessment")
+        .order_by(
+            "-completed_at",
+            "-started_at",
+        )
+    )
+
+    enrollments = (
+        filtered_enrollments
+        .select_related(
+            "user",
+            "course",
+            "course__category",
+            "certificate",
+        )
+        .annotate(
+            published_lesson_count=Count(
+                "course__lessons",
+                filter=Q(
+                    course__lessons__is_published=True,
+                ),
+                distinct=True,
+            ),
+            completed_lesson_count=Count(
+                "lesson_progress",
+                filter=Q(
+                    lesson_progress__completed=True,
+                    lesson_progress__lesson__is_published=True,
+                ),
+                distinct=True,
+            ),
+        )
+        .prefetch_related(
+            Prefetch(
+                "assessment_attempts",
+                queryset=completed_attempts,
+                to_attr="completed_attempts",
+            )
+        )
+        .order_by("-started_at")
+    )
+
+    enrollment_rows = []
+
+    for enrollment in enrollments:
+        total_lessons = (
+            enrollment.published_lesson_count
+        )
+
+        completed_lessons = (
+            enrollment.completed_lesson_count
+        )
+
+        if total_lessons > 0:
+            progress_percentage = min(
+                round(
+                    completed_lessons
+                    / total_lessons
+                    * 100
+                ),
+                100,
+            )
+
+        elif enrollment.is_completed:
+            progress_percentage = 100
+
+        else:
+            progress_percentage = 0
+
+        latest_attempt = None
+
+        if enrollment.completed_attempts:
+            latest_attempt = (
+                enrollment.completed_attempts[0]
+            )
+
+        try:
+            certificate = enrollment.certificate
+        except Certificate.DoesNotExist:
+            certificate = None
+
+        display_name = (
+            enrollment.user.get_full_name().strip()
+            or enrollment.user.username
+        )
+
+        enrollment_rows.append(
+            {
+                "enrollment": enrollment,
+                "display_name": display_name,
+                "published_lesson_count": total_lessons,
+                "completed_lesson_count": completed_lessons,
+                "progress_percentage": progress_percentage,
+                "latest_attempt": latest_attempt,
+                "certificate": certificate,
+            }
+        )
+
+    available_courses = (
+        Course.objects
+        .filter(
+            enrollments__school=school,
+        )
+        .select_related("category")
+        .distinct()
+        .order_by(
+            "category__name",
+            "title",
+        )
+    )
+
+    context = {
+        "school": school,
+        "enrollment_rows": enrollment_rows,
+        "total_enrollments": total_enrollments,
+        "active_enrollments": active_enrollments,
+        "completed_enrollments": completed_enrollments,
+        "certificate_count": certificate_count,
+        "displayed_count": len(enrollment_rows),
+        "available_courses": available_courses,
+        "search_query": search_query,
+        "selected_course_id": selected_course_id,
+        "status_filter": status_filter,
+    }
+
+    return render(
+        request,
+        "schools/enrollments.html",
+        context,
+    )
+
+
+
+
+
+
+
 @school_administrator_required
 def enrollment_create(request):
     """
@@ -308,7 +567,7 @@ def enrollment_create(request):
             )
 
             return redirect(
-                "schools:student_list",
+                "schools:enrollment_list",
             )
 
     else:
@@ -332,6 +591,105 @@ def enrollment_create(request):
     return render(
         request,
         "schools/enrollment_form.html",
+        context,
+    )
+
+
+@school_administrator_required
+def student_create(request):
+    """
+    Create a new student account, profile and
+    initial enrolment through the school portal.
+    """
+
+    school = request.school
+
+    if request.method == "POST":
+        form = SchoolStudentCreateForm(
+            request.POST,
+            school=school,
+        )
+
+        if form.is_valid():
+            student, enrollment = form.save()
+
+            invitation_sent = False
+
+            try:
+                send_student_invitation(
+                    request=request,
+                    student=student,
+                    school=school,
+                    course=enrollment.course,
+                )
+
+                invitation_sent = True
+
+            except Exception:
+                logger.exception(
+                    "Student invitation email failed "
+                    "for user ID %s.",
+                    student.pk,
+                )
+
+            student_name = (
+                student.get_full_name().strip()
+                or student.username
+            )
+
+            if invitation_sent:
+                messages.success(
+                    request,
+                    (
+                        f"{student_name} was created and enrolled "
+                        f"in {enrollment.course.title}. "
+                        f"The password invitation was sent to "
+                        f"{student.email}."
+                    ),
+                )
+
+            else:
+                messages.warning(
+                    request,
+                    (
+                        f"{student_name} was created and enrolled, "
+                        "but the invitation email could not be sent. "
+                        "Please contact the platform administrator."
+                    ),
+                )
+
+            return redirect(
+                "schools:student_detail",
+                student_id=student.pk,
+            )
+
+    else:
+        form = SchoolStudentCreateForm(
+            school=school,
+        )
+
+    current_student_count = (
+        school.active_student_count
+    )
+
+    available_student_places = max(
+        school.student_limit
+        - current_student_count,
+        0,
+    )
+
+    context = {
+        "school": school,
+        "form": form,
+        "current_student_count": current_student_count,
+        "available_student_places": (
+            available_student_places
+        ),
+    }
+
+    return render(
+        request,
+        "schools/student_form.html",
         context,
     )
 

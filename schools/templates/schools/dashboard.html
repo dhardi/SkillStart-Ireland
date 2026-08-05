@@ -71,32 +71,42 @@
         {% endif %}
 
         <nav
-            class="school-portal-navigation"
-            aria-label="School portal navigation"
-        >
+    class="school-portal-navigation"
+    aria-label="School portal navigation"
+>
+    <a
+        href="{% url 'schools:student_list' %}"
+        class="dashboard-profile-button"
+    >
+        Students
+    </a>
+<a
+    href="{% url 'schools:student_create' %}"
+    class="dashboard-profile-button"
+>
+    Add student
+</a>
+    <a
+        href="{% url 'schools:enrollment_list' %}"
+        class="dashboard-profile-button"
+    >
+        Enrolments
+    </a>
 
-            <a
-                href="{% url 'schools:student_list' %}"
-                class="dashboard-profile-button"
-            >
-                View students
-            </a>
+    <a
+        href="{% url 'schools:enrollment_create' %}"
+        class="dashboard-profile-button"
+    >
+        Add enrolment
+    </a>
 
-            <a
-                href="{% url 'schools:enrollment_create' %}"
-                class="dashboard-profile-button"
-            >
-                Enroll student
-            </a>
-
-            <a
-                href="{% url 'schools:certificate_list' %}"
-                class="dashboard-profile-button"
-            >
-                Certificates
-            </a>
-
-        </nav>
+    <a
+        href="{% url 'schools:certificate_list' %}"
+        class="dashboard-profile-button"
+    >
+        Certificates
+    </a>
+</nav>
 
         <div class="school-dashboard-statistics">
 

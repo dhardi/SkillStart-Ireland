@@ -1,0 +1,337 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Add Student | {{ school.name }}
+{% endblock %}
+
+{% block content %}
+
+<section class="school-dashboard-section">
+    <div class="container">
+
+        <header class="school-dashboard-header">
+
+            <div>
+                <span class="school-dashboard-label">
+                    School portal
+                </span>
+
+                <h1>
+                    Add new student
+                </h1>
+
+                <p>
+                    Create a student account, select the initial
+                    course and send a secure password invitation.
+                </p>
+            </div>
+
+            <a
+                href="{% url 'schools:student_list' %}"
+                class="student-profile-back-button"
+            >
+                <span aria-hidden="true">←</span>
+                Back to students
+            </a>
+
+        </header>
+
+        <div class="row g-4">
+
+            <div class="col-12 col-lg-8">
+
+                <section class="student-profile-form-card">
+
+                    <div class="student-profile-form-header">
+                        <div>
+                            <span class="student-profile-label">
+                                New account
+                            </span>
+
+                            <h2>
+                                Student information
+                            </h2>
+
+                            <p>
+                                The student will receive a secure
+                                link to create their own password.
+                            </p>
+                        </div>
+                    </div>
+
+                    <form
+                        method="post"
+                        class="student-profile-form"
+                        novalidate
+                    >
+                        {% csrf_token %}
+
+                        {% if form.non_field_errors %}
+                            <div class="student-profile-form-errors">
+                                {% for error in form.non_field_errors %}
+                                    <p>
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="student-profile-form-section">
+
+                            <div class="student-profile-form-section-header">
+
+                                <span class="student-profile-form-section-number">
+                                    01
+                                </span>
+
+                                <div>
+                                    <h3>
+                                        Personal information
+                                    </h3>
+
+                                    <p>
+                                        Enter the student's name and
+                                        contact details.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="school-student-form-grid">
+
+                                <div class="student-profile-form-group">
+                                    <label for="{{ form.first_name.id_for_label }}">
+                                        {{ form.first_name.label }}
+                                    </label>
+
+                                    {{ form.first_name }}
+
+                                    {% for error in form.first_name.errors %}
+                                        <div class="student-profile-field-errors">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="student-profile-form-group">
+                                    <label for="{{ form.last_name.id_for_label }}">
+                                        {{ form.last_name.label }}
+                                    </label>
+
+                                    {{ form.last_name }}
+
+                                    {% for error in form.last_name.errors %}
+                                        <div class="student-profile-field-errors">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div
+                                    class="
+                                        student-profile-form-group
+                                        school-student-form-full
+                                    "
+                                >
+                                    <label for="{{ form.email.id_for_label }}">
+                                        {{ form.email.label }}
+                                    </label>
+
+                                    {{ form.email }}
+
+                                    {% if form.email.help_text %}
+                                        <small>
+                                            {{ form.email.help_text }}
+                                        </small>
+                                    {% endif %}
+
+                                    {% for error in form.email.errors %}
+                                        <div class="student-profile-field-errors">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="student-profile-form-group">
+                                    <label for="{{ form.phone_number.id_for_label }}">
+                                        {{ form.phone_number.label }}
+                                    </label>
+
+                                    {{ form.phone_number }}
+
+                                    {% for error in form.phone_number.errors %}
+                                        <div class="student-profile-field-errors">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                                <div class="student-profile-form-group">
+                                    <label for="{{ form.preferred_language.id_for_label }}">
+                                        {{ form.preferred_language.label }}
+                                    </label>
+
+                                    {{ form.preferred_language }}
+
+                                    {% for error in form.preferred_language.errors %}
+                                        <div class="student-profile-field-errors">
+                                            <span>{{ error }}</span>
+                                        </div>
+                                    {% endfor %}
+                                </div>
+
+                            </div>
+
+                        </div>
+
+                        <div class="student-profile-form-section">
+
+                            <div class="student-profile-form-section-header">
+
+                                <span class="student-profile-form-section-number">
+                                    02
+                                </span>
+
+                                <div>
+                                    <h3>
+                                        Initial course
+                                    </h3>
+
+                                    <p>
+                                        The new account will immediately
+                                        be connected to this course.
+                                    </p>
+                                </div>
+
+                            </div>
+
+                            <div class="student-profile-form-group">
+                                <label for="{{ form.course.id_for_label }}">
+                                    {{ form.course.label }}
+                                </label>
+
+                                {{ form.course }}
+
+                                {% for error in form.course.errors %}
+                                    <div class="student-profile-field-errors">
+                                        <span>{{ error }}</span>
+                                    </div>
+                                {% endfor %}
+                            </div>
+
+                        </div>
+
+                        <div class="student-profile-form-actions">
+
+                            <a
+                                href="{% url 'schools:student_list' %}"
+                                class="student-profile-cancel-button"
+                            >
+                                Cancel
+                            </a>
+
+                            <button
+                                type="submit"
+                                class="student-profile-save-button"
+                            >
+                                Create student
+                                <span aria-hidden="true">→</span>
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            </div>
+
+            <div class="col-12 col-lg-4">
+
+                <aside class="student-profile-sidebar">
+
+                    <div class="student-profile-summary">
+
+                        {% if school.logo %}
+                            <div class="student-profile-avatar">
+                                <img
+                                    src="{{ school.logo.url }}"
+                                    alt="{{ school.name }} logo"
+                                >
+                            </div>
+                        {% else %}
+                            <div class="student-profile-avatar">
+                                <span aria-hidden="true">
+                                    {{ school.name|first|upper }}
+                                </span>
+                            </div>
+                        {% endif %}
+
+                        <h2>
+                            {{ school.name }}
+                        </h2>
+
+                        <p>
+                            {{ school.get_plan_display }} plan
+                        </p>
+
+                        <span class="student-profile-account-badge">
+                            Student invitation
+                        </span>
+
+                    </div>
+
+                    <div class="student-profile-account-details">
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Current students
+                            </span>
+
+                            <strong>
+                                {{ current_student_count }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Student limit
+                            </span>
+
+                            <strong>
+                                {{ school.student_limit }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Available places
+                            </span>
+
+                            <strong>
+                                {{ available_student_places }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>
+                                Invitation
+                            </span>
+
+                            <strong>
+                                Automatic
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </aside>
+
+            </div>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

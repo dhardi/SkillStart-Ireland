@@ -1,0 +1,25 @@
+Hello {{ student.first_name }},
+
+{{ school.name }} has created a SkillStart Ireland student account for you.
+
+You have been enrolled in:
+
+{{ course.title }}
+
+Use the secure link below to create your password:
+
+{{ invitation_url }}
+
+Your username is:
+
+{{ student.username }}
+
+Your account email is:
+
+{{ student.email }}
+
+After creating your password, you can sign in and begin your course.
+
+If you were not expecting this invitation, please contact {{ school.name }}.
+
+SkillStart Ireland

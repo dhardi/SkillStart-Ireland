@@ -11054,3 +11054,155 @@ input[type="checkbox"] {
     border: 1px solid rgba(31, 111, 92, 0.2);
 }
 
+/* =========================================================
+   SCHOOL PORTAL — ENROLMENT MANAGEMENT
+========================================================= */
+
+.school-enrollment-filters {
+    display: grid;
+    grid-template-columns:
+        minmax(240px, 2fr)
+        minmax(180px, 1fr)
+        minmax(170px, 1fr)
+        auto
+        auto;
+    align-items: end;
+    gap: 0.8rem;
+    padding-bottom: 1.5rem;
+}
+
+.school-enrollment-filter-field {
+    min-width: 0;
+}
+
+.school-enrollment-filter-field label {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: #35414d;
+    font-size: 0.78rem;
+    font-weight: 750;
+}
+
+.school-enrollment-table {
+    min-width: 1180px;
+}
+
+.school-enrollment-secondary {
+    display: block;
+    margin-top: 0.3rem;
+    color: #87919b;
+    font-size: 0.7rem;
+    line-height: 1.4;
+}
+
+.school-enrollment-course-title {
+    display: block;
+    color: #29343e;
+    font-size: 0.8rem;
+    font-weight: 800;
+}
+
+.school-enrollment-progress-cell {
+    min-width: 170px;
+    max-width: 200px;
+}
+
+.school-enrollment-progress-cell
+.school-dashboard-progress {
+    height: 8px;
+    margin-bottom: 0.4rem;
+}
+
+.school-enrollment-progress-cell small {
+    color: #79858f;
+    font-size: 0.7rem;
+}
+
+.school-enrollment-assessment {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.4rem 0.65rem;
+    font-size: 0.68rem;
+    font-weight: 750;
+    white-space: nowrap;
+    border-radius: 999px;
+}
+
+.school-enrollment-assessment-passed {
+    color: #185847;
+    background: #edf8f3;
+    border: 1px solid rgba(31, 111, 92, 0.2);
+}
+
+.school-enrollment-assessment-failed {
+    color: #9f2f2f;
+    background: #fff3f3;
+    border: 1px solid rgba(184, 56, 56, 0.2);
+}
+
+.school-enrollment-assessment-pending {
+    color: #5f6b77;
+    background: #f1f4f6;
+    border: 1px solid #dce2e8;
+}
+
+.school-dashboard-empty
+.student-profile-save-button,
+.school-dashboard-empty
+.student-profile-cancel-button {
+    margin-top: 1.25rem;
+}
+
+@media (max-width: 1199.98px) {
+
+    .school-enrollment-filters {
+        grid-template-columns:
+            repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 767.98px) {
+
+    .school-enrollment-filters {
+        grid-template-columns: 1fr;
+    }
+
+    .school-enrollment-filters
+    .student-profile-save-button,
+    .school-enrollment-filters
+    .student-profile-cancel-button {
+        width: 100%;
+    }
+}
+
+/* =========================================================
+   SCHOOL PORTAL — STUDENT REGISTRATION
+========================================================= */
+
+.school-student-form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 1rem;
+}
+
+.school-student-form-full {
+    grid-column: 1 / -1;
+}
+
+.school-student-form-grid
+.student-profile-form-group {
+    margin-bottom: 0;
+}
+
+@media (max-width: 767.98px) {
+
+    .school-student-form-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .school-student-form-full {
+        grid-column: auto;
+    }
+}
+
