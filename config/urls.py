@@ -25,9 +25,21 @@ urlpatterns = [
         "management/",
         include("admin_dashboard.urls"),
     ),
+
+    # School support must come before the general school routes.
+    path(
+        "school/support/",
+        include("support.school_urls"),
+    ),
     path(
         "school/",
         include("schools.urls"),
+    ),
+
+    # Student support.
+    path(
+        "support/",
+        include("support.student_urls"),
     ),
 ]
 

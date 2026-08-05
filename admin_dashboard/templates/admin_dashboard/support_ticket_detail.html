@@ -1,0 +1,597 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    {{ ticket.ticket_number }} | Support
+{% endblock %}
+
+{% block page_title %}
+    Support Ticket
+{% endblock %}
+
+{% block admin_content %}
+
+<section class="management-support-detail">
+
+    <header class="management-support-detail-header">
+
+        <div>
+            <span class="management-header-label">
+                Customer service
+            </span>
+
+            <div class="management-support-title-row">
+                <h2>
+                    {{ ticket.subject }}
+                </h2>
+
+                <span
+                    class="
+                        management-support-badge
+                        management-support-status-{{ ticket.status }}
+                    "
+                >
+                    {{ ticket.get_status_display }}
+                </span>
+            </div>
+
+            <p>
+                Ticket
+                <strong>{{ ticket.ticket_number }}</strong>
+                · Opened {{ ticket.created_at|date:"d M Y, H:i" }}
+            </p>
+        </div>
+
+        <a
+            href="{% url 'admin_dashboard:support_ticket_list' %}"
+            class="btn btn-outline-secondary"
+        >
+            ← Back to support
+        </a>
+
+    </header>
+
+    {% if messages %}
+        <div class="management-support-messages">
+            {% for message in messages %}
+                <div
+                    class="
+                        alert
+                        {% if message.tags == 'success' %}
+                            alert-success
+                        {% elif message.tags == 'error' %}
+                            alert-danger
+                        {% elif message.tags == 'warning' %}
+                            alert-warning
+                        {% else %}
+                            alert-info
+                        {% endif %}
+                    "
+                    role="alert"
+                >
+                    {{ message }}
+                </div>
+            {% endfor %}
+        </div>
+    {% endif %}
+
+    <div class="management-support-summary-grid">
+
+        <article class="management-support-summary-card">
+            <span>Status</span>
+            <strong>{{ ticket.get_status_display }}</strong>
+        </article>
+
+        <article class="management-support-summary-card">
+            <span>Priority</span>
+            <strong>{{ ticket.get_priority_display }}</strong>
+        </article>
+
+        <article class="management-support-summary-card">
+            <span>Category</span>
+            <strong>{{ ticket.get_category_display }}</strong>
+        </article>
+
+        <article class="management-support-summary-card">
+            <span>Assigned to</span>
+            <strong>
+                {% if ticket.assigned_to %}
+                    {{ ticket.assigned_to.get_full_name|default:ticket.assigned_to.username }}
+                {% else %}
+                    Unassigned
+                {% endif %}
+            </strong>
+        </article>
+
+    </div>
+
+    <div class="management-support-layout">
+
+        <div class="management-support-main">
+
+            <article class="management-support-conversation-card">
+
+                <div class="management-support-conversation-header">
+
+                    <div class="management-support-author">
+
+                        <div class="management-support-avatar">
+                            {{ ticket.author_display_name|first|upper }}
+                        </div>
+
+                        <div>
+                            <strong>
+                                {{ ticket.author_display_name }}
+                            </strong>
+
+                            <span>
+                                Ticket creator
+                            </span>
+                        </div>
+
+                    </div>
+
+                    <time datetime="{{ ticket.created_at|date:'c' }}">
+                        {{ ticket.created_at|date:"d M Y, H:i" }}
+                    </time>
+
+                </div>
+
+                <div class="management-support-message">
+                    {{ ticket.description|linebreaks }}
+                </div>
+
+                {% if ticket_attachments %}
+                    <div class="management-support-attachments">
+
+                        <span class="management-support-attachments-title">
+                            Attachments
+                        </span>
+
+                        {% for attachment in ticket_attachments %}
+                            <a
+                                href="{% url 'admin_dashboard:support_attachment_download' attachment.id %}"
+                                class="management-support-attachment"
+                            >
+                                <span aria-hidden="true">↓</span>
+                                {{ attachment.original_name }}
+                            </a>
+                        {% endfor %}
+
+                    </div>
+                {% endif %}
+
+            </article>
+
+            {% for reply in replies %}
+
+                <article
+                    class="
+                        management-support-conversation-card
+                        {% if reply.is_internal_note %}
+                            management-support-internal-note
+                        {% endif %}
+                    "
+                >
+
+                    <div class="management-support-conversation-header">
+
+                        <div class="management-support-author">
+
+                            <div class="management-support-avatar">
+                                {{ reply.author_display_name|first|upper }}
+                            </div>
+
+                            <div>
+                                <strong>
+                                    {{ reply.author_display_name }}
+                                </strong>
+
+                                <span>
+                                    {% if reply.is_internal_note %}
+                                        Internal administrator note
+                                    {% elif reply.author.is_staff %}
+                                        SkillStart Ireland support
+                                    {% elif reply.author == ticket.author %}
+                                        Ticket creator
+                                    {% else %}
+                                        School representative
+                                    {% endif %}
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <div class="management-support-reply-meta">
+
+                            {% if reply.is_internal_note %}
+                                <span class="management-support-note-badge">
+                                    Internal note
+                                </span>
+                            {% endif %}
+
+                            <time datetime="{{ reply.created_at|date:'c' }}">
+                                {{ reply.created_at|date:"d M Y, H:i" }}
+                            </time>
+
+                        </div>
+
+                    </div>
+
+                    <div class="management-support-message">
+                        {{ reply.message|linebreaks }}
+                    </div>
+
+                    {% if reply.attachments.all %}
+                        <div class="management-support-attachments">
+
+                            <span class="management-support-attachments-title">
+                                Attachments
+                            </span>
+
+                            {% for attachment in reply.attachments.all %}
+                                <a
+                                    href="{% url 'admin_dashboard:support_attachment_download' attachment.id %}"
+                                    class="management-support-attachment"
+                                >
+                                    <span aria-hidden="true">↓</span>
+                                    {{ attachment.original_name }}
+                                </a>
+                            {% endfor %}
+
+                        </div>
+                    {% endif %}
+
+                </article>
+
+            {% empty %}
+
+                <div class="management-support-empty-conversation">
+                    <strong>No replies yet</strong>
+
+                    <p>
+                        The conversation will appear here after the
+                        first response or internal note.
+                    </p>
+                </div>
+
+            {% endfor %}
+
+            {% if ticket.status == "closed" %}
+
+                <div class="alert alert-secondary mb-0">
+                    <strong>This ticket is closed.</strong>
+                    Reopen it before adding another reply or note.
+                </div>
+
+            {% else %}
+
+                <section class="management-support-form-card">
+
+                    <div class="management-support-form-header">
+                        <div>
+                            <span class="management-header-label">
+                                Conversation
+                            </span>
+
+                            <h3>
+                                Add reply or internal note
+                            </h3>
+                        </div>
+                    </div>
+
+                    <form
+                        method="post"
+                        enctype="multipart/form-data"
+                        class="management-support-form"
+                        novalidate
+                    >
+                        {% csrf_token %}
+
+                        <input
+                            type="hidden"
+                            name="action"
+                            value="add_reply"
+                        >
+
+                        {% if reply_form.non_field_errors %}
+                            <div class="alert alert-danger">
+                                {% for error in reply_form.non_field_errors %}
+                                    <p class="mb-0">
+                                        {{ error }}
+                                    </p>
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+
+                        <div class="management-support-form-group">
+
+                            <label for="{{ reply_form.message.id_for_label }}">
+                                {{ reply_form.message.label }}
+                            </label>
+
+                            {{ reply_form.message }}
+
+                            {% for error in reply_form.message.errors %}
+                                <span class="management-support-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="management-support-form-group">
+
+                            <label for="{{ reply_form.attachment.id_for_label }}">
+                                {{ reply_form.attachment.label }}
+                            </label>
+
+                            {{ reply_form.attachment }}
+
+                            {% if reply_form.attachment.help_text %}
+                                <small class="management-support-help">
+                                    {{ reply_form.attachment.help_text }}
+                                </small>
+                            {% endif %}
+
+                            {% for error in reply_form.attachment.errors %}
+                                <span class="management-support-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="management-support-note-option">
+
+                            <div>
+                                {{ reply_form.is_internal_note }}
+
+                                <label for="{{ reply_form.is_internal_note.id_for_label }}">
+                                    {{ reply_form.is_internal_note.label }}
+                                </label>
+                            </div>
+
+                            {% if reply_form.is_internal_note.help_text %}
+                                <small>
+                                    {{ reply_form.is_internal_note.help_text }}
+                                </small>
+                            {% endif %}
+
+                            {% for error in reply_form.is_internal_note.errors %}
+                                <span class="management-support-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+
+                        </div>
+
+                        <div class="management-support-form-actions">
+
+                            <button
+                                type="submit"
+                                class="btn btn-success"
+                            >
+                                Send message
+                            </button>
+
+                        </div>
+
+                    </form>
+
+                </section>
+
+            {% endif %}
+
+        </div>
+
+        <aside class="management-support-sidebar">
+
+            <section class="management-support-sidebar-card">
+
+                <div class="management-support-sidebar-header">
+                    <span class="management-header-label">
+                        Ticket management
+                    </span>
+
+                    <h3>
+                        Update ticket
+                    </h3>
+                </div>
+
+                <form
+                    method="post"
+                    class="management-support-form"
+                    novalidate
+                >
+                    {% csrf_token %}
+
+                    <input
+                        type="hidden"
+                        name="action"
+                        value="update_ticket"
+                    >
+
+                    {% if update_form.non_field_errors %}
+                        <div class="alert alert-danger">
+                            {% for error in update_form.non_field_errors %}
+                                <p class="mb-0">
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="management-support-form-group">
+                        <label for="{{ update_form.status.id_for_label }}">
+                            {{ update_form.status.label }}
+                        </label>
+
+                        {{ update_form.status }}
+
+                        {% for error in update_form.status.errors %}
+                            <span class="management-support-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="management-support-form-group">
+                        <label for="{{ update_form.priority.id_for_label }}">
+                            {{ update_form.priority.label }}
+                        </label>
+
+                        {{ update_form.priority }}
+
+                        {% for error in update_form.priority.errors %}
+                            <span class="management-support-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="management-support-form-group">
+                        <label for="{{ update_form.assigned_to.id_for_label }}">
+                            {{ update_form.assigned_to.label }}
+                        </label>
+
+                        {{ update_form.assigned_to }}
+
+                        {% for error in update_form.assigned_to.errors %}
+                            <span class="management-support-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <button
+                        type="submit"
+                        class="btn btn-success w-100"
+                    >
+                        Save changes
+                    </button>
+
+                </form>
+
+                <div class="management-support-quick-actions">
+
+                    {% if ticket.assigned_to != request.user %}
+
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="assign_to_me"
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-success w-100"
+                            >
+                                Assign to me
+                            </button>
+                        </form>
+
+                    {% endif %}
+
+                    {% if ticket.status == "resolved" or ticket.status == "closed" %}
+
+                        <form method="post">
+                            {% csrf_token %}
+
+                            <input
+                                type="hidden"
+                                name="action"
+                                value="reopen_ticket"
+                            >
+
+                            <button
+                                type="submit"
+                                class="btn btn-outline-secondary w-100"
+                            >
+                                Reopen ticket
+                            </button>
+                        </form>
+
+                    {% endif %}
+
+                </div>
+
+            </section>
+
+            <section class="management-support-sidebar-card">
+
+                <div class="management-support-sidebar-header">
+                    <span class="management-header-label">
+                        Request information
+                    </span>
+
+                    <h3>
+                        Ticket details
+                    </h3>
+                </div>
+
+                <dl class="management-support-metadata">
+
+                    <div>
+                        <dt>Ticket number</dt>
+                        <dd>{{ ticket.ticket_number }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Created by</dt>
+                        <dd>{{ ticket.author_display_name }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Email</dt>
+                        <dd>{{ ticket.author.email|default:"No email" }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>School</dt>
+                        <dd>
+                            {% if ticket.school %}
+                                {{ ticket.school.name }}
+                            {% else %}
+                                Platform support
+                            {% endif %}
+                        </dd>
+                    </div>
+
+                    <div>
+                        <dt>Created</dt>
+                        <dd>{{ ticket.created_at|date:"d M Y, H:i" }}</dd>
+                    </div>
+
+                    <div>
+                        <dt>Last updated</dt>
+                        <dd>{{ ticket.updated_at|date:"d M Y, H:i" }}</dd>
+                    </div>
+
+                    {% if ticket.resolved_at %}
+                        <div>
+                            <dt>Resolved</dt>
+                            <dd>{{ ticket.resolved_at|date:"d M Y, H:i" }}</dd>
+                        </div>
+                    {% endif %}
+
+                    {% if ticket.closed_at %}
+                        <div>
+                            <dt>Closed</dt>
+                            <dd>{{ ticket.closed_at|date:"d M Y, H:i" }}</dd>
+                        </div>
+                    {% endif %}
+
+                </dl>
+
+            </section>
+
+        </aside>
+
+    </div>
+
+</section>
+
+{% endblock %}

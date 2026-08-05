@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "accounts",
     "admin_dashboard",
     "schools.apps.SchoolsConfig",
+    "support.apps.SupportConfig",
 ]
 
 MIDDLEWARE = [

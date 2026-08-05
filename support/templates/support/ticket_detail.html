@@ -1,0 +1,470 @@
+{% extends "base.html" %}
+
+{% block title %}
+    {{ ticket.ticket_number }} | Support
+{% endblock %}
+
+{% block content %}
+
+<section class="support-section">
+    <div class="container">
+
+        <header class="support-page-header">
+
+            <div>
+                <span class="support-page-label">
+                    Support ticket
+                </span>
+
+                <div class="support-ticket-heading">
+                    <h1>
+                        {{ ticket.subject }}
+                    </h1>
+
+                    <span
+                        class="
+                            support-status-badge
+                            support-status-{{ ticket.status }}
+                        "
+                    >
+                        {{ ticket.get_status_display }}
+                    </span>
+                </div>
+
+                <p>
+                    Ticket
+                    <strong>{{ ticket.ticket_number }}</strong>
+                    · Opened {{ ticket.created_at|date:"d M Y, H:i" }}
+                </p>
+            </div>
+
+            {% if portal_type == "school" %}
+                <a
+                    href="{% url 'school_support:ticket_list' %}"
+                    class="support-secondary-button"
+                >
+                    <span aria-hidden="true">←</span>
+                    Back to tickets
+                </a>
+            {% else %}
+                <a
+                    href="{% url 'support:ticket_list' %}"
+                    class="support-secondary-button"
+                >
+                    <span aria-hidden="true">←</span>
+                    Back to tickets
+                </a>
+            {% endif %}
+
+        </header>
+
+        {% if messages %}
+            <div class="support-messages">
+                {% for message in messages %}
+                    <div
+                        class="
+                            support-message
+                            {% if message.tags %}
+                                support-message-{{ message.tags }}
+                            {% endif %}
+                        "
+                        role="alert"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="support-ticket-layout">
+
+            <div class="support-ticket-main">
+
+                <article class="support-conversation-item support-original-message">
+
+                    <div class="support-conversation-header">
+
+                        <div class="support-conversation-author">
+
+                            <div class="support-author-avatar">
+                                {{ ticket.author_display_name|first|upper }}
+                            </div>
+
+                            <div>
+                                <strong>
+                                    {{ ticket.author_display_name }}
+                                </strong>
+
+                                <span>
+                                    Ticket creator
+                                </span>
+                            </div>
+
+                        </div>
+
+                        <time datetime="{{ ticket.created_at|date:'c' }}">
+                            {{ ticket.created_at|date:"d M Y, H:i" }}
+                        </time>
+
+                    </div>
+
+                    <div class="support-conversation-message">
+                        {{ ticket.description|linebreaks }}
+                    </div>
+
+                    {% if ticket_attachments %}
+                        <div class="support-attachments">
+
+                            <span class="support-attachments-title">
+                                Attachments
+                            </span>
+
+                            {% for attachment in ticket_attachments %}
+
+                                {% if portal_type == "school" %}
+                                    <a
+                                        href="{% url 'school_support:attachment_download' attachment.id %}"
+                                        class="support-attachment-link"
+                                    >
+                                        <span aria-hidden="true">↓</span>
+
+                                        <span>
+                                            {{ attachment.original_name }}
+                                        </span>
+                                    </a>
+                                {% else %}
+                                    <a
+                                        href="{% url 'support:attachment_download' attachment.id %}"
+                                        class="support-attachment-link"
+                                    >
+                                        <span aria-hidden="true">↓</span>
+
+                                        <span>
+                                            {{ attachment.original_name }}
+                                        </span>
+                                    </a>
+                                {% endif %}
+
+                            {% endfor %}
+
+                        </div>
+                    {% endif %}
+
+                </article>
+
+                {% for reply in replies %}
+
+                    <article class="support-conversation-item">
+
+                        <div class="support-conversation-header">
+
+                            <div class="support-conversation-author">
+
+                                <div class="support-author-avatar">
+                                    {{ reply.author_display_name|first|upper }}
+                                </div>
+
+                                <div>
+                                    <strong>
+                                        {{ reply.author_display_name }}
+                                    </strong>
+
+                                    <span>
+                                        {% if reply.author.is_staff %}
+                                            SkillStart Ireland support
+                                        {% elif reply.author == ticket.author %}
+                                            Ticket creator
+                                        {% else %}
+                                            School representative
+                                        {% endif %}
+                                    </span>
+                                </div>
+
+                            </div>
+
+                            <time datetime="{{ reply.created_at|date:'c' }}">
+                                {{ reply.created_at|date:"d M Y, H:i" }}
+                            </time>
+
+                        </div>
+
+                        <div class="support-conversation-message">
+                            {{ reply.message|linebreaks }}
+                        </div>
+
+                        {% if reply.attachments.all %}
+                            <div class="support-attachments">
+
+                                <span class="support-attachments-title">
+                                    Attachments
+                                </span>
+
+                                {% for attachment in reply.attachments.all %}
+
+                                    {% if portal_type == "school" %}
+                                        <a
+                                            href="{% url 'school_support:attachment_download' attachment.id %}"
+                                            class="support-attachment-link"
+                                        >
+                                            <span aria-hidden="true">↓</span>
+
+                                            <span>
+                                                {{ attachment.original_name }}
+                                            </span>
+                                        </a>
+                                    {% else %}
+                                        <a
+                                            href="{% url 'support:attachment_download' attachment.id %}"
+                                            class="support-attachment-link"
+                                        >
+                                            <span aria-hidden="true">↓</span>
+
+                                            <span>
+                                                {{ attachment.original_name }}
+                                            </span>
+                                        </a>
+                                    {% endif %}
+
+                                {% endfor %}
+
+                            </div>
+                        {% endif %}
+
+                    </article>
+
+                {% empty %}
+
+                    <div class="support-no-replies">
+                        <strong>
+                            No replies yet
+                        </strong>
+
+                        <p>
+                            The conversation will appear here when
+                            someone responds to the ticket.
+                        </p>
+                    </div>
+
+                {% endfor %}
+
+                {% if ticket.status == "closed" %}
+
+                    <div class="support-closed-notice">
+                        <strong>
+                            This ticket is closed
+                        </strong>
+
+                        <p>
+                            Closed tickets can be viewed but can no
+                            longer receive new replies.
+                        </p>
+                    </div>
+
+                {% else %}
+
+                    <section class="support-reply-card">
+
+                        <div class="support-card-header">
+                            <div>
+                                <span class="support-page-label">
+                                    Conversation
+                                </span>
+
+                                <h2>
+                                    Add a reply
+                                </h2>
+                            </div>
+                        </div>
+
+                        <form
+                            method="post"
+                            enctype="multipart/form-data"
+                            class="support-form"
+                            novalidate
+                        >
+                            {% csrf_token %}
+
+                            {% if reply_form.non_field_errors %}
+                                <div class="support-form-errors">
+                                    {% for error in reply_form.non_field_errors %}
+                                        <p>
+                                            {{ error }}
+                                        </p>
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+
+                            <div class="support-form-group">
+                                <label for="{{ reply_form.message.id_for_label }}">
+                                    {{ reply_form.message.label }}
+                                </label>
+
+                                {{ reply_form.message }}
+
+                                {% for error in reply_form.message.errors %}
+                                    <span class="support-field-error">
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+
+                            <div class="support-form-group">
+                                <label for="{{ reply_form.attachment.id_for_label }}">
+                                    {{ reply_form.attachment.label }}
+                                </label>
+
+                                {{ reply_form.attachment }}
+
+                                {% if reply_form.attachment.help_text %}
+                                    <small class="support-help-text">
+                                        {{ reply_form.attachment.help_text }}
+                                    </small>
+                                {% endif %}
+
+                                {% for error in reply_form.attachment.errors %}
+                                    <span class="support-field-error">
+                                        {{ error }}
+                                    </span>
+                                {% endfor %}
+                            </div>
+
+                            <div class="support-form-actions">
+                                <button
+                                    type="submit"
+                                    class="support-primary-button"
+                                >
+                                    Send reply
+                                    <span aria-hidden="true">→</span>
+                                </button>
+                            </div>
+
+                        </form>
+
+                    </section>
+
+                {% endif %}
+
+            </div>
+
+            <aside class="support-ticket-sidebar">
+
+                <section class="support-ticket-summary">
+
+                    <span class="support-page-label">
+                        Ticket details
+                    </span>
+
+                    <h2>
+                        {{ ticket.ticket_number }}
+                    </h2>
+
+                    <div class="support-ticket-metadata">
+
+                        <div>
+                            <span>
+                                Status
+                            </span>
+
+                            <strong>
+                                {{ ticket.get_status_display }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>
+                                Priority
+                            </span>
+
+                            <strong>
+                                {{ ticket.get_priority_display }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>
+                                Category
+                            </span>
+
+                            <strong>
+                                {{ ticket.get_category_display }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>
+                                Created by
+                            </span>
+
+                            <strong>
+                                {{ ticket.author_display_name }}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>
+                                School
+                            </span>
+
+                            <strong>
+                                {% if ticket.school %}
+                                    {{ ticket.school.name }}
+                                {% else %}
+                                    Platform support
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>
+                                Assigned to
+                            </span>
+
+                            <strong>
+                                {% if ticket.assigned_to %}
+                                    {{ ticket.assigned_to.get_full_name|default:ticket.assigned_to.username }}
+                                {% else %}
+                                    Not assigned
+                                {% endif %}
+                            </strong>
+                        </div>
+
+                        <div>
+                            <span>
+                                Last updated
+                            </span>
+
+                            <strong>
+                                {{ ticket.updated_at|date:"d M Y, H:i" }}
+                            </strong>
+                        </div>
+
+                    </div>
+
+                </section>
+
+                <section class="support-response-information">
+
+                    <h3>
+                        What happens next?
+                    </h3>
+
+                    <p>
+                        The support team will review the request and
+                        respond through this conversation.
+                    </p>
+
+                    <p>
+                        Every new reply updates the ticket and places
+                        it back in the support queue.
+                    </p>
+
+                </section>
+
+            </aside>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}

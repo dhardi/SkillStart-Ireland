@@ -60,4 +60,20 @@ urlpatterns = [
         views.enrollment_create,
         name="enrollment_create",
     ),
+
+    path(
+    "support/",
+    views.support_ticket_list,
+    name="support_ticket_list",
+),
+path(
+    "support/attachments/<int:attachment_id>/download/",
+    views.support_attachment_download,
+    name="support_attachment_download",
+),
+path(
+    "support/<str:ticket_number>/",
+    views.support_ticket_detail,
+    name="support_ticket_detail",
+),
 ]

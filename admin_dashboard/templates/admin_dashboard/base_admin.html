@@ -131,6 +131,22 @@
                     Enrollments
                 </a>
 
+                <span class="management-navigation-title">
+    Customer service
+</span>
+
+<a
+    href="{% url 'admin_dashboard:support_ticket_list' %}"
+    class="
+        management-navigation-link
+        {% if request.resolver_match.url_name == 'support_ticket_list' or request.resolver_match.url_name == 'support_ticket_detail' %}
+            active
+        {% endif %}
+    "
+>
+    Support tickets
+</a>
+
             </nav>
 
             <div class="management-sidebar-footer">

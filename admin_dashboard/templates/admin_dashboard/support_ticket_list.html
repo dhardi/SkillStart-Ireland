@@ -1,0 +1,445 @@
+{% extends "admin_dashboard/base_admin.html" %}
+
+{% block title %}
+    Support Tickets | SkillStart Ireland
+{% endblock %}
+
+{% block page_title %}
+    Support Tickets
+{% endblock %}
+
+{% block admin_content %}
+
+<section class="management-page-section">
+
+    <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-start gap-3 mb-4">
+
+        <div>
+            <span class="management-header-label">
+                Customer service
+            </span>
+
+            <h2 class="mb-2">
+                Centralised support
+            </h2>
+
+            <p class="text-muted mb-0">
+                Review, filter and manage support requests from
+                students and school administrators.
+            </p>
+        </div>
+
+    </div>
+
+    <div class="row g-3 mb-4">
+
+        <div class="col-12 col-sm-6 col-xl">
+            <article class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small text-uppercase">
+                        Total tickets
+                    </span>
+
+                    <strong class="d-block fs-2 mt-2">
+                        {{ total_tickets }}
+                    </strong>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl">
+            <article class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small text-uppercase">
+                        Active
+                    </span>
+
+                    <strong class="d-block fs-2 mt-2">
+                        {{ active_tickets }}
+                    </strong>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl">
+            <article class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small text-uppercase">
+                        New
+                    </span>
+
+                    <strong class="d-block fs-2 mt-2">
+                        {{ new_tickets }}
+                    </strong>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl">
+            <article class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small text-uppercase">
+                        Waiting for support
+                    </span>
+
+                    <strong class="d-block fs-2 mt-2">
+                        {{ waiting_support_count }}
+                    </strong>
+                </div>
+            </article>
+        </div>
+
+        <div class="col-12 col-sm-6 col-xl">
+            <article class="card h-100 border-0 shadow-sm">
+                <div class="card-body">
+                    <span class="text-muted small text-uppercase">
+                        Urgent
+                    </span>
+
+                    <strong class="d-block fs-2 mt-2">
+                        {{ urgent_tickets }}
+                    </strong>
+                </div>
+            </article>
+        </div>
+
+    </div>
+
+    <section class="card border-0 shadow-sm">
+
+        <div class="card-body">
+
+            <div class="d-flex flex-column flex-lg-row justify-content-between align-items-lg-center gap-3 mb-4">
+
+                <div>
+                    <span class="management-header-label">
+                        Ticket management
+                    </span>
+
+                    <h3 class="h5 mb-0">
+                        All support requests
+                    </h3>
+                </div>
+
+                <span class="badge rounded-pill text-bg-light border px-3 py-2">
+                    {{ filtered_ticket_count }} displayed
+                </span>
+
+            </div>
+
+            <form method="get" class="row g-3 align-items-end mb-4">
+
+                <div class="col-12 col-xl-4">
+                    <label for="support-search" class="form-label">
+                        Search
+                    </label>
+
+                    <input
+                        type="search"
+                        id="support-search"
+                        name="search"
+                        value="{{ search_query }}"
+                        class="management-form-control form-control"
+                        placeholder="Ticket, subject, user, email or school"
+                    >
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-2">
+                    <label for="support-status" class="form-label">
+                        Status
+                    </label>
+
+                    <select
+                        id="support-status"
+                        name="status"
+                        class="management-form-control form-select"
+                    >
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        {% for value, label in status_choices %}
+                            <option
+                                value="{{ value }}"
+                                {% if selected_status == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-2">
+                    <label for="support-priority" class="form-label">
+                        Priority
+                    </label>
+
+                    <select
+                        id="support-priority"
+                        name="priority"
+                        class="management-form-control form-select"
+                    >
+                        <option value="">
+                            All priorities
+                        </option>
+
+                        {% for value, label in priority_choices %}
+                            <option
+                                value="{{ value }}"
+                                {% if selected_priority == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-2">
+                    <label for="support-category" class="form-label">
+                        Category
+                    </label>
+
+                    <select
+                        id="support-category"
+                        name="category"
+                        class="management-form-control form-select"
+                    >
+                        <option value="">
+                            All categories
+                        </option>
+
+                        {% for value, label in category_choices %}
+                            <option
+                                value="{{ value }}"
+                                {% if selected_category == value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ label }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <div class="col-12 col-sm-6 col-xl-2">
+                    <label for="support-assignment" class="form-label">
+                        Assignment
+                    </label>
+
+                    <select
+                        id="support-assignment"
+                        name="assignment"
+                        class="management-form-control form-select"
+                    >
+                        <option value="">
+                            All tickets
+                        </option>
+
+                        <option
+                            value="mine"
+                            {% if selected_assignment == "mine" %}
+                                selected
+                            {% endif %}
+                        >
+                            Assigned to me
+                        </option>
+
+                        <option
+                            value="assigned"
+                            {% if selected_assignment == "assigned" %}
+                                selected
+                            {% endif %}
+                        >
+                            Assigned
+                        </option>
+
+                        <option
+                            value="unassigned"
+                            {% if selected_assignment == "unassigned" %}
+                                selected
+                            {% endif %}
+                        >
+                            Unassigned
+                        </option>
+                    </select>
+                </div>
+
+                <div class="col-12 d-flex flex-column flex-sm-row justify-content-end gap-2">
+
+                    {% if search_query or selected_status or selected_priority or selected_category or selected_assignment %}
+                        <a
+                            href="{% url 'admin_dashboard:support_ticket_list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Clear filters
+                        </a>
+                    {% endif %}
+
+                    <button type="submit" class="btn btn-success">
+                        Apply filters
+                    </button>
+
+                </div>
+
+            </form>
+
+            {% if tickets %}
+
+                <div class="table-responsive border rounded">
+
+                    <table class="table table-hover align-middle mb-0">
+
+                        <thead class="table-light">
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Subject</th>
+                                <th>Author</th>
+                                <th>School</th>
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Assigned to</th>
+                                <th>Replies</th>
+                                <th>Updated</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for ticket in tickets %}
+
+                                <tr>
+                                    <td>
+                                        <strong class="text-success">
+                                            {{ ticket.ticket_number }}
+                                        </strong>
+
+                                        <small class="d-block text-muted">
+                                            {{ ticket.created_at|date:"d M Y" }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong class="d-block">
+                                            {{ ticket.subject }}
+                                        </strong>
+
+                                        <small class="d-block text-muted">
+                                            {{ ticket.description|truncatewords:10 }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong class="d-block">
+                                            {{ ticket.author_display_name }}
+                                        </strong>
+
+                                        <small class="d-block text-muted">
+                                            {{ ticket.author.email|default:"No email" }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        {% if ticket.school %}
+                                            {{ ticket.school.name }}
+                                        {% else %}
+                                            <span class="text-muted">
+                                                Platform
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.get_category_display }}
+                                    </td>
+
+                                    <td>
+                                        <span class="badge rounded-pill text-bg-light border">
+                                            {{ ticket.get_priority_display }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span class="badge rounded-pill text-bg-secondary">
+                                            {{ ticket.get_status_display }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        {% if ticket.assigned_to %}
+                                            {{ ticket.assigned_to.get_full_name|default:ticket.assigned_to.username }}
+                                        {% else %}
+                                            <span class="text-muted">
+                                                Unassigned
+                                            </span>
+                                        {% endif %}
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.reply_count }}
+                                    </td>
+
+                                    <td>
+                                        {{ ticket.updated_at|date:"d M Y" }}
+
+                                        <small class="d-block text-muted">
+                                            {{ ticket.updated_at|date:"H:i" }}
+                                        </small>
+                                    </td>
+
+                                    <td class="text-end">
+                                        <a
+                                            href="{% url 'admin_dashboard:support_ticket_detail' ticket.ticket_number %}"
+                                            class="btn btn-sm btn-outline-success text-nowrap"
+                                        >
+                                            View ticket
+                                        </a>
+                                    </td>
+                                </tr>
+
+                            {% endfor %}
+
+                        </tbody>
+
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="text-center py-5">
+
+                    <h3 class="h5">
+                        No support tickets found
+                    </h3>
+
+                    <p class="text-muted mb-3">
+                        No tickets matched the current filters,
+                        or no support requests have been created yet.
+                    </p>
+
+                    {% if search_query or selected_status or selected_priority or selected_category or selected_assignment %}
+                        <a
+                            href="{% url 'admin_dashboard:support_ticket_list' %}"
+                            class="btn btn-outline-secondary"
+                        >
+                            Clear filters
+                        </a>
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </div>
+
+    </section>
+
+</section>
+
+{% endblock %}

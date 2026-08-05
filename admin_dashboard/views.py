@@ -1,10 +1,10 @@
+from django.contrib import messages
 from django.contrib.admin.views.decorators import (
     staff_member_required,
 )
-from .forms import EnrollmentForm, LessonForm
 from django.contrib.auth import get_user_model
 from django.db.models import Count, Q
-from django.contrib import messages
+from django.http import FileResponse, Http404
 from django.shortcuts import (
     get_object_or_404,
     redirect,
@@ -13,9 +13,25 @@ from django.shortcuts import (
 
 from accounts.models import Enrollment, LessonProgress
 from courses.models import Category, Course, Lesson
+from support.forms import (
+    StaffTicketReplyForm,
+    StaffTicketUpdateForm,
+)
+from support.models import (
+    Ticket,
+    TicketAttachment,
+)
+
+from .forms import EnrollmentForm, LessonForm
 
 
 User = get_user_model()
+
+
+SUPPORT_FINISHED_STATUSES = {
+    "resolved",
+    "closed",
+}
 
 
 @staff_member_required
@@ -692,4 +708,423 @@ def lesson_delete(request, lesson_id):
         request,
         "admin_dashboard/lesson_confirm_delete.html",
         context,
+    )
+
+@staff_member_required
+def support_ticket_list(request):
+    """
+    Display and filter all support tickets
+    across the platform.
+    """
+
+    search_query = request.GET.get(
+        "search",
+        "",
+    ).strip()
+
+    selected_status = request.GET.get(
+        "status",
+        "",
+    ).strip()
+
+    selected_priority = request.GET.get(
+        "priority",
+        "",
+    ).strip()
+
+    selected_category = request.GET.get(
+        "category",
+        "",
+    ).strip()
+
+    selected_assignment = request.GET.get(
+        "assignment",
+        "",
+    ).strip()
+
+    base_queryset = Ticket.objects.all()
+
+    total_tickets = base_queryset.count()
+
+    active_tickets = (
+        base_queryset
+        .exclude(
+            status__in=SUPPORT_FINISHED_STATUSES,
+        )
+        .count()
+    )
+
+    new_tickets = (
+        base_queryset
+        .filter(status="new")
+        .count()
+    )
+
+    waiting_support_count = (
+        base_queryset
+        .filter(status="waiting_support")
+        .count()
+    )
+
+    urgent_tickets = (
+        base_queryset
+        .filter(
+            priority="urgent",
+        )
+        .exclude(
+            status__in=SUPPORT_FINISHED_STATUSES,
+        )
+        .count()
+    )
+
+    tickets = base_queryset
+
+    if search_query:
+        tickets = tickets.filter(
+            Q(
+                ticket_number__icontains=search_query
+            )
+            | Q(
+                subject__icontains=search_query
+            )
+            | Q(
+                description__icontains=search_query
+            )
+            | Q(
+                author__username__icontains=search_query
+            )
+            | Q(
+                author__first_name__icontains=search_query
+            )
+            | Q(
+                author__last_name__icontains=search_query
+            )
+            | Q(
+                author__email__icontains=search_query
+            )
+            | Q(
+                school__name__icontains=search_query
+            )
+        )
+
+    valid_statuses = {
+        value
+        for value, label in Ticket.STATUS_CHOICES
+    }
+
+    valid_priorities = {
+        value
+        for value, label in Ticket.PRIORITY_CHOICES
+    }
+
+    valid_categories = {
+        value
+        for value, label in Ticket.CATEGORY_CHOICES
+    }
+
+    if selected_status not in valid_statuses:
+        selected_status = ""
+
+    if selected_priority not in valid_priorities:
+        selected_priority = ""
+
+    if selected_category not in valid_categories:
+        selected_category = ""
+
+    if selected_status:
+        tickets = tickets.filter(
+            status=selected_status,
+        )
+
+    if selected_priority:
+        tickets = tickets.filter(
+            priority=selected_priority,
+        )
+
+    if selected_category:
+        tickets = tickets.filter(
+            category=selected_category,
+        )
+
+    if selected_assignment == "assigned":
+        tickets = tickets.filter(
+            assigned_to__isnull=False,
+        )
+
+    elif selected_assignment == "unassigned":
+        tickets = tickets.filter(
+            assigned_to__isnull=True,
+        )
+
+    elif selected_assignment == "mine":
+        tickets = tickets.filter(
+            assigned_to=request.user,
+        )
+
+    elif selected_assignment:
+        selected_assignment = ""
+
+    tickets = (
+        tickets
+        .select_related(
+            "author",
+            "school",
+            "assigned_to",
+        )
+        .annotate(
+            reply_count=Count(
+                "replies",
+                distinct=True,
+            )
+        )
+        .order_by(
+            "-updated_at",
+            "-created_at",
+        )
+    )
+
+    context = {
+        "tickets": tickets,
+        "total_tickets": total_tickets,
+        "active_tickets": active_tickets,
+        "new_tickets": new_tickets,
+        "waiting_support_count": waiting_support_count,
+        "urgent_tickets": urgent_tickets,
+        "filtered_ticket_count": tickets.count(),
+        "search_query": search_query,
+        "selected_status": selected_status,
+        "selected_priority": selected_priority,
+        "selected_category": selected_category,
+        "selected_assignment": selected_assignment,
+        "status_choices": Ticket.STATUS_CHOICES,
+        "priority_choices": Ticket.PRIORITY_CHOICES,
+        "category_choices": Ticket.CATEGORY_CHOICES,
+    }
+
+    return render(
+        request,
+        "admin_dashboard/support_ticket_list.html",
+        context,
+    )
+
+
+@staff_member_required
+def support_ticket_detail(
+    request,
+    ticket_number,
+):
+    """
+    Manage one support ticket, including status,
+    assignment, public replies and internal notes.
+    """
+
+    ticket = get_object_or_404(
+        Ticket.objects.select_related(
+            "author",
+            "school",
+            "assigned_to",
+        ),
+        ticket_number=ticket_number,
+    )
+
+    update_form = StaffTicketUpdateForm(
+        instance=ticket,
+        prefix="management",
+    )
+
+    reply_form = StaffTicketReplyForm(
+        prefix="reply",
+    )
+
+    if request.method == "POST":
+        action = request.POST.get(
+            "action",
+            "",
+        )
+
+        if action == "update_ticket":
+            update_form = StaffTicketUpdateForm(
+                request.POST,
+                instance=ticket,
+                prefix="management",
+            )
+
+            if update_form.is_valid():
+                ticket = update_form.save()
+
+                messages.success(
+                    request,
+                    (
+                        f"Ticket {ticket.ticket_number} "
+                        "was updated successfully."
+                    ),
+                )
+
+                return redirect(
+                    "admin_dashboard:support_ticket_detail",
+                    ticket_number=ticket.ticket_number,
+                )
+
+        elif action == "add_reply":
+            reply_form = StaffTicketReplyForm(
+                request.POST,
+                request.FILES,
+                prefix="reply",
+            )
+
+            if ticket.status == "closed":
+                messages.error(
+                    request,
+                    (
+                        "Closed tickets cannot receive "
+                        "new replies or notes."
+                    ),
+                )
+
+                return redirect(
+                    "admin_dashboard:support_ticket_detail",
+                    ticket_number=ticket.ticket_number,
+                )
+
+            if reply_form.is_valid():
+                reply = reply_form.save(
+                    ticket=ticket,
+                    author=request.user,
+                )
+
+                if reply.is_internal_note:
+                    messages.success(
+                        request,
+                        "Internal note added successfully.",
+                    )
+
+                else:
+                    messages.success(
+                        request,
+                        (
+                            "The reply was sent and the ticket "
+                            "is now waiting for the user."
+                        ),
+                    )
+
+                return redirect(
+                    "admin_dashboard:support_ticket_detail",
+                    ticket_number=ticket.ticket_number,
+                )
+
+        elif action == "assign_to_me":
+            ticket.assigned_to = request.user
+
+            if ticket.status == "new":
+                ticket.status = "open"
+
+            ticket.save(
+                update_fields=[
+                    "assigned_to",
+                    "status",
+                    "updated_at",
+                ]
+            )
+
+            messages.success(
+                request,
+                (
+                    f"Ticket {ticket.ticket_number} "
+                    "was assigned to you."
+                ),
+            )
+
+            return redirect(
+                "admin_dashboard:support_ticket_detail",
+                ticket_number=ticket.ticket_number,
+            )
+
+        elif action == "reopen_ticket":
+            ticket.status = "open"
+            ticket.resolved_at = None
+            ticket.closed_at = None
+
+            ticket.save(
+                update_fields=[
+                    "status",
+                    "resolved_at",
+                    "closed_at",
+                    "updated_at",
+                ]
+            )
+
+            messages.success(
+                request,
+                (
+                    f"Ticket {ticket.ticket_number} "
+                    "was reopened."
+                ),
+            )
+
+            return redirect(
+                "admin_dashboard:support_ticket_detail",
+                ticket_number=ticket.ticket_number,
+            )
+
+    replies = (
+        ticket.replies
+        .select_related("author")
+        .prefetch_related("attachments")
+        .order_by("created_at")
+    )
+
+    ticket_attachments = (
+        ticket.attachments
+        .filter(reply__isnull=True)
+        .select_related("uploaded_by")
+    )
+
+    context = {
+        "ticket": ticket,
+        "replies": replies,
+        "ticket_attachments": ticket_attachments,
+        "update_form": update_form,
+        "reply_form": reply_form,
+    }
+
+    return render(
+        request,
+        "admin_dashboard/support_ticket_detail.html",
+        context,
+    )
+
+
+@staff_member_required
+def support_attachment_download(
+    request,
+    attachment_id,
+):
+    """
+    Download any support attachment through
+    the protected management area.
+    """
+
+    attachment = get_object_or_404(
+        TicketAttachment.objects.select_related(
+            "ticket",
+            "reply",
+        ),
+        pk=attachment_id,
+    )
+
+    try:
+        opened_file = attachment.file.open("rb")
+
+    except FileNotFoundError as error:
+        raise Http404(
+            "The attachment file was not found."
+        ) from error
+
+    return FileResponse(
+        opened_file,
+        as_attachment=True,
+        filename=(
+            attachment.original_name
+            or "attachment"
+        ),
     )

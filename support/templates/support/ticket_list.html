@@ -1,0 +1,454 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Support Tickets | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section class="support-section">
+    <div class="container">
+
+        <header class="support-page-header">
+
+            <div>
+                <span class="support-page-label">
+                    {% if portal_type == "school" %}
+                        School portal
+                    {% else %}
+                        Student area
+                    {% endif %}
+                </span>
+
+                <h1>
+                    Support tickets
+                </h1>
+
+                <p>
+                    Create support requests, follow their progress
+                    and communicate securely with the SkillStart
+                    Ireland support team.
+                </p>
+            </div>
+
+            <div class="support-header-actions">
+
+                {% if portal_type == "school" %}
+                    <a
+                        href="{% url 'school_support:ticket_create' %}"
+                        class="support-primary-button"
+                    >
+                        New ticket
+                        <span aria-hidden="true">+</span>
+                    </a>
+
+                    <a
+                        href="{% url 'schools:dashboard' %}"
+                        class="support-secondary-button"
+                    >
+                        <span aria-hidden="true">←</span>
+                        School dashboard
+                    </a>
+                {% else %}
+                    <a
+                        href="{% url 'support:ticket_create' %}"
+                        class="support-primary-button"
+                    >
+                        New ticket
+                        <span aria-hidden="true">+</span>
+                    </a>
+
+                    <a
+                        href="{% url 'accounts:dashboard' %}"
+                        class="support-secondary-button"
+                    >
+                        <span aria-hidden="true">←</span>
+                        My dashboard
+                    </a>
+                {% endif %}
+
+            </div>
+
+        </header>
+
+        {% if messages %}
+            <div class="support-messages">
+                {% for message in messages %}
+                    <div
+                        class="
+                            support-message
+                            {% if message.tags %}
+                                support-message-{{ message.tags }}
+                            {% endif %}
+                        "
+                        role="alert"
+                    >
+                        {{ message }}
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        <div class="support-statistics">
+
+            <article class="support-stat-card">
+                <span>
+                    Total tickets
+                </span>
+
+                <strong>
+                    {{ total_tickets }}
+                </strong>
+
+                <small>
+                    All support requests
+                </small>
+            </article>
+
+            <article class="support-stat-card">
+                <span>
+                    Active
+                </span>
+
+                <strong>
+                    {{ active_tickets }}
+                </strong>
+
+                <small>
+                    Tickets requiring attention
+                </small>
+            </article>
+
+            <article class="support-stat-card">
+                <span>
+                    Waiting for support
+                </span>
+
+                <strong>
+                    {{ waiting_support_count }}
+                </strong>
+
+                <small>
+                    Replies awaiting the support team
+                </small>
+            </article>
+
+            <article class="support-stat-card">
+                <span>
+                    Finished
+                </span>
+
+                <strong>
+                    {{ resolved_tickets }}
+                </strong>
+
+                <small>
+                    Resolved or closed tickets
+                </small>
+            </article>
+
+            <article class="support-stat-card">
+                <span>
+                    Displayed
+                </span>
+
+                <strong>
+                    {{ displayed_count }}
+                </strong>
+
+                <small>
+                    Results matching the filters
+                </small>
+            </article>
+
+        </div>
+
+        <section class="support-card">
+
+            <div class="support-card-header">
+
+                <div>
+                    <span class="support-page-label">
+                        Ticket management
+                    </span>
+
+                    <h2>
+                        Your support requests
+                    </h2>
+                </div>
+
+                <span class="support-result-count">
+                    {{ displayed_count }}
+                </span>
+
+            </div>
+
+            <form
+                method="get"
+                class="support-ticket-filters"
+            >
+
+                <div class="support-filter-field">
+                    <label for="support-search">
+                        Search
+                    </label>
+
+                    <input
+                        type="search"
+                        id="support-search"
+                        name="q"
+                        value="{{ search_query }}"
+                        class="profile-form-control"
+                        placeholder="Ticket number, subject or description"
+                    >
+                </div>
+
+                <div class="support-filter-field">
+                    <label for="support-status">
+                        Status
+                    </label>
+
+                    <select
+                        id="support-status"
+                        name="status"
+                        class="profile-form-control"
+                    >
+                        <option value="">
+                            All statuses
+                        </option>
+
+                        {% for status_value, status_name in status_choices %}
+                            <option
+                                value="{{ status_value }}"
+                                {% if status_filter == status_value %}
+                                    selected
+                                {% endif %}
+                            >
+                                {{ status_name }}
+                            </option>
+                        {% endfor %}
+                    </select>
+                </div>
+
+                <button
+                    type="submit"
+                    class="support-primary-button"
+                >
+                    Apply filters
+                </button>
+
+                {% if search_query or status_filter %}
+                    {% if portal_type == "school" %}
+                        <a
+                            href="{% url 'school_support:ticket_list' %}"
+                            class="support-secondary-button"
+                        >
+                            Clear
+                        </a>
+                    {% else %}
+                        <a
+                            href="{% url 'support:ticket_list' %}"
+                            class="support-secondary-button"
+                        >
+                            Clear
+                        </a>
+                    {% endif %}
+                {% endif %}
+
+            </form>
+
+            {% if tickets %}
+
+                <div class="support-table-wrapper">
+
+                    <table class="support-table">
+                        <thead>
+                            <tr>
+                                <th>Ticket</th>
+                                <th>Subject</th>
+
+                                {% if portal_type == "school" %}
+                                    <th>Created by</th>
+                                {% endif %}
+
+                                <th>Category</th>
+                                <th>Priority</th>
+                                <th>Status</th>
+                                <th>Updated</th>
+                                <th>Action</th>
+                            </tr>
+                        </thead>
+
+                        <tbody>
+
+                            {% for ticket in tickets %}
+                                <tr>
+                                    <td>
+                                        <strong class="support-ticket-number">
+                                            {{ ticket.ticket_number }}
+                                        </strong>
+
+                                        <small class="support-secondary-text">
+                                            Opened
+                                            {{ ticket.created_at|date:"d M Y" }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        <strong class="support-ticket-subject">
+                                            {{ ticket.subject }}
+                                        </strong>
+
+                                        <small class="support-secondary-text">
+                                            {{ ticket.description|truncatewords:12 }}
+                                        </small>
+                                    </td>
+
+                                    {% if portal_type == "school" %}
+                                        <td>
+                                            <strong class="support-ticket-author">
+                                                {{ ticket.author_display_name }}
+                                            </strong>
+
+                                            <small class="support-secondary-text">
+                                                {{ ticket.author.email|default:"No email" }}
+                                            </small>
+                                        </td>
+                                    {% endif %}
+
+                                    <td>
+                                        <span class="support-category-badge">
+                                            {{ ticket.get_category_display }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span
+                                            class="
+                                                support-priority-badge
+                                                support-priority-{{ ticket.priority }}
+                                            "
+                                        >
+                                            {{ ticket.get_priority_display }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <span
+                                            class="
+                                                support-status-badge
+                                                support-status-{{ ticket.status }}
+                                            "
+                                        >
+                                            {{ ticket.get_status_display }}
+                                        </span>
+                                    </td>
+
+                                    <td>
+                                        <time datetime="{{ ticket.updated_at|date:'c' }}">
+                                            {{ ticket.updated_at|date:"d M Y" }}
+                                        </time>
+
+                                        <small class="support-secondary-text">
+                                            {{ ticket.updated_at|date:"H:i" }}
+                                        </small>
+                                    </td>
+
+                                    <td>
+                                        {% if portal_type == "school" %}
+                                            <a
+                                                href="{% url 'school_support:ticket_detail' ticket.ticket_number %}"
+                                                class="support-table-action"
+                                            >
+                                                View ticket
+                                            </a>
+                                        {% else %}
+                                            <a
+                                                href="{% url 'support:ticket_detail' ticket.ticket_number %}"
+                                                class="support-table-action"
+                                            >
+                                                View ticket
+                                            </a>
+                                        {% endif %}
+                                    </td>
+                                </tr>
+                            {% endfor %}
+
+                        </tbody>
+                    </table>
+
+                </div>
+
+            {% else %}
+
+                <div class="support-empty-state">
+
+                    <div class="support-empty-icon" aria-hidden="true">
+                        ?
+                    </div>
+
+                    {% if search_query or status_filter %}
+                        <h3>
+                            No tickets found
+                        </h3>
+
+                        <p>
+                            No support requests matched the current
+                            search terms and filters.
+                        </p>
+
+                        {% if portal_type == "school" %}
+                            <a
+                                href="{% url 'school_support:ticket_list' %}"
+                                class="support-secondary-button"
+                            >
+                                Clear filters
+                            </a>
+                        {% else %}
+                            <a
+                                href="{% url 'support:ticket_list' %}"
+                                class="support-secondary-button"
+                            >
+                                Clear filters
+                            </a>
+                        {% endif %}
+
+                    {% else %}
+                        <h3>
+                            No support tickets yet
+                        </h3>
+
+                        <p>
+                            Create your first support request when
+                            you need help with the platform.
+                        </p>
+
+                        {% if portal_type == "school" %}
+                            <a
+                                href="{% url 'school_support:ticket_create' %}"
+                                class="support-primary-button"
+                            >
+                                Create first ticket
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        {% else %}
+                            <a
+                                href="{% url 'support:ticket_create' %}"
+                                class="support-primary-button"
+                            >
+                                Create first ticket
+                                <span aria-hidden="true">→</span>
+                            </a>
+                        {% endif %}
+                    {% endif %}
+
+                </div>
+
+            {% endif %}
+
+        </section>
+
+    </div>
+</section>
+
+{% endblock %}

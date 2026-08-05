@@ -1,0 +1,306 @@
+{% extends "base.html" %}
+
+{% block title %}
+    New Support Ticket | SkillStart Ireland
+{% endblock %}
+
+{% block content %}
+
+<section class="support-section">
+    <div class="container">
+
+        <header class="support-page-header">
+
+            <div>
+                <span class="support-page-label">
+                    {% if portal_type == "school" %}
+                        School support
+                    {% else %}
+                        Student support
+                    {% endif %}
+                </span>
+
+                <h1>
+                    Create support ticket
+                </h1>
+
+                <p>
+                    Describe the issue clearly and include any
+                    information that may help our team investigate it.
+                </p>
+            </div>
+
+            {% if portal_type == "school" %}
+                <a
+                    href="{% url 'school_support:ticket_list' %}"
+                    class="support-secondary-button"
+                >
+                    <span aria-hidden="true">←</span>
+                    Back to tickets
+                </a>
+            {% else %}
+                <a
+                    href="{% url 'support:ticket_list' %}"
+                    class="support-secondary-button"
+                >
+                    <span aria-hidden="true">←</span>
+                    Back to tickets
+                </a>
+            {% endif %}
+
+        </header>
+
+        <div class="support-form-layout">
+
+            <section class="support-form-card">
+
+                <div class="support-card-header">
+
+                    <div>
+                        <span class="support-page-label">
+                            New request
+                        </span>
+
+                        <h2>
+                            Tell us what happened
+                        </h2>
+                    </div>
+
+                </div>
+
+                <form
+                    method="post"
+                    enctype="multipart/form-data"
+                    class="support-form"
+                    novalidate
+                >
+                    {% csrf_token %}
+
+                    {% if form.non_field_errors %}
+                        <div class="support-form-errors">
+                            {% for error in form.non_field_errors %}
+                                <p>
+                                    {{ error }}
+                                </p>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="support-form-group">
+                        <label for="{{ form.subject.id_for_label }}">
+                            {{ form.subject.label }}
+                        </label>
+
+                        {{ form.subject }}
+
+                        {% for error in form.subject.errors %}
+                            <span class="support-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="support-form-grid">
+
+                        <div class="support-form-group">
+                            <label for="{{ form.category.id_for_label }}">
+                                {{ form.category.label }}
+                            </label>
+
+                            {{ form.category }}
+
+                            {% for error in form.category.errors %}
+                                <span class="support-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                        <div class="support-form-group">
+                            <label for="{{ form.priority.id_for_label }}">
+                                {{ form.priority.label }}
+                            </label>
+
+                            {{ form.priority }}
+
+                            {% for error in form.priority.errors %}
+                                <span class="support-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+                        </div>
+
+                    </div>
+
+                    {% if portal_type == "student" %}
+                        <div class="support-form-group">
+                            <label for="{{ form.school.id_for_label }}">
+                                {{ form.school.label }}
+                            </label>
+
+                            {{ form.school }}
+
+                            {% if form.school.help_text %}
+                                <small class="support-help-text">
+                                    {{ form.school.help_text }}
+                                </small>
+                            {% endif %}
+
+                            {% for error in form.school.errors %}
+                                <span class="support-field-error">
+                                    {{ error }}
+                                </span>
+                            {% endfor %}
+                        </div>
+                    {% endif %}
+
+                    <div class="support-form-group">
+                        <label for="{{ form.description.id_for_label }}">
+                            {{ form.description.label }}
+                        </label>
+
+                        {{ form.description }}
+
+                        <small class="support-help-text">
+                            Include the steps that caused the problem
+                            and any error message that appeared.
+                        </small>
+
+                        {% for error in form.description.errors %}
+                            <span class="support-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="support-form-group">
+                        <label for="{{ form.attachment.id_for_label }}">
+                            {{ form.attachment.label }}
+                        </label>
+
+                        {{ form.attachment }}
+
+                        {% if form.attachment.help_text %}
+                            <small class="support-help-text">
+                                {{ form.attachment.help_text }}
+                            </small>
+                        {% endif %}
+
+                        {% for error in form.attachment.errors %}
+                            <span class="support-field-error">
+                                {{ error }}
+                            </span>
+                        {% endfor %}
+                    </div>
+
+                    <div class="support-form-actions">
+
+                        {% if portal_type == "school" %}
+                            <a
+                                href="{% url 'school_support:ticket_list' %}"
+                                class="support-secondary-button"
+                            >
+                                Cancel
+                            </a>
+                        {% else %}
+                            <a
+                                href="{% url 'support:ticket_list' %}"
+                                class="support-secondary-button"
+                            >
+                                Cancel
+                            </a>
+                        {% endif %}
+
+                        <button
+                            type="submit"
+                            class="support-primary-button"
+                        >
+                            Create ticket
+                            <span aria-hidden="true">→</span>
+                        </button>
+
+                    </div>
+
+                </form>
+
+            </section>
+
+            <aside class="support-information-card">
+
+                <div class="support-information-icon" aria-hidden="true">
+                    i
+                </div>
+
+                <h2>
+                    Before sending
+                </h2>
+
+                <p>
+                    Providing complete information helps the support
+                    team understand and resolve the problem faster.
+                </p>
+
+                <div class="support-information-list">
+
+                    <div>
+                        <strong>
+                            Clear subject
+                        </strong>
+
+                        <span>
+                            Summarise the main problem.
+                        </span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Steps taken
+                        </strong>
+
+                        <span>
+                            Explain what you did before the issue appeared.
+                        </span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            Error message
+                        </strong>
+
+                        <span>
+                            Copy the exact message or attach a screenshot.
+                        </span>
+                    </div>
+
+                    <div>
+                        <strong>
+                            No sensitive data
+                        </strong>
+
+                        <span>
+                            Never include passwords or banking information.
+                        </span>
+                    </div>
+
+                </div>
+
+                {% if portal_type == "school" and school %}
+                    <div class="support-related-school">
+                        <span>
+                            Ticket associated with
+                        </span>
+
+                        <strong>
+                            {{ school.name }}
+                        </strong>
+                    </div>
+                {% endif %}
+
+            </aside>
+
+        </div>
+
+    </div>
+</section>
+
+{% endblock %}
