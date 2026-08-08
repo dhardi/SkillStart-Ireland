@@ -13,6 +13,7 @@ from django.shortcuts import (
     redirect,
     render,
 )
+from django.views.decorators.http import require_POST
 
 from accounts.models import (
     AssessmentAttempt,
@@ -24,8 +25,9 @@ from .decorators import school_administrator_required
 from .forms import (
     SchoolEnrollmentForm,
     SchoolStudentCreateForm,
+    SchoolStudentUpdateForm,
 )
-
+from .models import SchoolStudent
 from .services import send_student_invitation
 
 
@@ -53,12 +55,7 @@ def dashboard(request):
         )
     )
 
-    total_students = (
-        school_enrollments
-        .values("user")
-        .distinct()
-        .count()
-    )
+    total_students = school.active_student_count
 
     total_enrollments = school_enrollments.count()
 
@@ -125,8 +122,12 @@ def dashboard(request):
 @school_administrator_required
 def student_list(request):
     """
-    Display students who have at least one enrollment
-    connected to the administrator's school.
+    Display students connected to the administrator's school.
+
+    SchoolStudent is the source of truth for the current
+    school/student relationship. The list can show active,
+    inactive or all memberships while Enrollment remains
+    the source of course progress and history.
     """
 
     school = request.school
@@ -136,17 +137,38 @@ def student_list(request):
         "",
     ).strip()
 
-    school_enrollments = (
-        Enrollment.objects
+    status_filter = request.GET.get(
+        "status",
+        "active",
+    ).strip().lower()
+
+    allowed_statuses = {
+        "active",
+        "inactive",
+        "all",
+    }
+
+    if status_filter not in allowed_statuses:
+        status_filter = "active"
+
+    memberships = (
+        SchoolStudent.objects
         .filter(school=school)
-        .select_related(
-            "user",
-            "course",
-        )
+        .select_related("user")
     )
 
+    if status_filter == "active":
+        memberships = memberships.filter(
+            is_active=True,
+        )
+
+    elif status_filter == "inactive":
+        memberships = memberships.filter(
+            is_active=False,
+        )
+
     if search_query:
-        school_enrollments = school_enrollments.filter(
+        memberships = memberships.filter(
             Q(
                 user__first_name__icontains=search_query
             )
@@ -161,79 +183,104 @@ def student_list(request):
             )
         )
 
-    school_enrollments = (
-        school_enrollments
-        .annotate(
-            published_lesson_count=Count(
-                "course__lessons",
-                filter=Q(
-                    course__lessons__is_published=True
-                ),
-                distinct=True,
-            ),
-            completed_lesson_count=Count(
-                "lesson_progress",
-                filter=Q(
-                    lesson_progress__completed=True,
-                    lesson_progress__lesson__is_published=True,
-                ),
-                distinct=True,
-            ),
-            enrollment_certificate_count=Count(
-                "certificate",
-                distinct=True,
-            ),
-        )
-        .order_by(
-            "user__first_name",
-            "user__last_name",
-            "user__username",
-            "course__title",
-        )
+    memberships = memberships.order_by(
+        "user__first_name",
+        "user__last_name",
+        "user__username",
     )
 
     students_by_id = {}
 
-    for enrollment in school_enrollments:
-        user = enrollment.user
+    for membership in memberships:
+        user = membership.user
 
-        if user.pk not in students_by_id:
-            display_name = (
-                user.get_full_name().strip()
-                or user.username
+        display_name = (
+            user.get_full_name().strip()
+            or user.username
+        )
+
+        students_by_id[user.pk] = {
+            "user": user,
+            "membership": membership,
+            "display_name": display_name,
+            "enrollment_count": 0,
+            "completed_course_count": 0,
+            "total_lesson_count": 0,
+            "completed_lesson_count": 0,
+            "certificate_count": 0,
+            "progress_percentage": 0,
+        }
+
+    student_ids = list(
+        students_by_id.keys()
+    )
+
+    if student_ids:
+        school_enrollments = (
+            Enrollment.objects
+            .filter(
+                school=school,
+                user_id__in=student_ids,
+            )
+            .select_related(
+                "user",
+                "course",
+            )
+            .annotate(
+                published_lesson_count=Count(
+                    "course__lessons",
+                    filter=Q(
+                        course__lessons__is_published=True
+                    ),
+                    distinct=True,
+                ),
+                completed_lesson_count=Count(
+                    "lesson_progress",
+                    filter=Q(
+                        lesson_progress__completed=True,
+                        lesson_progress__lesson__is_published=True,
+                    ),
+                    distinct=True,
+                ),
+                enrollment_certificate_count=Count(
+                    "certificate",
+                    distinct=True,
+                ),
+            )
+            .order_by(
+                "user__first_name",
+                "user__last_name",
+                "user__username",
+                "course__title",
+            )
+        )
+
+        for enrollment in school_enrollments:
+            student_data = students_by_id.get(
+                enrollment.user_id
             )
 
-            students_by_id[user.pk] = {
-                "user": user,
-                "display_name": display_name,
-                "enrollment_count": 0,
-                "completed_course_count": 0,
-                "total_lesson_count": 0,
-                "completed_lesson_count": 0,
-                "certificate_count": 0,
-                "progress_percentage": 0,
-            }
+            if student_data is None:
+                continue
 
-        student_data = students_by_id[user.pk]
+            student_data["enrollment_count"] += 1
 
-        student_data["enrollment_count"] += 1
+            if enrollment.is_completed:
+                student_data[
+                    "completed_course_count"
+                ] += 1
 
-        if enrollment.is_completed:
             student_data[
-                "completed_course_count"
-            ] += 1
+                "total_lesson_count"
+            ] += enrollment.published_lesson_count
 
-        student_data[
-            "total_lesson_count"
-        ] += enrollment.published_lesson_count
+            student_data[
+                "completed_lesson_count"
+            ] += enrollment.completed_lesson_count
 
-        student_data[
-            "completed_lesson_count"
-        ] += enrollment.completed_lesson_count
-
-        student_data[
-            "certificate_count"
-        ] += enrollment.enrollment_certificate_count
+            student_data[
+                "certificate_count"
+            ] += enrollment.enrollment_certificate_count
 
     student_rows = list(
         students_by_id.values()
@@ -269,17 +316,28 @@ def student_list(request):
                 "progress_percentage"
             ] = 100
 
-    student_rows.sort(
-        key=lambda student: (
-            student["display_name"].lower()
-        ),
-    )
-
     context = {
         "school": school,
         "student_rows": student_rows,
         "search_query": search_query,
+        "status_filter": status_filter,
         "student_count": len(student_rows),
+        "active_student_count": (
+            SchoolStudent.objects
+            .filter(
+                school=school,
+                is_active=True,
+            )
+            .count()
+        ),
+        "inactive_student_count": (
+            SchoolStudent.objects
+            .filter(
+                school=school,
+                is_active=False,
+            )
+            .count()
+        ),
     }
 
     return render(
@@ -596,6 +654,186 @@ def enrollment_create(request):
 
 
 @school_administrator_required
+def student_update(request, student_id):
+    """
+    Update a student connected to the
+    administrator's school.
+
+    Access is controlled by SchoolStudent rather than
+    by the existence of an old enrollment.
+    """
+
+    school = request.school
+
+    membership = get_object_or_404(
+        SchoolStudent.objects.select_related("user"),
+        school=school,
+        user_id=student_id,
+    )
+
+    student = membership.user
+
+    if request.method == "POST":
+        form = SchoolStudentUpdateForm(
+            request.POST,
+            student=student,
+        )
+
+        if form.is_valid():
+            student = form.save()
+
+            student_name = (
+                student.get_full_name().strip()
+                or student.username
+            )
+
+            messages.success(
+                request,
+                (
+                    f"{student_name}'s profile "
+                    "has been updated successfully."
+                ),
+            )
+
+            return redirect(
+                "schools:student_detail",
+                student_id=student.pk,
+            )
+
+    else:
+        form = SchoolStudentUpdateForm(
+            student=student,
+        )
+
+    context = {
+        "school": school,
+        "student": student,
+        "membership": membership,
+        "form": form,
+    }
+
+    return render(
+        request,
+        "schools/student_edit.html",
+        context,
+    )
+
+
+@school_administrator_required
+@require_POST
+def student_deactivate(request, student_id):
+    """
+    Deactivate only the student's membership with this school.
+
+    The global User account, enrollments, progress,
+    assessments and certificates are preserved.
+    """
+
+    school = request.school
+
+    membership = get_object_or_404(
+        SchoolStudent.objects.select_related("user"),
+        school=school,
+        user_id=student_id,
+    )
+
+    student = membership.user
+
+    if membership.is_active:
+        membership.deactivate()
+
+        student_name = (
+            student.get_full_name().strip()
+            or student.username
+        )
+
+        messages.success(
+            request,
+            (
+                f"{student_name} has been deactivated "
+                f"for {school.name}."
+            ),
+        )
+
+    else:
+        messages.info(
+            request,
+            "This student is already inactive for this school.",
+        )
+
+    return redirect(
+        "schools:student_detail",
+        student_id=student.pk,
+    )
+
+
+@school_administrator_required
+@require_POST
+def student_reactivate(request, student_id):
+    """
+    Reactivate the student's membership with this school.
+
+    Reactivation is blocked when the school's active
+    student capacity has already been reached.
+    """
+
+    school = request.school
+
+    membership = get_object_or_404(
+        SchoolStudent.objects.select_related("user"),
+        school=school,
+        user_id=student_id,
+    )
+
+    student = membership.user
+
+    if membership.is_active:
+        messages.info(
+            request,
+            "This student is already active for this school.",
+        )
+
+        return redirect(
+            "schools:student_detail",
+            student_id=student.pk,
+        )
+
+    if not school.has_available_student_places:
+        messages.error(
+            request,
+            (
+                "This student cannot be reactivated because "
+                "the school has reached its current student limit."
+            ),
+        )
+
+        return redirect(
+            "schools:student_detail",
+            student_id=student.pk,
+        )
+
+    membership.reactivate()
+
+    student_name = (
+        student.get_full_name().strip()
+        or student.username
+    )
+
+    messages.success(
+        request,
+        (
+            f"{student_name} has been reactivated "
+            f"for {school.name}."
+        ),
+    )
+
+    return redirect(
+        "schools:student_detail",
+        student_id=student.pk,
+    )
+
+
+@school_administrator_required
 def student_create(request):
     """
     Create a new student account, profile and
@@ -702,14 +940,13 @@ def student_detail(request, student_id):
 
     school = request.school
 
-    student = get_object_or_404(
-        User.objects
-        .filter(
-            pk=student_id,
-            enrollments__school=school,
-        )
-        .distinct()
+    membership = get_object_or_404(
+        SchoolStudent.objects.select_related("user"),
+        school=school,
+        user_id=student_id,
     )
+
+    student = membership.user
 
     enrollments = (
         Enrollment.objects
@@ -846,6 +1083,7 @@ def student_detail(request, student_id):
     context = {
         "school": school,
         "student": student,
+        "membership": membership,
         "enrollment_rows": enrollment_rows,
         "enrollment_count": enrollment_count,
         "completed_courses": completed_courses,

@@ -21,7 +21,7 @@
                 </h1>
 
                 <p>
-                    View students enrolled through
+                    Manage students connected to
                     {{ school.name }} and monitor their progress.
                 </p>
             </div>
@@ -29,31 +29,19 @@
             <div class="dashboard-header-actions">
 
                 <a
-    href="{% url 'schools:student_create' %}"
-    class="student-profile-save-button"
->
-    Add new student
-    <span aria-hidden="true">+</span>
-</a>
+                    href="{% url 'schools:student_create' %}"
+                    class="student-profile-save-button"
+                >
+                    Add new student
+                    <span aria-hidden="true">+</span>
+                </a>
 
-<div class="dashboard-header-actions">
-
-    <a
-        href="{% url 'schools:student_create' %}"
-        class="student-profile-save-button"
-    >
-        Add new student
-        <span aria-hidden="true">+</span>
-    </a>
-
-    <a
-        href="{% url 'schools:enrollment_create' %}"
-        class="student-profile-cancel-button"
-    >
-        Enrol existing student
-    </a>
-
-</div>
+                <a
+                    href="{% url 'schools:enrollment_create' %}"
+                    class="student-profile-cancel-button"
+                >
+                    Enrol existing student
+                </a>
 
                 <a
                     href="{% url 'schools:dashboard' %}"
@@ -104,6 +92,50 @@
 
             </div>
 
+            <nav
+                class="school-student-status-filters"
+                aria-label="Student status filters"
+            >
+                <a
+                    href="?status=active{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+                    class="
+                        {% if status_filter == 'active' %}
+                            student-profile-save-button
+                        {% else %}
+                            student-profile-cancel-button
+                        {% endif %}
+                    "
+                >
+                    Active ({{ active_student_count }})
+                </a>
+
+                <a
+                    href="?status=inactive{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+                    class="
+                        {% if status_filter == 'inactive' %}
+                            student-profile-save-button
+                        {% else %}
+                            student-profile-cancel-button
+                        {% endif %}
+                    "
+                >
+                    Inactive ({{ inactive_student_count }})
+                </a>
+
+                <a
+                    href="?status=all{% if search_query %}&q={{ search_query|urlencode }}{% endif %}"
+                    class="
+                        {% if status_filter == 'all' %}
+                            student-profile-save-button
+                        {% else %}
+                            student-profile-cancel-button
+                        {% endif %}
+                    "
+                >
+                    All
+                </a>
+            </nav>
+
             <form
                 method="get"
                 class="student-profile-form-actions"
@@ -112,6 +144,12 @@
                     padding: 0 0 1.5rem;
                 "
             >
+                <input
+                    type="hidden"
+                    name="status"
+                    value="{{ status_filter }}"
+                >
+
                 <div
                     style="
                         flex: 1;
@@ -146,7 +184,7 @@
 
                 {% if search_query %}
                     <a
-                        href="{% url 'schools:student_list' %}"
+                        href="{% url 'schools:student_list' %}?status={{ status_filter }}"
                         class="student-profile-cancel-button"
                     >
                         Clear
@@ -164,6 +202,7 @@
                         <thead>
                             <tr>
                                 <th>Student</th>
+                                <th>Status</th>
                                 <th>Email</th>
                                 <th>Courses</th>
                                 <th>Completed</th>
@@ -179,17 +218,29 @@
                                 <tr>
                                     <td>
                                         <a
-    href="{% url 'schools:student_detail' student.user.id %}"
-    class="school-student-name-link"
->
-    {{ student.display_name }}
-</a>
+                                            href="{% url 'schools:student_detail' student.user.id %}"
+                                            class="school-student-name-link"
+                                        >
+                                            {{ student.display_name }}
+                                        </a>
 
                                         <br>
 
                                         <small>
                                             @{{ student.user.username }}
                                         </small>
+                                    </td>
+
+                                    <td>
+                                        {% if student.membership.is_active %}
+                                            <span class="school-student-status-badge school-student-status-active">
+                                                Active
+                                            </span>
+                                        {% else %}
+                                            <span class="school-student-status-badge school-student-status-inactive">
+                                                Inactive
+                                            </span>
+                                        {% endif %}
                                     </td>
 
                                     <td>
@@ -252,27 +303,49 @@
 
                         <p>
                             No students matched
-                            “{{ search_query }}”.
+                            “{{ search_query }}” in this status view.
                         </p>
 
-                    {% else %}
+                    {% elif status_filter == "inactive" %}
+
+                        <h3>
+                            No inactive students
+                        </h3>
+
+                        <p>
+                            Students deactivated by this school
+                            will appear here.
+                        </p>
+
+                    {% elif status_filter == "all" %}
 
                         <h3>
                             No school students yet
                         </h3>
 
                         <p>
-                            Students will appear here after an
-                            enrollment is connected to this school.
+                            Students will appear here after they are
+                            connected to this school.
+                        </p>
+
+                    {% else %}
+
+                        <h3>
+                            No active students
+                        </h3>
+
+                        <p>
+                            Add a new student or enrol an existing
+                            SkillStart Ireland student.
                         </p>
 
                         <a
-    href="{% url 'schools:student_create' %}"
-    class="student-profile-save-button"
->
-    Add your first student
-    <span aria-hidden="true">→</span>
-</a>
+                            href="{% url 'schools:student_create' %}"
+                            class="student-profile-save-button"
+                        >
+                            Add your first student
+                            <span aria-hidden="true">→</span>
+                        </a>
 
                     {% endif %}
 

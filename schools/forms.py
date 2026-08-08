@@ -10,6 +10,8 @@ from accounts.models import (
 )
 from courses.models import Course
 
+from .models import SchoolStudent
+
 
 User = get_user_model()
 
@@ -135,17 +137,23 @@ class SchoolEnrollmentForm(forms.Form):
                 "This student is already enrolled in the selected course."
             )
 
-        student_already_belongs_to_school = (
-            Enrollment.objects
+        membership = (
+            SchoolStudent.objects
             .filter(
                 school=self.school,
                 user=self.student,
             )
-            .exists()
+            .first()
         )
 
+        if membership and not membership.is_active:
+            raise forms.ValidationError(
+                "This student is currently inactive for this school. "
+                "Reactivate the student before adding another course."
+            )
+
         if (
-            not student_already_belongs_to_school
+            membership is None
             and not self.school.has_available_student_places
         ):
             raise forms.ValidationError(
@@ -165,6 +173,14 @@ class SchoolEnrollmentForm(forms.Form):
             raise ValueError(
                 "The enrollment form must be valid before saving."
             )
+
+        SchoolStudent.objects.get_or_create(
+            school=self.school,
+            user=self.student,
+            defaults={
+                "is_active": True,
+            },
+        )
 
         return Enrollment.objects.create(
             user=self.student,
@@ -416,13 +432,9 @@ class SchoolStudentCreateForm(forms.Form):
             is_superuser=False,
         )
 
-        """
-        A school administrator must never create or know
-        the student's password. The student will define
-        the password using the secure invitation link.
-        
-    
-        """
+        # A school administrator must never create or know
+        # the student's password. The student will define
+        # the password using the secure invitation link.
         student.set_unusable_password()
         student.save()
 
@@ -438,6 +450,12 @@ class SchoolStudentCreateForm(forms.Form):
             },
         )
 
+        SchoolStudent.objects.create(
+            school=self.school,
+            user=student,
+            is_active=True,
+        )
+
         enrollment = Enrollment.objects.create(
             user=student,
             course=self.cleaned_data["course"],
@@ -445,3 +463,167 @@ class SchoolStudentCreateForm(forms.Form):
         )
 
         return student, enrollment
+
+
+class SchoolStudentUpdateForm(forms.Form):
+    """
+    Update the personal information of a student
+    connected to a school.
+    """
+
+    first_name = forms.CharField(
+        label="First name",
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "profile-form-control",
+                "autocomplete": "given-name",
+            }
+        ),
+    )
+
+    last_name = forms.CharField(
+        label="Last name",
+        max_length=150,
+        required=True,
+        widget=forms.TextInput(
+            attrs={
+                "class": "profile-form-control",
+                "autocomplete": "family-name",
+            }
+        ),
+    )
+
+    email = forms.EmailField(
+        label="Email address",
+        required=True,
+        widget=forms.EmailInput(
+            attrs={
+                "class": "profile-form-control",
+                "autocomplete": "email",
+            }
+        ),
+    )
+
+    phone_number = forms.CharField(
+        label="Phone number",
+        max_length=30,
+        required=False,
+        widget=forms.TextInput(
+            attrs={
+                "class": "profile-form-control",
+                "autocomplete": "tel",
+            }
+        ),
+    )
+
+    preferred_language = forms.ChoiceField(
+        label="Preferred language",
+        choices=StudentProfile.LANGUAGE_CHOICES,
+        required=True,
+        widget=forms.Select(
+            attrs={
+                "class": "profile-form-control",
+            }
+        ),
+    )
+
+    def __init__(
+        self,
+        *args,
+        student,
+        **kwargs,
+    ):
+        super().__init__(*args, **kwargs)
+
+        self.student = student
+
+        profile, _ = StudentProfile.objects.get_or_create(
+            user=student
+        )
+
+        if not self.is_bound:
+            self.initial.update(
+                {
+                    "first_name": student.first_name,
+                    "last_name": student.last_name,
+                    "email": student.email,
+                    "phone_number": profile.phone_number,
+                    "preferred_language": (
+                        profile.preferred_language
+                    ),
+                }
+            )
+
+    def clean_email(self):
+        email = (
+            self.cleaned_data["email"]
+            .strip()
+            .lower()
+        )
+
+        email_exists = (
+            User.objects
+            .filter(email__iexact=email)
+            .exclude(pk=self.student.pk)
+            .exists()
+        )
+
+        if email_exists:
+            raise forms.ValidationError(
+                "An account with this email address already exists."
+            )
+
+        return email
+
+    def clean_phone_number(self):
+        phone_number = self.cleaned_data.get(
+            "phone_number",
+            "",
+        )
+
+        return phone_number.strip()
+
+    @transaction.atomic
+    def save(self):
+        if not self.is_valid():
+            raise ValueError(
+                "The student update form must be valid before saving."
+            )
+
+        student = self.student
+
+        student.first_name = (
+            self.cleaned_data["first_name"].strip()
+        )
+
+        student.last_name = (
+            self.cleaned_data["last_name"].strip()
+        )
+
+        student.email = self.cleaned_data["email"]
+
+        student.save(
+            update_fields=[
+                "first_name",
+                "last_name",
+                "email",
+            ]
+        )
+
+        StudentProfile.objects.update_or_create(
+            user=student,
+            defaults={
+                "phone_number": (
+                    self.cleaned_data["phone_number"]
+                ),
+                "preferred_language": (
+                    self.cleaned_data[
+                        "preferred_language"
+                    ]
+                ),
+            },
+        )
+
+        return student

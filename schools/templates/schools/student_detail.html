@@ -1,3 +1,10 @@
+Library
+/
+student_detail_deactivate_reactivate.html
+
+
+
+
 {% extends "base.html" %}
 
 {% block title %}
@@ -33,14 +40,21 @@
 
             <div class="dashboard-header-actions">
 
-                <a
-                    href="{% url 'schools:enrollment_create' %}"
-                    class="student-profile-save-button"
-                >
-                    Enroll in another course
-                    <span aria-hidden="true">+</span>
-                </a>
-
+                {% if membership.is_active %}
+                    <a
+                        href="{% url 'schools:enrollment_create' %}"
+                        class="student-profile-save-button"
+                    >
+                        Enroll in another course
+                        <span aria-hidden="true">+</span>
+                    </a>
+                {% endif %}
+<a
+    href="{% url 'schools:student_update' student.id %}"
+    class="student-profile-save-button"
+>
+    Edit student
+</a>
                 <a
                     href="{% url 'schools:student_list' %}"
                     class="student-profile-back-button"
@@ -96,6 +110,25 @@
                             School student
                         </span>
 
+                        <div class="school-student-membership-status">
+                            {% if membership.is_active %}
+                                <span class="school-student-status-badge school-student-status-active">
+                                    Active
+                                </span>
+                            {% else %}
+                                <span class="school-student-status-badge school-student-status-inactive">
+                                    Inactive
+                                </span>
+
+                                {% if membership.deactivated_at %}
+                                    <small class="school-student-deactivated-date">
+                                        Deactivated
+                                        {{ membership.deactivated_at|date:"d M Y, H:i" }}
+                                    </small>
+                                {% endif %}
+                            {% endif %}
+                        </div>
+
                     </div>
 
                     <div class="student-profile-account-details">
@@ -113,6 +146,18 @@
 
                             <strong>
                                 {{ student.date_joined|date:"d M Y" }}
+                            </strong>
+                        </div>
+
+                        <div class="student-profile-account-detail">
+                            <span>School status</span>
+
+                            <strong>
+                                {% if membership.is_active %}
+                                    Active
+                                {% else %}
+                                    Inactive
+                                {% endif %}
                             </strong>
                         </div>
 
@@ -340,6 +385,88 @@
                                 enrolments connected to this school.
                             </p>
                         </div>
+
+                    {% endif %}
+
+                </section>
+
+                <section class="school-dashboard-card school-student-membership-card">
+
+                    <div class="school-dashboard-card-header">
+
+                        <div>
+                            <span class="school-dashboard-label">
+                                School membership
+                            </span>
+
+                            <h2>
+                                {% if membership.is_active %}
+                                    Active student
+                                {% else %}
+                                    Inactive student
+                                {% endif %}
+                            </h2>
+                        </div>
+
+                    </div>
+
+                    {% if membership.is_active %}
+
+                        <p class="school-student-membership-copy">
+                            Deactivating this student removes them from the
+                            school's active student list. Their SkillStart
+                            Ireland account, enrolments, progress, assessments
+                            and certificates will be preserved.
+                        </p>
+
+                        <form
+                            method="post"
+                            action="{% url 'schools:student_deactivate' student.id %}"
+                            class="school-student-membership-action"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="school-student-deactivate-button"
+                                onclick="return confirm('Deactivate this student for {{ school.name|escapejs }}? Their training history will be preserved.');"
+                            >
+                                Deactivate student
+                            </button>
+                        </form>
+
+                    {% else %}
+
+                        <p class="school-student-membership-copy">
+                            This student is inactive for {{ school.name }}.
+                            Reactivating them will add them back to the active
+                            student list and count them toward the school's
+                            student limit.
+                        </p>
+
+                        {% if membership.deactivated_at %}
+                            <p class="school-student-membership-meta">
+                                Deactivated:
+                                <strong>
+                                    {{ membership.deactivated_at|date:"d M Y, H:i" }}
+                                </strong>
+                            </p>
+                        {% endif %}
+
+                        <form
+                            method="post"
+                            action="{% url 'schools:student_reactivate' student.id %}"
+                            class="school-student-membership-action"
+                        >
+                            {% csrf_token %}
+
+                            <button
+                                type="submit"
+                                class="student-profile-save-button"
+                            >
+                                Reactivate student
+                            </button>
+                        </form>
 
                     {% endif %}
 

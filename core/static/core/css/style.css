@@ -12604,4 +12604,410 @@ input[type="checkbox"] {
     }
 }
 
+/* =========================================================
+   SCHOOL PORTAL - EDIT STUDENT
+   ========================================================= */
 
+.student-profile-form-card {
+    overflow: hidden;
+    background-color: #ffffff;
+    border: 1px solid #e6e9ee;
+    border-radius: 18px;
+    box-shadow: 0 12px 35px rgba(8, 35, 68, 0.08);
+}
+
+.student-profile-form-header {
+    padding: 2rem 2rem 1.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.student-profile-form-header h2 {
+    margin-bottom: 0.5rem;
+    color: #082344;
+    font-size: 1.45rem;
+    font-weight: 750;
+}
+
+.student-profile-form-header p {
+    margin-bottom: 0;
+    color: #6c757d;
+    font-size: 0.95rem;
+    line-height: 1.6;
+}
+
+.student-profile-form-card form {
+    padding: 2rem;
+}
+
+.student-profile-form-group {
+    margin-bottom: 1.5rem;
+}
+
+.student-profile-form-group label {
+    display: block;
+    margin-bottom: 0.55rem;
+    color: #25364d;
+    font-size: 0.9rem;
+    font-weight: 700;
+}
+
+.profile-form-control {
+    display: block;
+    width: 100%;
+    min-height: 48px;
+    padding: 0.75rem 0.95rem;
+    color: #25364d;
+    font-size: 0.95rem;
+    background-color: #ffffff;
+    border: 1px solid #dce2e9;
+    border-radius: 10px;
+    outline: none;
+    transition:
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.profile-form-control:hover {
+    border-color: #b8c4d1;
+}
+
+.profile-form-control:focus {
+    background-color: #ffffff;
+    border-color: #0d6efd;
+    box-shadow: 0 0 0 4px rgba(13, 110, 253, 0.10);
+}
+
+.profile-form-control::placeholder {
+    color: #98a2ad;
+}
+
+select.profile-form-control {
+    cursor: pointer;
+}
+
+.student-profile-form-group small {
+    display: block;
+    margin-top: 0.45rem;
+    color: #7a8795;
+    font-size: 0.82rem;
+}
+
+.student-profile-form-group .text-danger {
+    font-size: 0.85rem;
+    font-weight: 600;
+}
+
+.student-profile-form-actions {
+    display: flex;
+    align-items: center;
+    gap: 0.85rem;
+    margin-top: 2rem;
+    padding-top: 1.5rem;
+    border-top: 1px solid #e9ecef;
+}
+
+.student-profile-save-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.25rem;
+    color: #ffffff;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    background-color: #0d6efd;
+    border: 1px solid #0d6efd;
+    border-radius: 10px;
+    cursor: pointer;
+    transition:
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.student-profile-save-button:hover {
+    color: #ffffff;
+    background-color: #0b5ed7;
+    border-color: #0a58ca;
+    box-shadow: 0 8px 20px rgba(13, 110, 253, 0.20);
+    transform: translateY(-1px);
+}
+
+.student-profile-save-button:active {
+    transform: translateY(0);
+}
+
+.student-profile-back-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.4rem;
+    min-height: 44px;
+    padding: 0.7rem 1.15rem;
+    color: #526173;
+    font-size: 0.9rem;
+    font-weight: 700;
+    text-decoration: none;
+    background-color: #ffffff;
+    border: 1px solid #dce2e9;
+    border-radius: 10px;
+    transition:
+        color 0.2s ease,
+        border-color 0.2s ease,
+        background-color 0.2s ease;
+}
+
+.student-profile-back-button:hover {
+    color: #0d6efd;
+    background-color: #f7faff;
+    border-color: #a8c8f8;
+}
+
+.student-profile-form-card .alert-danger {
+    margin-bottom: 1.5rem;
+    padding: 0.85rem 1rem;
+    font-size: 0.9rem;
+    border-radius: 10px;
+}
+
+
+/* =========================================================
+   EDIT STUDENT - RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .student-profile-form-header {
+        padding: 1.5rem 1.25rem 1.25rem;
+    }
+
+    .student-profile-form-card form {
+        padding: 1.5rem 1.25rem;
+    }
+
+    .student-profile-form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .student-profile-save-button,
+    .student-profile-back-button {
+        width: 100%;
+    }
+}
+/* =========================================================
+   SCHOOL PORTAL - STUDENT MEMBERSHIP STATUS
+   ========================================================= */
+
+.school-student-status-filters {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 0.65rem;
+    margin-bottom: 1.5rem;
+}
+
+.school-student-status-filters a {
+    min-height: 40px;
+    padding: 0.55rem 1rem;
+    font-size: 0.88rem;
+}
+
+
+/* =========================================================
+   STUDENT STATUS BADGES
+   ========================================================= */
+
+.school-student-status-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.35rem;
+    min-width: 78px;
+    padding: 0.4rem 0.75rem;
+    font-size: 0.78rem;
+    font-weight: 750;
+    line-height: 1;
+    border-radius: 999px;
+    white-space: nowrap;
+}
+
+.school-student-status-active {
+    color: #146c43;
+    background-color: #dff5e8;
+    border: 1px solid #b9e6cc;
+}
+
+.school-student-status-active::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    background-color: #198754;
+    border-radius: 50%;
+}
+
+.school-student-status-inactive {
+    color: #842029;
+    background-color: #f8d7da;
+    border: 1px solid #f1aeb5;
+}
+
+.school-student-status-inactive::before {
+    content: "";
+    width: 7px;
+    height: 7px;
+    background-color: #dc3545;
+    border-radius: 50%;
+}
+
+
+/* =========================================================
+   STUDENT DETAIL - MEMBERSHIP STATUS
+   ========================================================= */
+
+.school-student-membership-status {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.55rem;
+    margin-top: 0.85rem;
+}
+
+.school-student-deactivated-date {
+    color: #6c757d;
+    font-size: 0.78rem;
+    text-align: center;
+}
+
+.school-student-membership-card {
+    margin-top: 1.5rem;
+}
+
+.school-student-membership-copy {
+    margin: 0;
+    color: #5f6b7a;
+    font-size: 0.94rem;
+    line-height: 1.7;
+}
+
+.school-student-membership-meta {
+    margin: 1rem 0 0;
+    padding: 0.8rem 1rem;
+    color: #5f6b7a;
+    font-size: 0.88rem;
+    background-color: #f8f9fb;
+    border: 1px solid #e6e9ee;
+    border-radius: 10px;
+}
+
+.school-student-membership-meta strong {
+    color: #25364d;
+}
+
+.school-student-membership-action {
+    display: flex;
+    align-items: center;
+    margin-top: 1.4rem;
+}
+
+
+/* =========================================================
+   DEACTIVATE STUDENT BUTTON
+   ========================================================= */
+
+.school-student-deactivate-button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 44px;
+    padding: 0.7rem 1.2rem;
+
+    color: #b42318;
+    font-size: 0.9rem;
+    font-weight: 700;
+
+    background-color: #ffffff;
+
+    border: 1px solid #f1b5b0;
+    border-radius: 10px;
+
+    cursor: pointer;
+
+    transition:
+        color 0.2s ease,
+        background-color 0.2s ease,
+        border-color 0.2s ease,
+        box-shadow 0.2s ease,
+        transform 0.2s ease;
+}
+
+.school-student-deactivate-button:hover {
+    color: #ffffff;
+    background-color: #dc3545;
+    border-color: #dc3545;
+    box-shadow: 0 8px 20px rgba(220, 53, 69, 0.2);
+    transform: translateY(-1px);
+}
+
+.school-student-deactivate-button:active {
+    transform: translateY(0);
+}
+
+.school-student-deactivate-button:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 4px rgba(220, 53, 69, 0.15);
+}
+
+
+/* =========================================================
+   STUDENT TABLE STATUS
+   ========================================================= */
+
+.school-dashboard-table td .school-student-status-badge {
+    vertical-align: middle;
+}
+
+
+/* =========================================================
+   MEMBERSHIP CARD - INACTIVE EMPHASIS
+   ========================================================= */
+
+.school-student-membership-card:has(
+    .school-student-status-inactive
+) {
+    border-color: #f1c5c9;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+   ========================================================= */
+
+@media (max-width: 767.98px) {
+
+    .school-student-status-filters {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: 100%;
+    }
+
+    .school-student-status-filters a {
+        width: 100%;
+    }
+
+    .school-student-membership-action {
+        display: block;
+    }
+
+    .school-student-membership-action button,
+    .school-student-membership-action a {
+        width: 100%;
+    }
+
+    .school-student-deactivate-button {
+        width: 100%;
+    }
+}

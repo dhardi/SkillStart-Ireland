@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db import models
+from django.utils import timezone
 
 
 class School(models.Model):
@@ -79,22 +80,19 @@ class School(models.Model):
     @property
     def active_student_count(self):
         """
-        Return the number of distinct students currently
-        enrolled through this school.
+        Return the number of active students
+        currently connected to this school.
         """
 
-        return (
-            self.enrollments
-            .values("user")
-            .distinct()
-            .count()
-        )
+        return self.student_memberships.filter(
+            is_active=True,
+        ).count()
 
     @property
     def has_available_student_places(self):
         """
         Return True when the school can register
-        additional students.
+        additional active students.
         """
 
         return (
@@ -160,6 +158,117 @@ class SchoolAdministrator(models.Model):
             return full_name
 
         return self.user.username
+
+    def __str__(self):
+        return (
+            f"{self.display_name} - "
+            f"{self.school.name}"
+        )
+
+
+class SchoolStudent(models.Model):
+    """
+    Represents the relationship between a student
+    and a school.
+
+    Deactivating this relationship must not deactivate
+    the student's global SkillStart Ireland account.
+    """
+
+    school = models.ForeignKey(
+        School,
+        on_delete=models.CASCADE,
+        related_name="student_memberships",
+    )
+
+    user = models.ForeignKey(
+        settings.AUTH_USER_MODEL,
+        on_delete=models.CASCADE,
+        related_name="school_memberships",
+    )
+
+    is_active = models.BooleanField(
+        default=True,
+    )
+
+    deactivated_at = models.DateTimeField(
+        blank=True,
+        null=True,
+    )
+
+    created_at = models.DateTimeField(
+        auto_now_add=True,
+    )
+
+    updated_at = models.DateTimeField(
+        auto_now=True,
+    )
+
+    class Meta:
+        ordering = [
+            "user__first_name",
+            "user__last_name",
+            "user__username",
+        ]
+
+        constraints = [
+            models.UniqueConstraint(
+                fields=[
+                    "school",
+                    "user",
+                ],
+                name="unique_school_student",
+            ),
+        ]
+
+    @property
+    def display_name(self):
+        full_name = self.user.get_full_name().strip()
+
+        if full_name:
+            return full_name
+
+        return self.user.username
+
+    def deactivate(self):
+        """
+        Deactivate the student's membership
+        with this school only.
+        """
+
+        if not self.is_active:
+            return
+
+        self.is_active = False
+        self.deactivated_at = timezone.now()
+
+        self.save(
+            update_fields=[
+                "is_active",
+                "deactivated_at",
+                "updated_at",
+            ]
+        )
+
+    def reactivate(self):
+        """
+        Reactivate the student's membership
+        with this school.
+        """
+
+        if self.is_active:
+            return
+
+        self.is_active = True
+        self.deactivated_at = None
+
+        self.save(
+            update_fields=[
+                "is_active",
+                "deactivated_at",
+                "updated_at",
+            ]
+        )
 
     def __str__(self):
         return (
